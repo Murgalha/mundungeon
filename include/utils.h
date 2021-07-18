@@ -1,24 +1,24 @@
 #ifndef _UTILS_H_
 #define _UTILS_H_
 
-#include <stdint.h>
-#include <stdbool.h>
+#include "types.h"
 
-// Signed
-#define i8 int8_t
-#define i16 int16_t
-#define i32 int32_t
-#define i64 int64_t
+typedef struct {
+	union {
+		i16 x, col;
+	};
+	union {
+		i16 y, row;
+	};
+} V2;
 
-// Unsigned
-#define u8 uint8_t
-#define u16 uint16_t
-#define u32 uint32_t
-#define u64 uint64_t
-#define uint unsigned int
-
-// Floating point
-#define f32 float
-#define f64 double
+typedef struct {
+	union {
+		f32 x, col;
+	};
+	union {
+		f32 y, row;
+	};
+} V2f;
 
 #endif

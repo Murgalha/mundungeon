@@ -1,7 +1,7 @@
 #include "window.h"
 #include "log.h"
 
-SDL_Window *window_create(int width, int height) {
+SDL_Window *window_new(int width, int height) {
 	SDL_Window *window = NULL;
 	int flags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE;
 
@@ -14,6 +14,6 @@ SDL_Window *window_create(int width, int height) {
 	return window;
 }
 
-void window_destroy(SDL_Window *window) {
+void window_delete(SDL_Window *window) {
 	SDL_DestroyWindow(window);
 }

@@ -10,7 +10,7 @@ typedef struct {
 	mat4 projection;
 } WindowContext;
 
-WindowContext *window_context_new();
+WindowContext *window_context_new(int, int);
 void window_context_delete(WindowContext *);
 
 #endif
