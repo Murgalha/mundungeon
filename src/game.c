@@ -13,7 +13,7 @@ Game *game_new(uint width, uint height) {
 
 	vec3 position = GLM_VEC3_ZERO_INIT;
 	position[2] = 3.0f;
-	game->camera = camera_new(position);
+	game->camera = camera_new(game->hero->position);
 	return game;
 }
 

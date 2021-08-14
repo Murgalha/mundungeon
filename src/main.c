@@ -9,8 +9,8 @@
 #include "random.h"
 #include "game.h"
 
-#define SCREEN_WIDTH 1024
-#define SCREEN_HEIGHT 1024
+#define SCREEN_WIDTH 1280
+#define SCREEN_HEIGHT 720
 
 void resize_viewport(int width, int height) {
 	glViewport(0, 0, width, height);
@@ -38,16 +38,16 @@ void process_input(WindowContext *ctx, Game *game, float delta_time) {
 		case SDL_KEYDOWN:
 			switch(e.key.keysym.sym) {
 			case SDLK_d:
-				camera_process_keyboard(game->camera, RIGHT, delta_time);
+				camera_move(game->camera, RIGHT, delta_time);
 				break;
 			case SDLK_a:
-				camera_process_keyboard(game->camera, LEFT, delta_time);
+				camera_move(game->camera, LEFT, delta_time);
 				break;
 			case SDLK_s:
-				camera_process_keyboard(game->camera, DOWN, delta_time);
+				camera_move(game->camera, DOWN, delta_time);
 				break;
 			case SDLK_w:
-				camera_process_keyboard(game->camera, UP, delta_time);
+				camera_move(game->camera, UP, delta_time);
 				break;
 			case SDLK_EQUALS: // TODO: Fix all zooms
 				game->camera->zoom = 0.0f;
@@ -59,16 +59,16 @@ void process_input(WindowContext *ctx, Game *game, float delta_time) {
 				game->camera->zoom += 0.1f;
 				break;
 			case SDLK_RIGHT:
-				game->hero->position[0]++;
+				hero_move(game->hero, game->dungeon, RIGHT, game->camera, delta_time);
 				break;
 			case SDLK_LEFT:
-				game->hero->position[0]--;
+				hero_move(game->hero, game->dungeon, LEFT, game->camera, delta_time);
 				break;
 			case SDLK_DOWN:
-				game->hero->position[1]++;
+				hero_move(game->hero, game->dungeon, DOWN, game->camera, delta_time);
 				break;
 			case SDLK_UP:
-				game->hero->position[1]--;
+				hero_move(game->hero, game->dungeon, UP, game->camera, delta_time);
 				break;
 			case SDLK_SPACE:
 				break;
@@ -115,7 +115,7 @@ int main(int argc, char *argv[]) {
 		camera_view_matrix(game->camera, view);
 		shader_set_mat4(game->renderer->shader, "view", view);
 
-        glClearColor(0.3f, 0.7f, 0.4f, 1.0f);
+        glClearColor(0.165f, 0.114f, 0.31f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
         game_render(game);
 

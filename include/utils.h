@@ -1,24 +1,14 @@
 #ifndef _UTILS_H_
 #define _UTILS_H_
 
-#include "types.h"
+#include <cglm/vec2.h>
 
-typedef struct {
-	union {
-		i16 x, col;
-	};
-	union {
-		i16 y, row;
-	};
-} V2;
+#define FLOOR 1
+#define CORRIDOR 1
+#define WALL 0
+#define EMPTY 4
+#define DOOR 2
 
-typedef struct {
-	union {
-		f32 x, col;
-	};
-	union {
-		f32 y, row;
-	};
-} V2f;
+extern vec2 dir_array[4];
 
 #endif

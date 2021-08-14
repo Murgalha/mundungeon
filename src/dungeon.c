@@ -37,15 +37,13 @@ void dungeon_render(Dungeon *dungeon, SpriteRenderer *renderer) {
 	unsigned int texture;
 	vec3 color;
 	vec2 position;
-	vec2 size;
-	size[0] = size[1] = 128.0f;
 	color[0] = color[1] = color[2] = 1.0f;
 
 	for(int y = 0; y < dungeon->size; y++) {
 		for(int x = 0; x < dungeon->size; x++) {
 			tile = dungeon->map[y][x];
-			position[0] = x * size[0];
-			position[1] = y * size[1];
+			position[0] = x * renderer->sprite_width;
+			position[1] = y * renderer->sprite_height;
 
 			switch(tile) {
 			case 0:
@@ -65,7 +63,7 @@ void dungeon_render(Dungeon *dungeon, SpriteRenderer *renderer) {
 				color[0] = color[1] = color[2] = 0.0f;
 				break;
 			}
-			sprite_renderer_draw_sprite(renderer, texture, position, size, 0.0, color);
+			sprite_renderer_draw_sprite(renderer, texture, position, 0.0, color);
 		}
 	}
 }

@@ -1,7 +1,9 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include "hero.h"
 #include "texture.h"
 #include "sprite_renderer.h"
+#include "utils.h"
 
 Hero *hero_new() {
 	Hero *hero = malloc(sizeof(Hero));
@@ -19,8 +21,22 @@ void hero_delete(Hero *hero) {
 
 void hero_render(Hero *hero, SpriteRenderer *renderer) {
 	vec2 size, color, position;
-	glm_vec2_scale(hero->position, 128.0, position);
-	size[0] = size[1] = 128.0;
+	glm_vec2_scale(hero->position, SPRITE_WIDTH, position);
 	color[0] = color[1] = 1.0;
-	sprite_renderer_draw_sprite(renderer, hero->texture_id, position, size, 0.0, color);
+	sprite_renderer_draw_sprite(renderer, hero->texture_id, position, 0.0, color);
+}
+
+void hero_move(Hero *hero, Dungeon *dungeon, Direction d, Camera *camera, float delta_time) {
+	int x, y;
+	vec2 new_position;
+
+	glm_vec2_add(hero->position, dir_array[d], new_position);
+	x = (int)new_position[0];
+	y = (int)new_position[1];
+
+	char tile = dungeon->map[y][x];
+	if(tile != WALL && tile != EMPTY) {
+		glm_vec2_copy(new_position, hero->position);
+		camera_move(camera, d, delta_time);
+	}
 }

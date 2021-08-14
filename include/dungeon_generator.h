@@ -1,6 +1,7 @@
 #ifndef _DUNGEON_GENERATOR_H_
 #define _DUNGEON_GENERATOR_H_
 
+#include "types.h"
 #include "utils.h"
 
 /*
@@ -10,19 +11,6 @@
 #define DOOR 68  // D
 #define CORRIDOR 67  // C
 */
-
-#define FLOOR 1
-#define CORRIDOR 1
-#define WALL 0
-#define EMPTY 4
-#define DOOR 2
-
-typedef enum {
-	UP,
-	DOWN,
-	LEFT,
-	RIGHT
-} Direction;
 
 typedef struct {
 	char **map;

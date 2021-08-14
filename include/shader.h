@@ -6,7 +6,7 @@
 #include <SDL2/SDL_opengl.h>
 #include <SDL2/SDL_opengl_glext.h>
 #include <cglm/mat4.h>
-#include "utils.h"
+#include "types.h"
 
 typedef struct {
 	uint program;

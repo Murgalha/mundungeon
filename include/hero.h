@@ -3,8 +3,9 @@
 
 #include <cglm/vec2.h>
 #include "types.h"
-#include "utils.h"
 #include "sprite_renderer.h"
+#include "dungeon.h"
+#include "camera.h"
 
 typedef struct {
 	uint texture_id;
@@ -14,5 +15,6 @@ typedef struct {
 Hero *hero_new();
 void hero_delete(Hero *);
 void hero_render(Hero *, SpriteRenderer *);
+void hero_move(Hero *, Dungeon *, Direction, Camera *, float);
 
 #endif

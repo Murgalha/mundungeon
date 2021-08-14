@@ -6,7 +6,8 @@
 SpriteRenderer *sprite_renderer_new(Shader *shader) {
 	SpriteRenderer *renderer = malloc(sizeof(SpriteRenderer));
 	renderer->shader = shader;
-
+	renderer->sprite_width = SPRITE_WIDTH;
+	renderer->sprite_height = SPRITE_HEIGHT;
     unsigned int VBO;
     float vertices[] = {
         // pos      // tex
@@ -40,10 +41,13 @@ void sprite_renderer_delete(SpriteRenderer *renderer) {
 	free(renderer);
 }
 
-void sprite_renderer_draw_sprite(SpriteRenderer *renderer, uint texture_id, vec2 position, vec2 size, float rotate, vec3 color) {
+void sprite_renderer_draw_sprite(SpriteRenderer *renderer, uint texture_id, vec2 position, float rotate, vec3 color) {
 	shader_use(renderer->shader);
+	vec2 size;
+	size[0] = renderer->sprite_width;
+	size[1] = renderer->sprite_height;
 
-    mat4 model = GLM_MAT4_IDENTITY_INIT;
+	mat4 model = GLM_MAT4_IDENTITY_INIT;
 	vec3 pos = GLM_VEC3_ZERO_INIT;
 	pos[0] = position[0]; pos[1] = position[1];
 

@@ -2,13 +2,7 @@
 #define _CAMERA_H_
 
 #include <cglm/vec3.h>
-
-typedef enum {
-    UP,
-    DOWN,
-    LEFT,
-    RIGHT
-} CameraMovement;
+#include "types.h"
 
 typedef struct {
     vec3 position;
@@ -19,9 +13,9 @@ typedef struct {
     float movement_speed;
 } Camera;
 
-Camera *camera_new(vec3);
+Camera *camera_new(vec2);
 void camera_delete(Camera *);
 void camera_view_matrix(Camera *, mat4);
-void camera_process_keyboard(Camera *, CameraMovement, float);
+void camera_move(Camera *, Direction, float);
 
 #endif
