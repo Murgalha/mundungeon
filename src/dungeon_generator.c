@@ -141,7 +141,6 @@ void dungeon_generator_make_room_at(DungeonGenerator *dungeon, V2 begin, int wid
 }
 
 bool dungeon_generator_has_room_space(DungeonGenerator *dungeon, V2 door, int width, int height, Direction d) {
-	V2 offset = direction_vector(d);
 	V2 begin = door;
 
 	switch(d) {

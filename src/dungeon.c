@@ -63,7 +63,7 @@ void dungeon_render(Dungeon *dungeon, SpriteRenderer *renderer) {
 				color[0] = color[1] = color[2] = 0.0f;
 				break;
 			}
-			sprite_renderer_draw_sprite(renderer, texture, position, 0.0, color);
+			sprite_renderer_draw_sprite(renderer, texture, position);
 		}
 	}
 }

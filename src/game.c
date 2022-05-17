@@ -1,6 +1,8 @@
 #include <cglm/cam.h>
 #include "game.h"
 
+#define UNUSED(X) (void)(X)
+
 Game *game_new(uint width, uint height) {
 	Game *game = malloc(sizeof(Game));
 	game->width = width;
@@ -11,8 +13,6 @@ Game *game_new(uint width, uint height) {
 	game->dungeon = dungeon_new(50);
 	game->hero = hero_new();
 
-	vec3 position = GLM_VEC3_ZERO_INIT;
-	position[2] = 3.0f;
 	game->camera = camera_new(game->hero->position);
 	return game;
 }
@@ -42,11 +42,13 @@ void game_init(Game *game) {
 }
 
 void game_process_input(Game *game, float delta_time) {
-
+	UNUSED(game);
+	UNUSED(delta_time);
 }
 
 void game_update(Game *game, float delta_time) {
-
+	UNUSED(game);
+	UNUSED(delta_time);
 }
 
 void game_render(Game *game) {

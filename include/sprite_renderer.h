@@ -18,6 +18,6 @@ typedef struct {
 
 SpriteRenderer *sprite_renderer_new(Shader *);
 void sprite_renderer_delete(SpriteRenderer *);
-void sprite_renderer_draw_sprite(SpriteRenderer *, uint, vec2, float, vec3);
+void sprite_renderer_draw_sprite(SpriteRenderer *, uint, vec2);
 
 #endif

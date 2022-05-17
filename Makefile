@@ -1,15 +1,36 @@
-comp=gcc
-src=src/*.c
-incl=-Iinclude
-out=./mundungeon
-libs=-pthread -lSDL2 -lGL -lm -ldl
-std=-std=c99
+CC ?= gcc
+SRCDIR=src/
+INCLUDEDIR=include/
+WARNFLAGS=-Wall -Wextra -Werror
+LIBS=-lGL -lSDL2 -lm
+STD=-std=c99
 
-all:
-	@$(comp) -o $(out) $(src) $(incl) $(libs) $(std)
+WRKDIR=build/
+OBJDIR := ${WRKDIR}obj/
+HEADERFILES := $(wildcard ${INCLUDEDIR}*.h)
+SRCFILES := $(wildcard ${SRCDIR}*.c)
+OBJFILES := ${addprefix ${OBJDIR}, ${notdir ${SRCFILES:.c=.o}}}
 
-debug:
-	@$(comp) -o $(out) $(src) $(incl) $(libs) $(std) -g
+# EXECUTABLE STUFF
+BIN=mundungeon
+BINDIR := ${WRKDIR}bin/
+BINFILE := ${BINDIR}${BIN}
+
+all: prepare ${BINFILE}
+
+${OBJDIR}%.o: ${SRCDIR}%.c ${HEADERFILES}
+	$(CC) -c $< ${WARNFLAGS} -I${INCLUDEDIR} -o $@ ${STD}
+
+${BINFILE}: ${OBJFILES}
+	$(CC) $^ ${WARNFLAGS} -I${INCLUDEDIR} -o $@ ${STD} ${LIBS}
 
 run:
-	@./$(out)
+	@./${BINFILE}
+
+prepare:
+	@if [ ! -d "${WRKDIR}" ]; then mkdir ${WRKDIR}; fi
+	@if [ ! -d "${OBJDIR}" ]; then mkdir ${OBJDIR}; fi
+	@if [ ! -d "${BINDIR}" ]; then mkdir ${BINDIR}; fi
+
+clear:
+	rm -rf ${WRKDIR}

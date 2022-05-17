@@ -41,7 +41,7 @@ void sprite_renderer_delete(SpriteRenderer *renderer) {
 	free(renderer);
 }
 
-void sprite_renderer_draw_sprite(SpriteRenderer *renderer, uint texture_id, vec2 position, float rotate, vec3 color) {
+void sprite_renderer_draw_sprite(SpriteRenderer *renderer, uint texture_id, vec2 position) {
 	shader_use(renderer->shader);
 	vec2 size;
 	size[0] = renderer->sprite_width;
@@ -53,28 +53,12 @@ void sprite_renderer_draw_sprite(SpriteRenderer *renderer, uint texture_id, vec2
 
     glm_translate(model, pos);
 
-	vec3 to_origin = GLM_VEC3_ZERO_INIT;
-	to_origin[0] = size[0] * 0.5;
-	to_origin[1] = size[1] * 0.5;
-    glm_translate(model, to_origin);
-
-	vec3 zup = GLM_VEC3_ZERO_INIT;
-	zup[2] = 1.0;
-	float radians = glm_rad(rotate);
-	glm_rotate(model, radians, zup);
-
-	vec3 from_origin = GLM_VEC3_ZERO_INIT;
-	from_origin[0] = size[0] * -0.5;
-	from_origin[1] = size[1] * -0.5;
-    glm_translate(model, from_origin);
-
 	vec3 v3_size = GLM_VEC3_ONE_INIT;
 	v3_size[0] = size[0];
 	v3_size[1] = size[1];
     glm_scale(model, v3_size);
 
 	shader_set_mat4(renderer->shader, "model", model);
-	shader_set_vec3(renderer->shader, "spriteColor", color[0], color[1], color[2]);
 
     glActiveTexture(GL_TEXTURE0);
     texture_bind(texture_id);

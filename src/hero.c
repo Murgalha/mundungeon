@@ -20,10 +20,9 @@ void hero_delete(Hero *hero) {
 }
 
 void hero_render(Hero *hero, SpriteRenderer *renderer) {
-	vec2 size, color, position;
+	vec2 position;
 	glm_vec2_scale(hero->position, SPRITE_WIDTH, position);
-	color[0] = color[1] = 1.0;
-	sprite_renderer_draw_sprite(renderer, hero->texture_id, position, 0.0, color);
+	sprite_renderer_draw_sprite(renderer, hero->texture_id, position);
 }
 
 void hero_move(Hero *hero, Dungeon *dungeon, Direction d, Camera *camera, float delta_time) {

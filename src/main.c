@@ -12,14 +12,14 @@
 #define SCREEN_WIDTH 1280
 #define SCREEN_HEIGHT 720
 
+#define UNUSED(X) (void)(X)
+
 void resize_viewport(int width, int height) {
 	glViewport(0, 0, width, height);
 }
 
 void process_input(WindowContext *ctx, Game *game, float delta_time) {
 	SDL_Event e;
-	mat4 projection;
-	float radians;
 
 	while(SDL_PollEvent(&e)) {
 		switch(e.type) {
@@ -81,6 +81,9 @@ void process_input(WindowContext *ctx, Game *game, float delta_time) {
 }
 
 int main(int argc, char *argv[]) {
+	UNUSED(argc);
+	UNUSED(argv);
+
 	if(SDL_InitSubSystem(SDL_INIT_EVERYTHING ^ SDL_INIT_HAPTIC)) {
 		log_print(ERROR, "Could not initialize SDL: %s\n", SDL_GetError());
 		exit(1);
