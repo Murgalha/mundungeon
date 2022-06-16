@@ -10,6 +10,7 @@ const Texture = @import("texture.zig").Texture;
 const Dungeon = @import("dungeon.zig").Dungeon;
 const Grid = @import("grid.zig").Grid;
 const Hero = @import("hero.zig").Hero;
+const Enemy = @import("enemy.zig").Enemy;
 const Clock = @import("clock.zig").Clock;
 
 const SCREEN_WIDTH: i32 = 800;
@@ -24,6 +25,8 @@ pub const Game = struct {
     dungeon: Dungeon,
     grid: Grid,
     hero: Hero,
+    enemy: Enemy,
+    enemy2: Enemy,
     clock: Clock,
 
     pub fn init(allocator: *Allocator) !Self {
@@ -46,6 +49,8 @@ pub const Game = struct {
             .dungeon = dungeon,
             .grid = grid,
             .clock = Clock.init(),
+            .enemy = try Enemy.init(allocator, dungeon.map, zm.f32x4(24.0, 24.0, 0.0, 0.0), zm.f32x4(25.0, 25.0, 0.0, 0.0)),
+            .enemy2 = try Enemy.init(allocator, dungeon.map, zm.f32x4(27.0, 41.0, 0.0, 0.0), zm.f32x4(25.0, 25.0, 0.0, 0.0)),
         };
     }
 
@@ -60,15 +65,23 @@ pub const Game = struct {
                 switch (e.key.keysym.sym) {
                     c.SDLK_w => {
                         self.hero.walk(.up, self.dungeon.map);
+                        self.enemy.move(self.hero.gridPosition);
+                        self.enemy2.move(self.hero.gridPosition);
                     },
                     c.SDLK_a => {
                         self.hero.walk(.left, self.dungeon.map);
+                        self.enemy.move(self.hero.gridPosition);
+                        self.enemy2.move(self.hero.gridPosition);
                     },
                     c.SDLK_s => {
                         self.hero.walk(.down, self.dungeon.map);
+                        self.enemy.move(self.hero.gridPosition);
+                        self.enemy2.move(self.hero.gridPosition);
                     },
                     c.SDLK_d => {
                         self.hero.walk(.right, self.dungeon.map);
+                        self.enemy.move(self.hero.gridPosition);
+                        self.enemy2.move(self.hero.gridPosition);
                     },
                     else => {},
                 }
@@ -89,6 +102,8 @@ pub const Game = struct {
     pub fn draw(self: *Self) !void {
         self.dungeon.draw(&self.spriteRenderer, &self.grid);
         self.hero.draw(&self.spriteRenderer, &self.grid);
+        self.enemy.draw(&self.spriteRenderer, &self.grid);
+        self.enemy2.draw(&self.spriteRenderer, &self.grid);
 
         var buf: [15]u8 = undefined;
         const result = try fmt.bufPrint(&buf, "Frame: {d}ms", .{self.clock.deltaTime()});
