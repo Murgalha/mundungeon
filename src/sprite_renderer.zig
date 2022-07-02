@@ -48,7 +48,8 @@ pub const SpriteRenderer = struct {
     }
 
     pub fn deinit(self: *Self) void {
-        c.glDeleteVertexArrays(self.quad_vao);
+        c.glDeleteVertexArrays(1, &self.quad_vao);
+        self.shader.deinit();
     }
 
     pub fn draw(self: *const Self, texture: u32, position: zm.Vec, scale: zm.Vec) void {

@@ -36,7 +36,9 @@ pub const Hero = struct {
         };
     }
 
-    pub fn deinit() void {}
+    pub fn deinit(_: *const Self) void {
+        std.log.warn("Hero deinit is not doing anything", .{});
+    }
 
     pub fn draw(self: *const Self, spriteRenderer: *const SpriteRenderer, grid: *const Grid) void {
         spriteRenderer.draw(self.texture, self.gridPosition, grid.spriteSize());
@@ -45,7 +47,7 @@ pub const Hero = struct {
     pub fn walk(self: *Self, direction: Direction, map: []const []const DungeonTile) void {
         var dest = self.gridPosition + directionToVec(direction);
         var destTile = map[@floatToInt(usize, dest[1])][@floatToInt(usize, dest[0])];
-        if (destTile != .wall and destTile != .empty) {
+        if (destTile == .floor or destTile == .door or destTile == .corridor) {
             self.gridPosition = dest;
         }
     }

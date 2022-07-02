@@ -54,6 +54,7 @@ pub const TextRenderer = struct {
 
     pub fn deinit(self: *Self) void {
         self.characters.deinit();
+        self.shader.deinit();
     }
 
     pub fn draw(self: *Self, text: []const u8, x: f32, y: f32, scale: f32, color: zm.Vec) void {

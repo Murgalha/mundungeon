@@ -26,9 +26,8 @@ pub const Shader = struct {
         };
     }
 
-    pub fn deinit(self: *Self) void {
-        c.glDeleteShader(self.vertexId);
-        c.glDeleteShader(self.fragmentId);
+    pub fn deinit(_: *Self) void {
+        std.log.warn("Shader deinit is not doing anything", .{});
     }
 
     pub fn create(self: *Self, allocator: *Allocator, shader_type: ShaderType, filename: []const u8) void {
@@ -40,7 +39,7 @@ pub const Shader = struct {
         };
 
         var c_str = cstr.addNullByte(allocator.*, filename) catch unreachable;
-        //defer allocator.free(c_str);
+        defer allocator.free(c_str);
         var file = std.fs.cwd().openFile(c_str, .{}) catch unreachable;
         defer file.close();
 
@@ -48,7 +47,7 @@ pub const Shader = struct {
             log.err("Could not read {s}: File too big", .{filename});
             return;
         };
-        //defer allocator.free(src);
+        defer allocator.free(src);
         var cShaderSrc = cstr.addNullByte(allocator.*, src) catch unreachable;
         defer allocator.free(cShaderSrc);
 

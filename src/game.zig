@@ -56,7 +56,11 @@ pub const Game = struct {
 
     pub fn deinit(self: *Self) void {
         self.textRenderer.deinit();
+        self.spriteRenderer.deinit();
         self.dungeon.deinit();
+        self.hero.deinit();
+        self.enemy.deinit();
+        self.enemy2.deinit();
     }
 
     pub fn processEvent(self: *Self, e: c.SDL_Event) void {
@@ -65,23 +69,23 @@ pub const Game = struct {
                 switch (e.key.keysym.sym) {
                     c.SDLK_w => {
                         self.hero.walk(.up, self.dungeon.map);
-                        self.enemy.move(self.hero.gridPosition);
-                        self.enemy2.move(self.hero.gridPosition);
+                        self.enemy.executeAction(self.dungeon.map, self.hero.gridPosition);
+                        self.enemy2.executeAction(self.dungeon.map, self.hero.gridPosition);
                     },
                     c.SDLK_a => {
                         self.hero.walk(.left, self.dungeon.map);
-                        self.enemy.move(self.hero.gridPosition);
-                        self.enemy2.move(self.hero.gridPosition);
+                        self.enemy.executeAction(self.dungeon.map, self.hero.gridPosition);
+                        self.enemy2.executeAction(self.dungeon.map, self.hero.gridPosition);
                     },
                     c.SDLK_s => {
                         self.hero.walk(.down, self.dungeon.map);
-                        self.enemy.move(self.hero.gridPosition);
-                        self.enemy2.move(self.hero.gridPosition);
+                        self.enemy.executeAction(self.dungeon.map, self.hero.gridPosition);
+                        self.enemy2.executeAction(self.dungeon.map, self.hero.gridPosition);
                     },
                     c.SDLK_d => {
                         self.hero.walk(.right, self.dungeon.map);
-                        self.enemy.move(self.hero.gridPosition);
-                        self.enemy2.move(self.hero.gridPosition);
+                        self.enemy.executeAction(self.dungeon.map, self.hero.gridPosition);
+                        self.enemy2.executeAction(self.dungeon.map, self.hero.gridPosition);
                     },
                     else => {},
                 }
@@ -100,6 +104,8 @@ pub const Game = struct {
     }
 
     pub fn draw(self: *Self) !void {
+        //std.log.info("Map len: {}", .{self.dungeon.map.len});
+
         self.dungeon.draw(&self.spriteRenderer, &self.grid);
         self.hero.draw(&self.spriteRenderer, &self.grid);
         self.enemy.draw(&self.spriteRenderer, &self.grid);

@@ -43,7 +43,11 @@ pub const Dungeon = struct {
     }
 
     pub fn deinit(self: *Self) void {
+        for (self.map) |row| {
+            self.allocator.free(row);
+        }
         self.allocator.free(self.map);
+        self.spriteTable.deinit();
     }
 
     pub fn draw(self: *Self, renderer: *SpriteRenderer, grid: *Grid) void {

@@ -14,35 +14,53 @@ pub const Enemy = struct {
     gridPosition: zm.Vec,
     path: ArrayList(zm.Vec),
     pathIndex: usize,
+    allocator: *Allocator,
 
     pub fn init(allocator: *Allocator, map: []const []const DungeonTile, gridPos: zm.Vec, heroPos: zm.Vec) !Self {
         var path = try getPathToHero(allocator, map, gridPos, heroPos);
-        std.log.info("Path: {d}", .{path.items});
 
         return Self{
             .texture = try Texture.new(allocator, "resources/sprites/enemy.png"[0..]),
             .gridPosition = gridPos,
             .path = path,
             .pathIndex = 0,
+            .allocator = allocator,
         };
     }
 
-    pub fn deinit(_: *Self) void {
-        //
+    pub fn deinit(self: *Self) void {
+        self.path.deinit();
     }
 
     pub fn draw(self: *const Self, spriteRenderer: *const SpriteRenderer, grid: *const Grid) void {
         spriteRenderer.draw(self.texture, self.gridPosition, grid.spriteSize());
     }
 
-    pub fn move(self: *Self, heroPos: zm.Vec) void {
+    pub fn executeAction(self: *Self, map: []const []const DungeonTile, heroPos: zm.Vec) void {
+        self.path.deinit();
+        self.path = getPathToHero(self.allocator, map, self.gridPosition, heroPos) catch unreachable;
+
+        if (self.path.items.len == 0) {
+            std.log.info("Enemy should attack", .{});
+            // TODO: Attack
+        } else {
+            self.move();
+        }
+    }
+
+    fn move(self: *Self) void {
         self.gridPosition = self.path.orderedRemove(0);
-        self.path.append(heroPos) catch |e| {
-            std.log.err("Could not set next enemy move: {s}", .{e});
-        };
     }
 
     fn getPathToHero(allocator: *Allocator, map: []const []const DungeonTile, enemyPos: zm.Vec, heroPos: zm.Vec) !ArrayList(zm.Vec) {
         return try aStar(allocator, map, enemyPos, heroPos);
+    }
+
+    fn inRange(enemyPos: zm.Vec, heroPos: zm.Vec) bool {
+        var tmp = enemyPos - heroPos;
+        tmp[0] = @fabs(tmp[0]);
+        tmp[1] = @fabs(tmp[1]);
+        return tmp[0] == 1.0 and tmp[1] == 0.0 or
+            tmp[0] == 0.0 and tmp[1] == 1.0;
     }
 };

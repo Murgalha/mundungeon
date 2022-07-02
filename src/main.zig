@@ -82,6 +82,8 @@ pub fn main() anyerror!void {
     c.glDebugMessageCallback(messageCallbackOpenGL, null);
 
     var game = try Game.init(&allocator);
+    defer game.deinit();
+
     while (!app.shouldQuit) {
         app.processInput(&game);
 

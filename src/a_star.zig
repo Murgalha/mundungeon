@@ -16,16 +16,27 @@ const Node = struct {
 };
 
 pub fn aStar(allocator: *Allocator, map: []const []const DungeonTile, start: zm.Vec, goal: zm.Vec) !ArrayList(zm.Vec) {
-    std.log.info("Starting A*...", .{});
-    std.log.info("Start: ({}, {})", .{ start[0], start[1] });
-    std.log.info("Goal: ({}, {})", .{ goal[0], goal[1] });
+    if (vecEquals(start, goal)) {
+        return ArrayList(zm.Vec).init(allocator.*);
+    }
+
     var nodeMap = try initNodeMap(allocator, map.len);
+    defer {
+        for (nodeMap) |row| {
+            allocator.free(row);
+        }
+        allocator.free(nodeMap);
+    }
     var closedList = try initClosedList(allocator, map.len);
+    defer {
+        for (closedList) |row| {
+            allocator.free(row);
+        }
+        allocator.free(closedList);
+    }
 
     var startNode = nodeMap[@floatToInt(usize, start[1])][@floatToInt(usize, start[0])];
     startNode.position = start;
-    //startNode.parentPosition = start;
-    std.log.info("Start parent: ({d:.1}, {d:.1})", .{ startNode.parentPosition[0], startNode.parentPosition[1] });
     startNode.fCost = 0.0;
     startNode.gCost = 0.0;
     startNode.hCost = 0.0;
@@ -52,23 +63,18 @@ pub fn aStar(allocator: *Allocator, map: []const []const DungeonTile, start: zm.
         var currentY = @floatToInt(usize, currentNode.position[1]);
 
         closedList[currentY][currentX] = true;
-        std.log.info("+++\nCurrent node: ({d:.1}, {d:.1})", .{ currentX, currentY });
 
         var neighbors = getNeighbors(nodeMap, currentNode);
         for (neighbors) |neighbor| {
-            std.log.info("Neighbor: ({d:.1}, {d:.1})", .{ neighbor.position[0], neighbor.position[1] });
-
             var neighborX = @floatToInt(usize, neighbor.position[0]);
             var neighborY = @floatToInt(usize, neighbor.position[1]);
             if (isWalkable(map, neighbor)) {
                 if (vecEquals(neighbor.position, goal)) {
-                    std.log.info("Found goal", .{});
                     var nodeToUpdate = &(nodeMap[neighborY][neighborX]);
                     nodeToUpdate.parentPosition = currentNode.position;
 
                     return makePath(allocator, nodeMap, goal);
                 } else if (closedList[neighborY][neighborX] == false) {
-                    std.log.info("Updating node", .{});
                     var gNew = currentNode.gCost + 1.0;
                     var hNew = heuristic(neighbor.position, goal);
                     var fNew = gNew + hNew;
@@ -79,8 +85,6 @@ pub fn aStar(allocator: *Allocator, map: []const []const DungeonTile, start: zm.
                         nodeToUpdate.hCost = hNew;
                         nodeToUpdate.parentPosition = currentNode.position;
                         try openList.append(nodeToUpdate.*);
-
-                        std.log.info("++++++++", .{});
                     }
                 }
             }
@@ -189,7 +193,7 @@ fn makePath(allocator: *Allocator, map: [][]Node, goal: zm.Vec) !ArrayList(zm.Ve
     var reversePath = ArrayList(zm.Vec).init(allocator.*);
 
     var i: i32 = @intCast(i32, path.items.len) - 1;
-    while (i >= 0) : (i -= 1) {
+    while (i > 0) : (i -= 1) {
         try reversePath.append(path.items[@intCast(usize, i)]);
     }
 
