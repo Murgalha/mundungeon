@@ -14,13 +14,14 @@ pub const Enemy = struct {
     gridPosition: zm.Vec,
     path: ArrayList(zm.Vec),
     pathIndex: usize,
-    allocator: *Allocator,
+    allocator: *const Allocator,
 
-    pub fn init(allocator: *Allocator, map: []const []const DungeonTile, gridPos: zm.Vec, heroPos: zm.Vec) !Self {
+    pub fn init(allocator: *const Allocator, map: []const []const DungeonTile, gridPos: zm.Vec, heroPos: zm.Vec) !Self {
         var path = try getPathToHero(allocator, map, gridPos, heroPos);
+        var tex = try Texture.new(allocator, "resources/sprites/enemy.png"[0..]);
 
         return Self{
-            .texture = try Texture.new(allocator, "resources/sprites/enemy.png"[0..]),
+            .texture = tex,
             .gridPosition = gridPos,
             .path = path,
             .pathIndex = 0,
@@ -28,7 +29,7 @@ pub const Enemy = struct {
         };
     }
 
-    pub fn deinit(self: *Self) void {
+    pub fn deinit(self: *const Self) void {
         self.path.deinit();
     }
 
@@ -52,7 +53,7 @@ pub const Enemy = struct {
         self.gridPosition = self.path.orderedRemove(0);
     }
 
-    fn getPathToHero(allocator: *Allocator, map: []const []const DungeonTile, enemyPos: zm.Vec, heroPos: zm.Vec) !ArrayList(zm.Vec) {
+    fn getPathToHero(allocator: *const Allocator, map: []const []const DungeonTile, enemyPos: zm.Vec, heroPos: zm.Vec) !ArrayList(zm.Vec) {
         return try aStar(allocator, map, enemyPos, heroPos);
     }
 

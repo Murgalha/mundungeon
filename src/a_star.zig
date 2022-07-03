@@ -15,7 +15,7 @@ const Node = struct {
     fCost: f32,
 };
 
-pub fn aStar(allocator: *Allocator, map: []const []const DungeonTile, start: zm.Vec, goal: zm.Vec) !ArrayList(zm.Vec) {
+pub fn aStar(allocator: *const Allocator, map: []const []const DungeonTile, start: zm.Vec, goal: zm.Vec) !ArrayList(zm.Vec) {
     if (vecEquals(start, goal)) {
         return ArrayList(zm.Vec).init(allocator.*);
     }
@@ -94,7 +94,7 @@ pub fn aStar(allocator: *Allocator, map: []const []const DungeonTile, start: zm.
     return ArrayList(zm.Vec).init(allocator.*);
 }
 
-fn initClosedList(allocator: *Allocator, size: usize) ![][]bool {
+fn initClosedList(allocator: *const Allocator, size: usize) ![][]bool {
     var x: usize = 0;
     var y: usize = 0;
     var closedList = ArrayList([]bool).init(allocator.*);
@@ -113,7 +113,7 @@ fn initClosedList(allocator: *Allocator, size: usize) ![][]bool {
     return closedList.toOwnedSlice();
 }
 
-fn initNodeMap(allocator: *Allocator, size: usize) ![][]Node {
+fn initNodeMap(allocator: *const Allocator, size: usize) ![][]Node {
     var x: usize = 0;
     var y: usize = 0;
     var nodeMap = ArrayList([]Node).init(allocator.*);
@@ -167,7 +167,7 @@ fn heuristic(v1: zm.Vec, v2: zm.Vec) f32 {
     return math.fabs(v1[0] - v2[0]) + math.fabs(v1[1] - v2[1]);
 }
 
-fn makePath(allocator: *Allocator, map: [][]Node, goal: zm.Vec) !ArrayList(zm.Vec) {
+fn makePath(allocator: *const Allocator, map: [][]Node, goal: zm.Vec) !ArrayList(zm.Vec) {
     var path = ArrayList(zm.Vec).init(allocator.*);
     defer path.deinit();
 

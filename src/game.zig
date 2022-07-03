@@ -24,9 +24,6 @@ pub const Game = struct {
     textRenderer: TextRenderer,
     dungeon: Dungeon,
     grid: Grid,
-    hero: Hero,
-    enemy: Enemy,
-    enemy2: Enemy,
     clock: Clock,
 
     pub fn init(allocator: *Allocator) !Self {
@@ -44,13 +41,10 @@ pub const Game = struct {
             .camera = Camera.init(zm.f32x4(0.0, 0.0, 0.0, 0.0)),
             .spriteRenderer = spriteRenderer,
             .shouldQuit = false,
-            .hero = try Hero.init(allocator, zm.f32x4(25.0, 25.0, 0.0, 0.0)),
             .textRenderer = textRenderer,
             .dungeon = dungeon,
             .grid = grid,
             .clock = Clock.init(),
-            .enemy = try Enemy.init(allocator, dungeon.map, zm.f32x4(24.0, 24.0, 0.0, 0.0), zm.f32x4(25.0, 25.0, 0.0, 0.0)),
-            .enemy2 = try Enemy.init(allocator, dungeon.map, zm.f32x4(27.0, 41.0, 0.0, 0.0), zm.f32x4(25.0, 25.0, 0.0, 0.0)),
         };
     }
 
@@ -58,58 +52,23 @@ pub const Game = struct {
         self.textRenderer.deinit();
         self.spriteRenderer.deinit();
         self.dungeon.deinit();
-        self.hero.deinit();
-        self.enemy.deinit();
-        self.enemy2.deinit();
     }
 
     pub fn processEvent(self: *Self, e: c.SDL_Event) void {
-        switch (e.@"type") {
-            c.SDL_KEYDOWN => {
-                switch (e.key.keysym.sym) {
-                    c.SDLK_w => {
-                        self.hero.walk(.up, self.dungeon.map);
-                        self.enemy.executeAction(self.dungeon.map, self.hero.gridPosition);
-                        self.enemy2.executeAction(self.dungeon.map, self.hero.gridPosition);
-                    },
-                    c.SDLK_a => {
-                        self.hero.walk(.left, self.dungeon.map);
-                        self.enemy.executeAction(self.dungeon.map, self.hero.gridPosition);
-                        self.enemy2.executeAction(self.dungeon.map, self.hero.gridPosition);
-                    },
-                    c.SDLK_s => {
-                        self.hero.walk(.down, self.dungeon.map);
-                        self.enemy.executeAction(self.dungeon.map, self.hero.gridPosition);
-                        self.enemy2.executeAction(self.dungeon.map, self.hero.gridPosition);
-                    },
-                    c.SDLK_d => {
-                        self.hero.walk(.right, self.dungeon.map);
-                        self.enemy.executeAction(self.dungeon.map, self.hero.gridPosition);
-                        self.enemy2.executeAction(self.dungeon.map, self.hero.gridPosition);
-                    },
-                    else => {},
-                }
-            },
-            else => {},
-        }
+        self.dungeon.processEvent(e);
     }
 
     pub fn update(self: *Self) void {
         var spriteSize = self.grid.spriteSize();
         spriteSize[0] /= 2.0;
         spriteSize[1] /= 2.0;
-        self.camera.focusOn(self.grid.toScreenPosition(self.hero.gridPosition) + spriteSize);
+        self.camera.focusOn(self.grid.toScreenPosition(self.dungeon.hero.gridPosition) + spriteSize);
         self.spriteRenderer.shader.use();
         self.spriteRenderer.shader.set_mat4("view", self.camera.viewMatrix());
     }
 
     pub fn draw(self: *Self) !void {
-        //std.log.info("Map len: {}", .{self.dungeon.map.len});
-
         self.dungeon.draw(&self.spriteRenderer, &self.grid);
-        self.hero.draw(&self.spriteRenderer, &self.grid);
-        self.enemy.draw(&self.spriteRenderer, &self.grid);
-        self.enemy2.draw(&self.spriteRenderer, &self.grid);
 
         var buf: [15]u8 = undefined;
         const result = try fmt.bufPrint(&buf, "Frame: {d}ms", .{self.clock.deltaTime()});

@@ -5,7 +5,7 @@ const Allocator = std.mem.Allocator;
 const cstr = std.cstr;
 
 pub const Texture = struct {
-    pub fn new(allocator: *Allocator, filename: []const u8) !u32 {
+    pub fn new(allocator: *const Allocator, filename: []const u8) !u32 {
         var texture: u32 = undefined;
         var width: i32 = undefined;
         var height: i32 = undefined;

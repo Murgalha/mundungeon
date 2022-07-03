@@ -29,7 +29,7 @@ pub const Hero = struct {
     texture: u32,
     gridPosition: zm.Vec,
 
-    pub fn init(allocator: *Allocator, gridPos: zm.Vec) !Self {
+    pub fn init(allocator: *const Allocator, gridPos: zm.Vec) !Self {
         return Self{
             .texture = try Texture.new(allocator, "resources/sprites/hero.png"[0..]),
             .gridPosition = gridPos,
