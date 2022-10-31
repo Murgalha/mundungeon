@@ -10,7 +10,7 @@ void random_init(u32 seed) {
 	z = rand();
 }
 
-u64 random() {
+u64 random_long() {
 	u64 t;
 	x ^= x << 16;
 	x ^= x >> 5;
@@ -25,5 +25,5 @@ u64 random() {
 }
 
 u64 random_rangei(u64 begin, u64 end) {
-	return (random() % (end - begin)) + begin;
+	return (random_long() % (end - begin)) + begin;
 }

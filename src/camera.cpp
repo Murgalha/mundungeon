@@ -1,13 +1,17 @@
 #include <cglm/cam.h>
 #include "camera.h"
 #include "sprite_renderer.h"
+#include "utils.h"
 
 Camera *camera_new(vec2 hero_position) {
 	Camera *camera = malloc(sizeof(Camera));
 	vec3 position;
-	// TODO: 6 and 3 are screen-size-dependant, they shouldn't
-	position[0] = (hero_position[0] * SPRITE_WIDTH) - 6 * SPRITE_WIDTH;
-	position[1] = (hero_position[1] * SPRITE_HEIGHT) - 3 * SPRITE_HEIGHT;
+
+	int nsprites_x = SCREEN_WIDTH / SPRITE_WIDTH;
+	int nsprites_y = SCREEN_HEIGHT / SPRITE_HEIGHT;
+
+	position[0] = ((hero_position[0] - (nsprites_x / 2)) * SPRITE_WIDTH) + (SPRITE_WIDTH / 2);
+	position[1] = ((hero_position[1] - (nsprites_y / 2)) * SPRITE_HEIGHT) + (SPRITE_HEIGHT / 2);
 	position[2] = 3.0f;
 	camera->zoom = 45.0f;
 	glm_vec3_copy(position, camera->position);

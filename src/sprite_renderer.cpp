@@ -2,6 +2,7 @@
 #include <cglm/affine.h>
 #include "sprite_renderer.h"
 #include "texture.h"
+#include "utils.h"
 
 SpriteRenderer *sprite_renderer_new(Shader *shader) {
 	SpriteRenderer *renderer = malloc(sizeof(SpriteRenderer));

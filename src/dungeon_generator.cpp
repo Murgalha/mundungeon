@@ -229,7 +229,8 @@ bool dungeon_generator_make_random_room(DungeonGenerator *dungeon) {
 
 	// TODO: Make shuffled array of directions so the
 	// algorithm stays "more random"
-	for(Direction d = 0; d < 4; d++) {
+	for(int dir = 0; dir < 4; dir++) {
+		Direction d = static_cast<Direction>(dir);
 		if(dungeon_generator_has_room_space(dungeon, corridor, size, size, d)) {
 			V2 begin, door;
 			int width, height;
@@ -329,7 +330,8 @@ void dungeon_generator_make_random_corridor(DungeonGenerator *dungeon) {
 
 	// TODO: Make shuffled array of directions so the
 	// algorithm stays "more random"
-	for(Direction d = 0; d < 4; d++) {
+	for(int dir = 0; dir < 4; dir++) {
+		Direction d = static_cast<Direction>(dir);
 		if(dungeon_generator_has_corridor_space(dungeon, wall, size, d)) {
 			dungeon_generator_make_corridor_at(dungeon, wall, size, d);
 			return;

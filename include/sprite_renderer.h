@@ -6,9 +6,6 @@
 #include <cglm/vec3.h>
 #include <cglm/vec2.h>
 
-#define SPRITE_HEIGHT 100.0
-#define SPRITE_WIDTH 100.0
-
 typedef struct {
 	Shader *shader;
 	uint quad_VAO;

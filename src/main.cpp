@@ -8,9 +8,7 @@
 #include "window_context.h"
 #include "random.h"
 #include "game.h"
-
-#define SCREEN_WIDTH 1280
-#define SCREEN_HEIGHT 720
+#include "utils.h"
 
 #define UNUSED(X) (void)(X)
 
