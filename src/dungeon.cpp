@@ -14,12 +14,12 @@ void dungeon_print(Dungeon *dungeon) {
 }
 
 Dungeon *dungeon_new(u16 size) {
-	Dungeon *dungeon = malloc(sizeof(Dungeon));
+	Dungeon *dungeon = (Dungeon *)malloc(sizeof(Dungeon));
 	dungeon->map = dungeon_generator_new_map(size);
 	dungeon->size = size;
-	dungeon->door_texture = texture_new("assets/door.png", GL_RGBA, false);
-	dungeon->floor_texture = texture_new("assets/floor.png", GL_RGBA, false);
-	dungeon->wall_texture = texture_new("assets/wall.png", GL_RGBA, false);
+	dungeon->door_texture = texture_new((char *)"assets/door.png", GL_RGBA, false);
+	dungeon->floor_texture = texture_new((char *)"assets/floor.png", GL_RGBA, false);
+	dungeon->wall_texture = texture_new((char *)"assets/wall.png", GL_RGBA, false);
 
 	return dungeon;
 }

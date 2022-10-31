@@ -1,7 +1,7 @@
 CXX ?= g++
 SRCDIR=src/
 INCLUDEDIR=include/
-WARNFLAGS=-Wall -Wextra -fpermissive
+WARNFLAGS=-Wall -Wextra -Werror
 LIBS=-lGL -lSDL2 -lm -lfreetype
 STD=-std=c++14
 

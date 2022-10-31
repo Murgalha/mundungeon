@@ -5,7 +5,7 @@
 #include "file.h"
 
 Shader *shader_new() {
-	Shader *s = malloc(sizeof(Shader));
+	Shader *s = (Shader *)malloc(sizeof(Shader));
 	s->program = 0;
 	s->vertex_id = 0;
 	s->fragment_id = 0;
@@ -46,8 +46,8 @@ void shader_create_program(Shader *s) {
 }
 
 void shader_reload(Shader *s) {
-	shader_create(s, GL_VERTEX_SHADER, "shaders/shader.vert");
-	shader_create(s, GL_FRAGMENT_SHADER, "shaders/shader.frag");
+	shader_create(s, GL_VERTEX_SHADER, (char *)"shaders/shader.vert");
+	shader_create(s, GL_FRAGMENT_SHADER, (char *)"shaders/shader.frag");
 	shader_create_program(s);
 }
 

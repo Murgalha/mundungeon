@@ -27,7 +27,7 @@ SDL_GLContext gl_context_init(SDL_Window *window) {
 
 // TODO: Add arguments to customize the window
 WindowContext *window_context_new(int width, int height) {
-	WindowContext *ctx = malloc(sizeof(WindowContext));
+	WindowContext *ctx = (WindowContext *)malloc(sizeof(WindowContext));
 	SDL_Window *window = window_new(width, height);
 	SDL_GLContext context = gl_context_init(window);
 

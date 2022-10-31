@@ -4,10 +4,10 @@
 #define UNUSED(X) (void)(X)
 
 Game *game_new(uint width, uint height) {
-	Game *game = malloc(sizeof(Game));
+	Game *game = (Game *)malloc(sizeof(Game));
 	game->width = width;
 	game->height = height;
-	game->keys = malloc(sizeof(bool) * 1024);
+	game->keys = (bool *)malloc(sizeof(bool) * 1024);
 	game->state = GAME_ACTIVE;
 	game->renderer = NULL;
 	game->dungeon = dungeon_new(50);
@@ -28,16 +28,16 @@ void game_delete(Game *game) {
 
 void game_init(Game *game) {
 	Shader *shader = shader_new();
-	shader_create(shader, GL_VERTEX_SHADER, "shaders/shader.vert");
-	shader_create(shader, GL_FRAGMENT_SHADER, "shaders/shader.frag");
+	shader_create(shader, GL_VERTEX_SHADER, (char *)"shaders/shader.vert");
+	shader_create(shader, GL_FRAGMENT_SHADER, (char *)"shaders/shader.frag");
 	shader_create_program(shader);
 
     mat4 projection;
 	glm_ortho(0.0f, (float)game->width, (float)game->height, 0.0f, -10.0f, 10.0f, projection);
 
 	shader_use(shader);
-	shader_set_int(shader, "image", 0);
-	shader_set_mat4(shader, "projection", projection);
+	shader_set_int(shader, (char *)"image", 0);
+	shader_set_mat4(shader, (char *)"projection", projection);
     game->renderer = sprite_renderer_new(shader);
 }
 

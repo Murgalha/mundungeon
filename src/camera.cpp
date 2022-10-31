@@ -4,7 +4,7 @@
 #include "utils.h"
 
 Camera *camera_new(vec2 hero_position) {
-	Camera *camera = malloc(sizeof(Camera));
+	Camera *camera = (Camera *)malloc(sizeof(Camera));
 	vec3 position;
 
 	int nsprites_x = SCREEN_WIDTH / SPRITE_WIDTH;

@@ -18,7 +18,7 @@ int create_characters(TextRenderer *renderer) {
 
 	printf("2\n");
 	// find path to font
-    char *font_name = "assets/fonts/OpenSans-Regular.ttf";
+    char *font_name = (char *)"assets/fonts/OpenSans-Regular.ttf";
 
 	// load font as face
 	printf("3\n");
@@ -89,11 +89,11 @@ int create_characters(TextRenderer *renderer) {
 }
 
 TextRenderer *text_renderer_new() {
-	TextRenderer *renderer = malloc(sizeof(TextRenderer));
+	TextRenderer *renderer = (TextRenderer *)malloc(sizeof(TextRenderer));
 
 	renderer->shader = shader_new();
-	shader_create(renderer->shader, GL_VERTEX_SHADER, "shaders/text.vert");
-	shader_create(renderer->shader, GL_FRAGMENT_SHADER, "shaders/text.frag");
+	shader_create(renderer->shader, GL_VERTEX_SHADER, (char *)"shaders/text.vert");
+	shader_create(renderer->shader, GL_FRAGMENT_SHADER, (char *)"shaders/text.frag");
 	shader_create_program(renderer->shader);
 
 	create_characters(renderer);
@@ -119,7 +119,7 @@ void text_renderer_draw(TextRenderer *renderer, char *text, float x, float y, fl
 {
     // activate corresponding render state
     shader_use(renderer->shader);
-	shader_set_vec3(renderer->shader, "textColor", color[0], color[1], color[2]);
+	shader_set_vec3(renderer->shader, (char *)"textColor", color[0], color[1], color[2]);
 
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(renderer->vao);

@@ -5,7 +5,7 @@
 #include "utils.h"
 
 SpriteRenderer *sprite_renderer_new(Shader *shader) {
-	SpriteRenderer *renderer = malloc(sizeof(SpriteRenderer));
+	SpriteRenderer *renderer = (SpriteRenderer *)malloc(sizeof(SpriteRenderer));
 	renderer->shader = shader;
 	renderer->sprite_width = SPRITE_WIDTH;
 	renderer->sprite_height = SPRITE_HEIGHT;
@@ -59,7 +59,7 @@ void sprite_renderer_draw_sprite(SpriteRenderer *renderer, uint texture_id, vec2
 	v3_size[1] = size[1];
     glm_scale(model, v3_size);
 
-	shader_set_mat4(renderer->shader, "model", model);
+	shader_set_mat4(renderer->shader, (char *)"model", model);
 
     glActiveTexture(GL_TEXTURE0);
     texture_bind(texture_id);

@@ -6,8 +6,8 @@
 #include "utils.h"
 
 Hero *hero_new() {
-	Hero *hero = malloc(sizeof(Hero));
-	hero->texture_id = texture_new("assets/hero.png", GL_RGBA, false);
+	Hero *hero = (Hero *)malloc(sizeof(Hero));
+	hero->texture_id = texture_new((char *)"assets/hero.png", GL_RGBA, false);
 	vec2 position;
 	position[0] = position[1] = 25.0;
 	glm_vec2_copy(position, hero->position);
