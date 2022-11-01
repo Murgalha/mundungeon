@@ -24,7 +24,7 @@ ${OBJDIR}%.o: ${SRCDIR}%.cpp ${HEADERFILES}
 ${BINFILE}: ${OBJFILES}
 	$(CXX) $^ ${WARNFLAGS} -I${INCLUDEDIR} -o $@ ${STD} ${LIBS} -g -I/usr/include/freetype2 -I/usr/include/libpng16 -I/usr/include/harfbuzz -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include -I/usr/include/sysprof-4 -pthread
 
-run:
+run: all
 	@./${BINFILE}
 
 prepare:

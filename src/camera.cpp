@@ -3,8 +3,7 @@
 #include "sprite_renderer.h"
 #include "utils.h"
 
-Camera *camera_new(vec2 hero_position) {
-	Camera *camera = (Camera *)malloc(sizeof(Camera));
+Camera::Camera(vec2 hero_position) {
 	vec3 position;
 
 	int nsprites_x = SCREEN_WIDTH / SPRITE_WIDTH;
@@ -13,26 +12,22 @@ Camera *camera_new(vec2 hero_position) {
 	position[0] = ((hero_position[0] - (nsprites_x / 2)) * SPRITE_WIDTH) + (SPRITE_WIDTH / 2);
 	position[1] = ((hero_position[1] - (nsprites_y / 2)) * SPRITE_HEIGHT) + (SPRITE_HEIGHT / 2);
 	position[2] = 3.0f;
-	camera->zoom = 45.0f;
-	glm_vec3_copy(position, camera->position);
+	this->zoom = 45.0f;
+	glm_vec3_copy(position, this->position);
 
 	vec3 up = GLM_VEC3_ZERO_INIT;
 	up[1] = 1.0f;
 	vec3 front = GLM_VEC3_ZERO_INIT;
 	front[2] = -1.0f;
 
-	glm_vec3_copy(up, camera->up);
-	glm_vec3_copy(front, camera->front);
+	glm_vec3_copy(up, this->up);
+	glm_vec3_copy(front, this->front);
 
-	glm_vec3_crossn(front, up, camera->right);
-	camera->movement_speed = 2.5;
-
-	return camera;
+	glm_vec3_crossn(front, up, this->right);
+	this->movement_speed = 2.5;
 }
 
-void camera_delete(Camera *camera) {
-	free(camera);
-}
+Camera::~Camera() {}
 
 void camera_view_matrix(Camera *camera, mat4 view) {
 	vec3 pos_front_sum;

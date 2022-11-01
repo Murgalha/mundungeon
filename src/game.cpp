@@ -3,31 +3,27 @@
 
 #define UNUSED(X) (void)(X)
 
-Game *game_new(uint width, uint height) {
-	Game *game = (Game *)malloc(sizeof(Game));
-	game->width = width;
-	game->height = height;
-	game->keys = (bool *)malloc(sizeof(bool) * 1024);
-	game->state = GAME_ACTIVE;
-	game->renderer = NULL;
-	game->dungeon = dungeon_new(50);
-	game->hero = hero_new();
-
-	game->camera = camera_new(game->hero->position);
-	return game;
+Game::Game(uint viewport_width, uint viewport_height) {
+	width = viewport_width;
+	height = viewport_height;
+	keys = (bool *)malloc(sizeof(bool) * 1024);
+	state = GAME_ACTIVE;
+	renderer = NULL;
+	dungeon = new Dungeon(50);
+	hero = new Hero();
+	camera = new Camera(hero->position);
 }
 
-void game_delete(Game *game) {
-	sprite_renderer_delete(game->renderer);
-	camera_delete(game->camera);
-	dungeon_delete(game->dungeon);
-	hero_delete(game->hero);
-	free(game->keys);
-	free(game);
+Game::~Game() {
+	delete renderer;
+	delete camera;
+	delete dungeon;
+	delete hero;
+	free(keys);
 }
 
 void game_init(Game *game) {
-	Shader *shader = shader_new();
+	Shader *shader = new Shader();
 	shader_create(shader, GL_VERTEX_SHADER, (char *)"shaders/shader.vert");
 	shader_create(shader, GL_FRAGMENT_SHADER, (char *)"shaders/shader.frag");
 	shader_create_program(shader);
@@ -38,7 +34,7 @@ void game_init(Game *game) {
 	shader_use(shader);
 	shader_set_int(shader, (char *)"image", 0);
 	shader_set_mat4(shader, (char *)"projection", projection);
-    game->renderer = sprite_renderer_new(shader);
+    game->renderer = new SpriteRenderer(shader);
 }
 
 void game_process_input(Game *game, float delta_time) {

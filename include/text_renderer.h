@@ -5,22 +5,23 @@
 #include "shader.h"
 
 
-typedef struct {
+struct Character {
     unsigned int texture;
     vec2 size;
     vec2 bearing;
     unsigned int advance;
-} Character;
+};
 
-typedef struct {
+struct TextRenderer {
 	Character characters[128];
 	Shader *shader;
 	unsigned int vao;
 	unsigned int vbo;
-} TextRenderer;
 
-TextRenderer *text_renderer_new();
+	TextRenderer();
+	~TextRenderer();
+};
+
 void text_renderer_draw(TextRenderer *, char *, float, float, float, vec3);
-
 
 #endif

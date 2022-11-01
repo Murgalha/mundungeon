@@ -21,29 +21,29 @@
 #define f32 float
 #define f64 double
 
-typedef struct {
+struct V2 {
 	union {
 		i16 x, col;
 	};
 	union {
 		i16 y, row;
 	};
-} V2;
+};
 
-typedef struct {
+struct V2f {
 	union {
 		f32 x, col;
 	};
 	union {
 		f32 y, row;
 	};
-} V2f;
+};
 
-typedef enum {
+enum Direction {
 	UP = 0,
 	DOWN,
 	LEFT,
 	RIGHT
-} Direction;
+};
 
 #endif

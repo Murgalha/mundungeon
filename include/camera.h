@@ -4,14 +4,17 @@
 #include <cglm/vec3.h>
 #include "types.h"
 
-typedef struct {
+struct Camera {
     vec3 position;
     vec3 front;
     vec3 up;
     vec3 right;
 	float zoom;
     float movement_speed;
-} Camera;
+
+	Camera(vec2);
+	~Camera();
+};
 
 Camera *camera_new(vec2);
 void camera_delete(Camera *);

@@ -4,18 +4,15 @@
 #include "shader.h"
 #include "file.h"
 
-Shader *shader_new() {
-	Shader *s = (Shader *)malloc(sizeof(Shader));
-	s->program = 0;
-	s->vertex_id = 0;
-	s->fragment_id = 0;
-	return s;
+Shader::Shader() {
+	this->program = 0;
+	this->vertex_id = 0;
+	this->fragment_id = 0;
 }
 
-void shader_delete(Shader *s) {
-	glDeleteShader(s->vertex_id);
-	glDeleteShader(s->fragment_id);
-	free(s);
+Shader::~Shader() {
+	glDeleteShader(vertex_id);
+	glDeleteShader(fragment_id);
 }
 
 void shader_create(Shader *s, GLenum shader_type, char *filename) {

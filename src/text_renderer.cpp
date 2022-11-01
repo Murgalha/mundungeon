@@ -36,7 +36,7 @@ int create_characters(TextRenderer *renderer) {
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 	printf("5\n");
 
-	// load first 128 characters of ASCII set
+	// load first 128 characters of ASCII
 	for (unsigned char c = 0; c < 128; c++) {
 		printf("Char: %d\n", (int)c);
 		// Load character glyph
@@ -44,7 +44,6 @@ int create_characters(TextRenderer *renderer) {
 			printf("ERROR::FREETYTPE: Failed to load Glyph\n");
 			continue;
 		}
-		// generate texture
 		unsigned int texture;
 		glGenTextures(1, &texture);
 		glBindTexture(GL_TEXTURE_2D, texture);
@@ -58,7 +57,7 @@ int create_characters(TextRenderer *renderer) {
 					 GL_UNSIGNED_BYTE,
 					 face->glyph->bitmap.buffer
 					 );
-		// set texture options
+
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -80,23 +79,19 @@ int create_characters(TextRenderer *renderer) {
 
 	}
 	glBindTexture(GL_TEXTURE_2D, 0);
-
-    // destroy FreeType once we're finished
     FT_Done_Face(face);
     FT_Done_FreeType(ft);
 
 	return 0;
 }
 
-TextRenderer *text_renderer_new() {
-	TextRenderer *renderer = (TextRenderer *)malloc(sizeof(TextRenderer));
+TextRenderer::TextRenderer() {
+	shader = new Shader();
+	shader_create(shader, GL_VERTEX_SHADER, (char *)"shaders/text.vert");
+	shader_create(shader, GL_FRAGMENT_SHADER, (char *)"shaders/text.frag");
+	shader_create_program(shader);
 
-	renderer->shader = shader_new();
-	shader_create(renderer->shader, GL_VERTEX_SHADER, (char *)"shaders/text.vert");
-	shader_create(renderer->shader, GL_FRAGMENT_SHADER, (char *)"shaders/text.frag");
-	shader_create_program(renderer->shader);
-
-	create_characters(renderer);
+	create_characters(this);
 
 	unsigned int VAO, VBO;
     glGenVertexArrays(1, &VAO);
@@ -109,10 +104,13 @@ TextRenderer *text_renderer_new() {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
-	renderer->vao = VAO;
-	renderer->vbo = VBO;
-	printf("Vao: %d\tVBO: %d\n", VAO, VBO);
-	return renderer;
+	vao = VAO;
+	vbo = VBO;
+	printf("Vao: %d\tVBO: %d\n", vao, vbo);
+}
+
+TextRenderer::~TextRenderer() {
+	delete shader;
 }
 
 void text_renderer_draw(TextRenderer *renderer, char *text, float x, float y, float scale, vec3 color)

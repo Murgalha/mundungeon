@@ -1,11 +1,31 @@
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_opengl.h>
-#include "window_context.h"
-#include "window.h"
-#define LOG_COLORED_OUTPUT
+#include "app.h"
 #include "log.h"
 
-SDL_GLContext gl_context_init(SDL_Window *window) {
+App::App(int window_width, int window_height) {
+	window = window_new(window_width, window_height);
+	should_quit = false;
+	gl_context = gl_context_init(window);
+}
+
+App::~App() {
+	SDL_GL_DeleteContext(gl_context);
+	SDL_DestroyWindow(window);
+}
+
+SDL_Window *App::window_new(int width, int height) {
+	SDL_Window *window = NULL;
+	int flags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE;
+
+	window = SDL_CreateWindow("Mundungeon", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, flags);
+
+	if(!window) {
+		log_print(ERROR, "Could not create window: %s\n", SDL_GetError());
+	}
+
+	return window;
+}
+
+SDL_GLContext App::gl_context_init(SDL_Window *window) {
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
     SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
@@ -23,21 +43,4 @@ SDL_GLContext gl_context_init(SDL_Window *window) {
 	}
 
 	return context;
-}
-
-// TODO: Add arguments to customize the window
-WindowContext *window_context_new(int width, int height) {
-	WindowContext *ctx = (WindowContext *)malloc(sizeof(WindowContext));
-	SDL_Window *window = window_new(width, height);
-	SDL_GLContext context = gl_context_init(window);
-
-	ctx->window = window;
-	ctx->quit = 0;
-	ctx->gl_context = context;
-	return ctx;
-}
-
-void window_context_delete(WindowContext *ctx) {
-	SDL_GL_DeleteContext(ctx->gl_context);
-	window_delete(ctx->window);
 }

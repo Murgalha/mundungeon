@@ -6,15 +6,16 @@
 #include <cglm/vec3.h>
 #include <cglm/vec2.h>
 
-typedef struct {
+struct SpriteRenderer {
 	Shader *shader;
 	uint quad_VAO;
 	uint sprite_width;
 	uint sprite_height;
-} SpriteRenderer;
 
-SpriteRenderer *sprite_renderer_new(Shader *);
-void sprite_renderer_delete(SpriteRenderer *);
+	SpriteRenderer(Shader *);
+	~SpriteRenderer();
+};
+
 void sprite_renderer_draw_sprite(SpriteRenderer *, uint, vec2);
 
 #endif

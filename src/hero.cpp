@@ -5,19 +5,14 @@
 #include "sprite_renderer.h"
 #include "utils.h"
 
-Hero *hero_new() {
-	Hero *hero = (Hero *)malloc(sizeof(Hero));
-	hero->texture_id = texture_new((char *)"assets/hero.png", GL_RGBA, false);
+Hero::Hero() {
+	this->texture_id = texture_new((char *)"assets/hero.png", GL_RGBA, false);
 	vec2 position;
 	position[0] = position[1] = 25.0;
-	glm_vec2_copy(position, hero->position);
-
-	return hero;
+	glm_vec2_copy(position, this->position);
 }
 
-void hero_delete(Hero *hero) {
-	free(hero);
-}
+Hero::~Hero() {}
 
 void hero_render(Hero *hero, SpriteRenderer *renderer) {
 	vec2 position;

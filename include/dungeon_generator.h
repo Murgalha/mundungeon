@@ -12,16 +12,17 @@
 #define CORRIDOR 67  // C
 */
 
-typedef struct {
+struct DungeonGenerator {
 	char **map;
 	u16 size;
 	V2 *walls;
 	u16 nwalls;
 	V2 *corridors;
 	u16 ncorridors;
-} DungeonGenerator;
+
+	static char **new_map(u16);
+};
 
 void dungeon_generator_print(DungeonGenerator *);
-char **dungeon_generator_new_map(u16);
 
 #endif

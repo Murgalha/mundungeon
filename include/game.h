@@ -15,7 +15,7 @@ typedef enum {
     GAME_WIN
 } GameState;
 
-typedef struct {
+struct Game {
 	GameState state;
 	bool *keys;
 	uint width;
@@ -25,10 +25,11 @@ typedef struct {
 	Camera *camera;
 	Dungeon *dungeon;
 	Hero *hero;
-} Game;
 
-Game *game_new(uint, uint);
-void game_delete(Game *);
+	Game(uint, uint);
+	~Game();
+};
+
 void game_init(Game *);
 void game_process_input(Game *, float);
 void game_update(Game *, float);

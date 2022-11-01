@@ -8,14 +8,15 @@
 #include <cglm/mat4.h>
 #include "types.h"
 
-typedef struct {
+struct Shader {
 	uint program;
 	uint vertex_id;
 	uint fragment_id;
-} Shader;
 
-Shader *shader_new();
-void shader_delete(Shader *);
+	Shader();
+	~Shader();
+};
+
 void shader_create(Shader *, GLenum, char *);
 void shader_create_program(Shader *);
 void shader_reload(Shader *);

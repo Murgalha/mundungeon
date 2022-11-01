@@ -13,23 +13,19 @@ void dungeon_print(Dungeon *dungeon) {
 	}
 }
 
-Dungeon *dungeon_new(u16 size) {
-	Dungeon *dungeon = (Dungeon *)malloc(sizeof(Dungeon));
-	dungeon->map = dungeon_generator_new_map(size);
-	dungeon->size = size;
-	dungeon->door_texture = texture_new((char *)"assets/door.png", GL_RGBA, false);
-	dungeon->floor_texture = texture_new((char *)"assets/floor.png", GL_RGBA, false);
-	dungeon->wall_texture = texture_new((char *)"assets/wall.png", GL_RGBA, false);
-
-	return dungeon;
+Dungeon::Dungeon(u16 dungeon_size) {
+	size = dungeon_size;
+	map = DungeonGenerator::new_map(size);
+	door_texture = texture_new((char *)"assets/door.png", GL_RGBA, false);
+	floor_texture = texture_new((char *)"assets/floor.png", GL_RGBA, false);
+	wall_texture = texture_new((char *)"assets/wall.png", GL_RGBA, false);
 }
 
-void dungeon_delete(Dungeon *dungeon) {
-	for(int i = 0; i < dungeon->size; i++) {
-		free(dungeon->map[i]);
+Dungeon::~Dungeon() {
+	for(int i = 0; i < size; i++) {
+		free(map[i]);
 	}
-	free(dungeon->map);
-	free(dungeon);
+	free(map);
 }
 
 void dungeon_render(Dungeon *dungeon, SpriteRenderer *renderer) {

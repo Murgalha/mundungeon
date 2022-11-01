@@ -4,11 +4,10 @@
 #include "texture.h"
 #include "utils.h"
 
-SpriteRenderer *sprite_renderer_new(Shader *shader) {
-	SpriteRenderer *renderer = (SpriteRenderer *)malloc(sizeof(SpriteRenderer));
-	renderer->shader = shader;
-	renderer->sprite_width = SPRITE_WIDTH;
-	renderer->sprite_height = SPRITE_HEIGHT;
+SpriteRenderer::SpriteRenderer(Shader *shader) {
+	this->shader = shader;
+	this->sprite_width = SPRITE_WIDTH;
+	this->sprite_height = SPRITE_HEIGHT;
     unsigned int VBO;
     float vertices[] = {
         // pos      // tex
@@ -21,25 +20,22 @@ SpriteRenderer *sprite_renderer_new(Shader *shader) {
         1.0f, 0.0f, 1.0f, 0.0f
     };
 
-    glGenVertexArrays(1, &(renderer->quad_VAO));
+    glGenVertexArrays(1, &(this->quad_VAO));
     glGenBuffers(1, &VBO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-    glBindVertexArray(renderer->quad_VAO);
+    glBindVertexArray(this->quad_VAO);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
-
-	return renderer;
 }
 
-void sprite_renderer_delete(SpriteRenderer *renderer) {
-    glDeleteVertexArrays(1, &(renderer->quad_VAO));
-	shader_delete(renderer->shader);
-	free(renderer);
+SpriteRenderer::~SpriteRenderer() {
+    glDeleteVertexArrays(1, &(quad_VAO));
+	delete shader;
 }
 
 void sprite_renderer_draw_sprite(SpriteRenderer *renderer, uint texture_id, vec2 position) {
