@@ -1,7 +1,7 @@
 #ifndef _UTILS_H_
 #define _UTILS_H_
 
-#include <cglm/vec2.h>
+#include <glm/vec2.hpp>
 
 #define FLOOR 1
 #define CORRIDOR 1
@@ -9,7 +9,7 @@
 #define EMPTY 4
 #define DOOR 2
 
-extern vec2 dir_array[4];
+extern glm::vec2 dir_array[4];
 
 #define SCREEN_WIDTH 1280.0f
 #define SCREEN_HEIGHT 720.0f

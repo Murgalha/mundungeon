@@ -5,7 +5,7 @@
 #include "sprite_renderer.h"
 
 struct Dungeon {
-	uint door_texture, floor_texture, wall_texture;
+	unsigned int door_texture, floor_texture, wall_texture;
 	char **map;
 	u16 size;
 

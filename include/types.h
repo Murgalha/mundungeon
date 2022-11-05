@@ -15,7 +15,6 @@
 #define u16 uint16_t
 #define u32 uint32_t
 #define u64 uint64_t
-#define uint unsigned int
 
 // Floating point
 #define f32 float

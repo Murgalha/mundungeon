@@ -1,5 +1,4 @@
-#include <cglm/util.h>
-#include <cglm/affine.h>
+#include <glm/gtc/matrix_transform.hpp>
 #include "sprite_renderer.h"
 #include "texture.h"
 #include "utils.h"
@@ -38,22 +37,12 @@ SpriteRenderer::~SpriteRenderer() {
 	delete shader;
 }
 
-void sprite_renderer_draw_sprite(SpriteRenderer *renderer, uint texture_id, vec2 position) {
+void sprite_renderer_draw_sprite(SpriteRenderer *renderer, uint texture_id, glm::vec2 position) {
 	shader_use(renderer->shader);
-	vec2 size;
-	size[0] = renderer->sprite_width;
-	size[1] = renderer->sprite_height;
 
-	mat4 model = GLM_MAT4_IDENTITY_INIT;
-	vec3 pos = GLM_VEC3_ZERO_INIT;
-	pos[0] = position[0]; pos[1] = position[1];
-
-    glm_translate(model, pos);
-
-	vec3 v3_size = GLM_VEC3_ONE_INIT;
-	v3_size[0] = size[0];
-	v3_size[1] = size[1];
-    glm_scale(model, v3_size);
+	glm::mat4 model = glm::mat4(1.0f);
+	model = glm::translate(model, glm::vec3(position[0], position[1], 0.0f));
+	model = glm::scale(model, glm::vec3(renderer->sprite_width, renderer->sprite_height, 1.0f));
 
 	shader_set_mat4(renderer->shader, (char *)"model", model);
 

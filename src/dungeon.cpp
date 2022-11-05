@@ -31,8 +31,8 @@ Dungeon::~Dungeon() {
 void dungeon_render(Dungeon *dungeon, SpriteRenderer *renderer) {
 	char tile;
 	unsigned int texture;
-	vec3 color;
-	vec2 position;
+	glm::vec3 color;
+	glm::vec2 position;
 	color[0] = color[1] = color[2] = 1.0f;
 
 	for(int y = 0; y < dungeon->size; y++) {

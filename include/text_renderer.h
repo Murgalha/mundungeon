@@ -1,14 +1,15 @@
 #ifndef _TEXT_RENDERER_H_
 #define _TEXT_RENDERER_H_
 
-#include <cglm/vec2.h>
+#include <glm/vec3.hpp>
+#include <glm/vec2.hpp>
 #include "shader.h"
 
 
 struct Character {
     unsigned int texture;
-    vec2 size;
-    vec2 bearing;
+	glm::vec2 size;
+	glm::vec2 bearing;
     unsigned int advance;
 };
 
@@ -22,6 +23,6 @@ struct TextRenderer {
 	~TextRenderer();
 };
 
-void text_renderer_draw(TextRenderer *, char *, float, float, float, vec3);
+void text_renderer_draw(TextRenderer *, char *, float, float, float, glm::vec3);
 
 #endif

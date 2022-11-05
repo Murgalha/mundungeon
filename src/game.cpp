@@ -1,9 +1,9 @@
-#include <cglm/cam.h>
+#include <glm/gtc/matrix_transform.hpp>
 #include "game.h"
 
 #define UNUSED(X) (void)(X)
 
-Game::Game(uint viewport_width, uint viewport_height) {
+Game::Game(unsigned int viewport_width, unsigned int viewport_height) {
 	width = viewport_width;
 	height = viewport_height;
 	keys = (bool *)malloc(sizeof(bool) * 1024);
@@ -28,8 +28,7 @@ void game_init(Game *game) {
 	shader_create(shader, GL_FRAGMENT_SHADER, (char *)"shaders/shader.frag");
 	shader_create_program(shader);
 
-    mat4 projection;
-	glm_ortho(0.0f, (float)game->width, (float)game->height, 0.0f, -10.0f, 10.0f, projection);
+	glm::mat4 projection = glm::ortho(0.0f, (float)game->width, (float)game->height, 0.0f, -10.0f, 10.0f);
 
 	shader_use(shader);
 	shader_set_int(shader, (char *)"image", 0);

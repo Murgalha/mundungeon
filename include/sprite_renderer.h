@@ -3,8 +3,7 @@
 
 #include "types.h"
 #include "shader.h"
-#include <cglm/vec3.h>
-#include <cglm/vec2.h>
+#include <glm/vec2.hpp>
 
 struct SpriteRenderer {
 	Shader *shader;
@@ -16,6 +15,6 @@ struct SpriteRenderer {
 	~SpriteRenderer();
 };
 
-void sprite_renderer_draw_sprite(SpriteRenderer *, uint, vec2);
+void sprite_renderer_draw_sprite(SpriteRenderer *, uint, glm::vec2);
 
 #endif

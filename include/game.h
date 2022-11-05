@@ -18,15 +18,15 @@ typedef enum {
 struct Game {
 	GameState state;
 	bool *keys;
-	uint width;
-	uint height;
+	unsigned int width;
+	unsigned int height;
 	SpriteRenderer *renderer;
-	uint texture_id;
+	unsigned int texture_id;
 	Camera *camera;
 	Dungeon *dungeon;
 	Hero *hero;
 
-	Game(uint, uint);
+	Game(unsigned int, unsigned int);
 	~Game();
 };
 

@@ -63,10 +63,10 @@ int create_characters(TextRenderer *renderer) {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-		vec2 size;
+		glm::vec2 size;
 		size[0] = face->glyph->bitmap.width;
 		size[1] = face->glyph->bitmap.rows;
-		vec2 bearing;
+		glm::vec2 bearing;
 		bearing[0] = face->glyph->bitmap_left;
 		bearing[1] = face->glyph->bitmap_top;
 
@@ -113,7 +113,7 @@ TextRenderer::~TextRenderer() {
 	delete shader;
 }
 
-void text_renderer_draw(TextRenderer *renderer, char *text, float x, float y, float scale, vec3 color)
+void text_renderer_draw(TextRenderer *renderer, char *text, float x, float y, float scale, glm::vec3 color)
 {
     // activate corresponding render state
     shader_use(renderer->shader);
@@ -145,17 +145,15 @@ void text_renderer_draw(TextRenderer *renderer, char *text, float x, float y, fl
             { xpos + w, ypos,       1.0f, 1.0f },
             { xpos + w, ypos + h,   1.0f, 0.0f }
         };
-        // render glyph texture over quad
+
         glBindTexture(GL_TEXTURE_2D, ch.texture);
-        // update content of VBO memory
         glBindBuffer(GL_ARRAY_BUFFER, renderer->vbo);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices); // be sure to use glBufferSubData and not glBufferData
+        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
-        // render quad
         glDrawArrays(GL_TRIANGLES, 0, 6);
-        // now advance cursors for next glyph (note that advance is number of 1/64 pixels)
-        x += (ch.advance >> 6) * scale; // bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by 64 to get amount of pixels))
+
+        x += (ch.advance >> 6) * scale;
     }
     glBindVertexArray(0);
     glBindTexture(GL_TEXTURE_2D, 0);

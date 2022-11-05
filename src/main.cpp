@@ -3,7 +3,6 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
 #include <SDL2/SDL_opengl_glext.h>
-#include <cglm/cglm.h>
 #include "log.h"
 #include "app.h"
 #include "random.h"
@@ -102,7 +101,7 @@ int main(int argc, char *argv[]) {
 
     float delta_time = 0.0f;
     float last_frame = 0.0f;
-	mat4 view;
+	glm::mat4 view;
 	float current_frame;
 	while(!app->should_quit) {
 		current_frame = SDL_GetTicks();
@@ -115,7 +114,7 @@ int main(int argc, char *argv[]) {
         game_update(game, delta_time);
 
 		shader_use(game->renderer->shader);
-		camera_view_matrix(game->camera, view);
+		view = camera_view_matrix(game->camera);
 		shader_set_mat4(game->renderer->shader, (char *)"view", view);
 
         glClearColor(0.165f, 0.114f, 0.31f, 1.0f);

@@ -1,13 +1,12 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <cglm/vec3.h>
 #include "shader.h"
 #include "file.h"
 
 Shader::Shader() {
-	this->program = 0;
-	this->vertex_id = 0;
-	this->fragment_id = 0;
+	program = 0;
+	vertex_id = 0;
+	fragment_id = 0;
 }
 
 Shader::~Shader() {
@@ -61,12 +60,11 @@ void shader_set_int(Shader *s, char *name, int value) {
 }
 
 void shader_set_vec3(Shader *s, char *name, float x, float y, float z) {
-	vec3 v;
-	v[0] = x; v[1] = y; v[2] = z;
-    glUniform3fv(glGetUniformLocation(s->program, name), 1, v);
+	glm::vec3 v = glm::vec3(x, y, z);
+    glUniform3fv(glGetUniformLocation(s->program, name), 1, &v[0]);
 }
 
-void shader_set_mat4(Shader *s, char *name, mat4 m) {
+void shader_set_mat4(Shader *s, char *name, glm::mat4 &m) {
 	unsigned int loc = glGetUniformLocation(s->program, name);
-	glUniformMatrix4fv(loc, 1, GL_FALSE, *m);
+	glUniformMatrix4fv(loc, 1, GL_FALSE, &m[0][0]);
 }

@@ -1,14 +1,14 @@
 #ifndef _APP_H_
 #define _APP_H_
 
-#include <cglm/mat4.h>
+#include <glm/mat4x4.hpp>
 #include <SDL2/SDL.h>
 
 struct App {
 	bool should_quit;
 	SDL_Window *window;
 	SDL_GLContext gl_context;
-	mat4 projection;
+	glm::mat4 projection;
 
 	App(int, int);
 	~App();
