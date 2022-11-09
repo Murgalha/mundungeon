@@ -4,17 +4,13 @@
 #include "utils.h"
 
 Camera::Camera(glm::vec2 &hero_position) {
-	glm::vec3 position;
-
 	int nsprites_x = SCREEN_WIDTH / SPRITE_WIDTH;
 	int nsprites_y = SCREEN_HEIGHT / SPRITE_HEIGHT;
 
 	position[0] = ((hero_position[0] - (nsprites_x / 2)) * SPRITE_WIDTH) + (SPRITE_WIDTH / 2);
 	position[1] = ((hero_position[1] - (nsprites_y / 2)) * SPRITE_HEIGHT) + (SPRITE_HEIGHT / 2);
 	position[2] = 3.0f;
-	this->zoom = 45.0f;
-
-	this->position = position;
+	zoom = 45.0f;
 
 	this->up = glm::vec3(0.0f, 1.0f, 0.0f);
 	this->front = glm::vec3(0.0f, 0.0f, -1.0f);

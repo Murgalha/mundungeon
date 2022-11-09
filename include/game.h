@@ -4,6 +4,7 @@
 #include "types.h"
 #include "shader.h"
 #include "sprite_renderer.h"
+#include "text_renderer.h"
 #include "texture.h"
 #include "camera.h"
 #include "dungeon.h"
@@ -20,7 +21,8 @@ struct Game {
 	bool *keys;
 	unsigned int width;
 	unsigned int height;
-	SpriteRenderer *renderer;
+	SpriteRenderer *sprite_renderer;
+	TextRenderer *text_renderer;
 	unsigned int texture_id;
 	Camera *camera;
 	Dungeon *dungeon;

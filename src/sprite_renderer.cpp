@@ -37,19 +37,41 @@ SpriteRenderer::~SpriteRenderer() {
 	delete shader;
 }
 
-void sprite_renderer_draw_sprite(SpriteRenderer *renderer, uint texture_id, glm::vec2 position) {
-	shader_use(renderer->shader);
+void SpriteRenderer::draw_sprite(unsigned int texture_id, glm::vec2 position) {
+	shader_use(shader);
 
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::translate(model, glm::vec3(position[0], position[1], 0.0f));
-	model = glm::scale(model, glm::vec3(renderer->sprite_width, renderer->sprite_height, 1.0f));
+	model = glm::scale(model, glm::vec3(sprite_width, sprite_height, 1.0f));
 
-	shader_set_mat4(renderer->shader, (char *)"model", model);
+	shader_set_mat4(shader, (char *)"model", model);
 
     glActiveTexture(GL_TEXTURE0);
     texture_bind(texture_id);
 
-    glBindVertexArray(renderer->quad_VAO);
+    glBindVertexArray(quad_VAO);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glBindVertexArray(0);
+}
+
+void SpriteRenderer::draw_sprite_with_rotation(unsigned int texture_id, glm::vec2 position, float degrees) {
+	shader_use(shader);
+
+	glm::mat4 model = glm::mat4(1.0f);
+	model = glm::translate(model, glm::vec3(position[0], position[1], 0.0f));
+
+    model = glm::translate(model, glm::vec3(0.5f * sprite_width, 0.5f * sprite_height, 0.0f));
+    model = glm::rotate(model, glm::radians(degrees), glm::vec3(0.0f, 0.0f, 1.0f));
+    model = glm::translate(model, glm::vec3(-0.5f * sprite_width, -0.5f * sprite_height, 0.0f));
+
+	model = glm::scale(model, glm::vec3(sprite_width, sprite_height, 1.0f));
+
+	shader_set_mat4(shader, (char *)"model", model);
+
+    glActiveTexture(GL_TEXTURE0);
+    texture_bind(texture_id);
+
+    glBindVertexArray(quad_VAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glBindVertexArray(0);
 }

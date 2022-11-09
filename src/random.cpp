@@ -1,17 +1,17 @@
 #include <stdlib.h>
 #include "random.h"
 
-static u64 x, y, z;
+static unsigned long x, y, z;
 
-void random_init(u32 seed) {
+void random_init(unsigned int seed) {
 	srand(seed);
 	x = rand();
 	y = rand();
 	z = rand();
 }
 
-u64 random_long() {
-	u64 t;
+unsigned long random_long() {
+	unsigned long t;
 	x ^= x << 16;
 	x ^= x >> 5;
 	x ^= x << 1;
@@ -24,6 +24,6 @@ u64 random_long() {
 	return z;
 }
 
-u64 random_rangei(u64 begin, u64 end) {
+unsigned long random_rangei(unsigned long begin, unsigned long end) {
 	return (random_long() % (end - begin)) + begin;
 }

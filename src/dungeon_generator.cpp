@@ -343,7 +343,7 @@ void dungeon_generator_make_random_corridor(DungeonGenerator *dungeon) {
 // END CORRIDOR FUNCTIONS
 // =========================
 
-char **DungeonGenerator::new_map(u16 size) {
+char **DungeonGenerator::new_map(unsigned short size) {
 	DungeonGenerator *dungeon = (DungeonGenerator *)malloc(sizeof(DungeonGenerator));
 	dungeon->size = size;
 

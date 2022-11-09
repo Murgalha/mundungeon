@@ -13,7 +13,7 @@ void dungeon_print(Dungeon *dungeon) {
 	}
 }
 
-Dungeon::Dungeon(u16 dungeon_size) {
+Dungeon::Dungeon(unsigned short dungeon_size) {
 	size = dungeon_size;
 	map = DungeonGenerator::new_map(size);
 	door_texture = texture_new((char *)"assets/door.png", GL_RGBA, false);
@@ -59,7 +59,7 @@ void dungeon_render(Dungeon *dungeon, SpriteRenderer *renderer) {
 				color[0] = color[1] = color[2] = 0.0f;
 				break;
 			}
-			sprite_renderer_draw_sprite(renderer, texture, position);
+			renderer->draw_sprite(texture, position);
 		}
 	}
 }

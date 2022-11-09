@@ -6,7 +6,6 @@
 #include <SDL2/SDL_opengl.h>
 #include <SDL2/SDL_opengl_glext.h>
 #include <glm/mat4x4.hpp>
-#include "types.h"
 
 struct Shader {
 	unsigned int program;

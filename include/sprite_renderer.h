@@ -1,20 +1,19 @@
 #ifndef _SPRITE_RENDERER_H_
 #define _SPRITE_RENDERER_H_
 
-#include "types.h"
 #include "shader.h"
 #include <glm/vec2.hpp>
 
 struct SpriteRenderer {
 	Shader *shader;
-	uint quad_VAO;
-	uint sprite_width;
-	uint sprite_height;
+	unsigned int quad_VAO;
+	unsigned int sprite_width;
+	unsigned int sprite_height;
 
 	SpriteRenderer(Shader *);
 	~SpriteRenderer();
+	void draw_sprite(unsigned int, glm::vec2);
+	void draw_sprite_with_rotation(unsigned int, glm::vec2, float);
 };
-
-void sprite_renderer_draw_sprite(SpriteRenderer *, uint, glm::vec2);
 
 #endif

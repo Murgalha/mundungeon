@@ -1,8 +1,8 @@
 #ifndef _DUNGEON_GENERATOR_H_
 #define _DUNGEON_GENERATOR_H_
 
-#include "types.h"
 #include "utils.h"
+#include "types.h"
 
 /*
 #define FLOOR 32 // <Space>
@@ -14,13 +14,13 @@
 
 struct DungeonGenerator {
 	char **map;
-	u16 size;
+	unsigned short size;
 	V2 *walls;
-	u16 nwalls;
+	unsigned short nwalls;
 	V2 *corridors;
-	u16 ncorridors;
+	unsigned short ncorridors;
 
-	static char **new_map(u16);
+	static char **new_map(unsigned short);
 };
 
 void dungeon_generator_print(DungeonGenerator *);

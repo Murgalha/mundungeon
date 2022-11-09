@@ -9,6 +9,7 @@
 struct Hero {
 	unsigned int texture_id;
 	glm::vec2 position;
+	Direction facing_direction;
 
 	Hero();
 	~Hero();

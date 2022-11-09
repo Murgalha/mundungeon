@@ -113,9 +113,9 @@ int main(int argc, char *argv[]) {
 
         game_update(game, delta_time);
 
-		shader_use(game->renderer->shader);
+		shader_use(game->sprite_renderer->shader);
 		view = camera_view_matrix(game->camera);
-		shader_set_mat4(game->renderer->shader, (char *)"view", view);
+		shader_set_mat4(game->sprite_renderer->shader, (char *)"view", view);
 
         glClearColor(0.165f, 0.114f, 0.31f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
