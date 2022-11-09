@@ -4,6 +4,7 @@
 #include "types.h"
 #include "shader.h"
 #include "sprite_renderer.h"
+#include "text_renderer.h"
 #include "texture.h"
 #include "camera.h"
 #include "dungeon.h"
@@ -15,20 +16,22 @@ typedef enum {
     GAME_WIN
 } GameState;
 
-typedef struct {
+struct Game {
 	GameState state;
 	bool *keys;
-	uint width;
-	uint height;
-	SpriteRenderer *renderer;
-	uint texture_id;
+	unsigned int width;
+	unsigned int height;
+	SpriteRenderer *sprite_renderer;
+	TextRenderer *text_renderer;
+	unsigned int texture_id;
 	Camera *camera;
 	Dungeon *dungeon;
 	Hero *hero;
-} Game;
 
-Game *game_new(uint, uint);
-void game_delete(Game *);
+	Game(unsigned int, unsigned int);
+	~Game();
+};
+
 void game_init(Game *);
 void game_process_input(Game *, float);
 void game_update(Game *, float);

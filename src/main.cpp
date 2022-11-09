@@ -3,14 +3,11 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
 #include <SDL2/SDL_opengl_glext.h>
-#include <cglm/cglm.h>
 #include "log.h"
-#include "window_context.h"
+#include "app.h"
 #include "random.h"
 #include "game.h"
-
-#define SCREEN_WIDTH 1280
-#define SCREEN_HEIGHT 720
+#include "utils.h"
 
 #define UNUSED(X) (void)(X)
 
@@ -18,7 +15,7 @@ void resize_viewport(int width, int height) {
 	glViewport(0, 0, width, height);
 }
 
-void process_input(WindowContext *ctx, Game *game, float delta_time) {
+void process_input(App *app, Game *game, float delta_time) {
 	SDL_Event e;
 
 	while(SDL_PollEvent(&e)) {
@@ -33,20 +30,21 @@ void process_input(WindowContext *ctx, Game *game, float delta_time) {
 			}
 			break;
 		case SDL_QUIT:
-			ctx->quit = 1;
+			app->should_quit = true;
 			break;
 		case SDL_KEYDOWN:
 			switch(e.key.keysym.sym) {
-			case SDLK_d:
+				// TODO: make camera-only movement as free-roam and not tile-based
+			case SDLK_RIGHT:
 				camera_move(game->camera, RIGHT, delta_time);
 				break;
-			case SDLK_a:
+			case SDLK_LEFT:
 				camera_move(game->camera, LEFT, delta_time);
 				break;
-			case SDLK_s:
+			case SDLK_DOWN:
 				camera_move(game->camera, DOWN, delta_time);
 				break;
-			case SDLK_w:
+			case SDLK_UP:
 				camera_move(game->camera, UP, delta_time);
 				break;
 			case SDLK_EQUALS: // TODO: Fix all zooms
@@ -58,16 +56,16 @@ void process_input(WindowContext *ctx, Game *game, float delta_time) {
 			case SDLK_PLUS:
 				game->camera->zoom += 0.1f;
 				break;
-			case SDLK_RIGHT:
+			case SDLK_d:
 				hero_move(game->hero, game->dungeon, RIGHT, game->camera, delta_time);
 				break;
-			case SDLK_LEFT:
+			case SDLK_a:
 				hero_move(game->hero, game->dungeon, LEFT, game->camera, delta_time);
 				break;
-			case SDLK_DOWN:
+			case SDLK_s:
 				hero_move(game->hero, game->dungeon, DOWN, game->camera, delta_time);
 				break;
-			case SDLK_UP:
+			case SDLK_w:
 				hero_move(game->hero, game->dungeon, UP, game->camera, delta_time);
 				break;
 			case SDLK_SPACE:
@@ -88,10 +86,11 @@ int main(int argc, char *argv[]) {
 		log_print(ERROR, "Could not initialize SDL: %s\n", SDL_GetError());
 		exit(1);
 	}
-	random_init(time(NULL));
+	//random_init(time(NULL));
+	random_init(13);
 
-	WindowContext *window_ctx = window_context_new(SCREEN_WIDTH, SCREEN_HEIGHT);
-	Game *game = game_new(SCREEN_WIDTH, SCREEN_HEIGHT);
+	App *app = new App(SCREEN_WIDTH, SCREEN_HEIGHT);
+	Game *game = new Game(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	SDL_GL_SetSwapInterval(1);
 	glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -102,32 +101,33 @@ int main(int argc, char *argv[]) {
 
     float delta_time = 0.0f;
     float last_frame = 0.0f;
-	mat4 view;
+	glm::mat4 view;
 	float current_frame;
-	while(!window_ctx->quit) {
+	while(!app->should_quit) {
 		current_frame = SDL_GetTicks();
         delta_time = current_frame - last_frame;
         last_frame = current_frame;
 
         game_process_input(game, delta_time);
-		process_input(window_ctx, game, delta_time);
+		process_input(app, game, delta_time);
 
         game_update(game, delta_time);
 
-		shader_use(game->renderer->shader);
-		camera_view_matrix(game->camera, view);
-		shader_set_mat4(game->renderer->shader, "view", view);
+		shader_use(game->sprite_renderer->shader);
+		view = camera_view_matrix(game->camera);
+		shader_set_mat4(game->sprite_renderer->shader, (char *)"view", view);
 
         glClearColor(0.165f, 0.114f, 0.31f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
         game_render(game);
 
-		SDL_GL_SwapWindow(window_ctx->window);
+		SDL_GL_SwapWindow(app->window);
 	}
 
-	game_delete(game);
-	window_context_delete(window_ctx);
+	delete game;
+	delete app;
 	SDL_Quit();
+
 
 	return 0;
 }

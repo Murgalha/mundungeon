@@ -1,15 +1,15 @@
-CC ?= gcc
+CXX ?= g++
 SRCDIR=src/
 INCLUDEDIR=include/
 WARNFLAGS=-Wall -Wextra -Werror
-LIBS=-lGL -lSDL2 -lm
-STD=-std=c99
+LIBS=-lGL -lSDL2 -lm -lfreetype
+STD=-std=c++14
 
 WRKDIR=build/
 OBJDIR := ${WRKDIR}obj/
 HEADERFILES := $(wildcard ${INCLUDEDIR}*.h)
-SRCFILES := $(wildcard ${SRCDIR}*.c)
-OBJFILES := ${addprefix ${OBJDIR}, ${notdir ${SRCFILES:.c=.o}}}
+SRCFILES := $(wildcard ${SRCDIR}*.cpp)
+OBJFILES := ${addprefix ${OBJDIR}, ${notdir ${SRCFILES:.cpp=.o}}}
 
 # EXECUTABLE STUFF
 BIN=mundungeon
@@ -18,13 +18,13 @@ BINFILE := ${BINDIR}${BIN}
 
 all: prepare ${BINFILE}
 
-${OBJDIR}%.o: ${SRCDIR}%.c ${HEADERFILES}
-	$(CC) -c $< ${WARNFLAGS} -I${INCLUDEDIR} -o $@ ${STD}
+${OBJDIR}%.o: ${SRCDIR}%.cpp ${HEADERFILES}
+	$(CXX) -c $< ${WARNFLAGS} -I${INCLUDEDIR} -o $@ ${STD} -g -I/usr/include/freetype2 -I/usr/include/libpng16 -I/usr/include/harfbuzz -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include -I/usr/include/sysprof-4 -pthread
 
 ${BINFILE}: ${OBJFILES}
-	$(CC) $^ ${WARNFLAGS} -I${INCLUDEDIR} -o $@ ${STD} ${LIBS}
+	$(CXX) $^ ${WARNFLAGS} -I${INCLUDEDIR} -o $@ ${STD} ${LIBS} -g -I/usr/include/freetype2 -I/usr/include/libpng16 -I/usr/include/harfbuzz -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include -I/usr/include/sysprof-4 -pthread
 
-run:
+run: all
 	@./${BINFILE}
 
 prepare:

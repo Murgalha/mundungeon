@@ -229,7 +229,8 @@ bool dungeon_generator_make_random_room(DungeonGenerator *dungeon) {
 
 	// TODO: Make shuffled array of directions so the
 	// algorithm stays "more random"
-	for(Direction d = 0; d < 4; d++) {
+	for(int dir = 0; dir < 4; dir++) {
+		Direction d = static_cast<Direction>(dir);
 		if(dungeon_generator_has_room_space(dungeon, corridor, size, size, d)) {
 			V2 begin, door;
 			int width, height;
@@ -329,7 +330,8 @@ void dungeon_generator_make_random_corridor(DungeonGenerator *dungeon) {
 
 	// TODO: Make shuffled array of directions so the
 	// algorithm stays "more random"
-	for(Direction d = 0; d < 4; d++) {
+	for(int dir = 0; dir < 4; dir++) {
+		Direction d = static_cast<Direction>(dir);
 		if(dungeon_generator_has_corridor_space(dungeon, wall, size, d)) {
 			dungeon_generator_make_corridor_at(dungeon, wall, size, d);
 			return;
@@ -341,19 +343,19 @@ void dungeon_generator_make_random_corridor(DungeonGenerator *dungeon) {
 // END CORRIDOR FUNCTIONS
 // =========================
 
-char **dungeon_generator_new_map(u16 size) {
-	DungeonGenerator *dungeon = malloc(sizeof(DungeonGenerator));
+char **DungeonGenerator::new_map(unsigned short size) {
+	DungeonGenerator *dungeon = (DungeonGenerator *)malloc(sizeof(DungeonGenerator));
 	dungeon->size = size;
 
 	// Allocating the dungeon map
-	dungeon->map = malloc(sizeof(char *) * dungeon->size);
+	dungeon->map = (char **)malloc(sizeof(char *) * dungeon->size);
 	for(int i = 0; i < dungeon->size; i++) {
-		(dungeon->map)[i] = malloc(sizeof(char) * dungeon->size);
+		(dungeon->map)[i] = (char *)malloc(sizeof(char) * dungeon->size);
 	}
 	// TODO: Make them dynamically resizable
-	dungeon->walls = malloc(sizeof(V2) * dungeon->size * dungeon->size);
+	dungeon->walls = (V2 *)malloc(sizeof(V2) * dungeon->size * dungeon->size);
 	dungeon->nwalls = 0;
-	dungeon->corridors = malloc(sizeof(V2) * dungeon->size * dungeon->size);
+	dungeon->corridors = (V2 *)malloc(sizeof(V2) * dungeon->size * dungeon->size);
 	dungeon->ncorridors = 0;
 
 	// Filling map with EMPTY

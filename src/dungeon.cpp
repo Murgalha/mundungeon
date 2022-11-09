@@ -13,30 +13,26 @@ void dungeon_print(Dungeon *dungeon) {
 	}
 }
 
-Dungeon *dungeon_new(u16 size) {
-	Dungeon *dungeon = malloc(sizeof(Dungeon));
-	dungeon->map = dungeon_generator_new_map(size);
-	dungeon->size = size;
-	dungeon->door_texture = texture_new("assets/door.png", GL_RGBA, false);
-	dungeon->floor_texture = texture_new("assets/floor.png", GL_RGBA, false);
-	dungeon->wall_texture = texture_new("assets/wall.png", GL_RGBA, false);
-
-	return dungeon;
+Dungeon::Dungeon(unsigned short dungeon_size) {
+	size = dungeon_size;
+	map = DungeonGenerator::new_map(size);
+	door_texture = texture_new((char *)"assets/door.png", GL_RGBA, false);
+	floor_texture = texture_new((char *)"assets/floor.png", GL_RGBA, false);
+	wall_texture = texture_new((char *)"assets/wall.png", GL_RGBA, false);
 }
 
-void dungeon_delete(Dungeon *dungeon) {
-	for(int i = 0; i < dungeon->size; i++) {
-		free(dungeon->map[i]);
+Dungeon::~Dungeon() {
+	for(int i = 0; i < size; i++) {
+		free(map[i]);
 	}
-	free(dungeon->map);
-	free(dungeon);
+	free(map);
 }
 
 void dungeon_render(Dungeon *dungeon, SpriteRenderer *renderer) {
 	char tile;
 	unsigned int texture;
-	vec3 color;
-	vec2 position;
+	glm::vec3 color;
+	glm::vec2 position;
 	color[0] = color[1] = color[2] = 1.0f;
 
 	for(int y = 0; y < dungeon->size; y++) {
@@ -63,7 +59,7 @@ void dungeon_render(Dungeon *dungeon, SpriteRenderer *renderer) {
 				color[0] = color[1] = color[2] = 0.0f;
 				break;
 			}
-			sprite_renderer_draw_sprite(renderer, texture, position);
+			renderer->draw_sprite(texture, position);
 		}
 	}
 }

@@ -5,17 +5,17 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
 #include <SDL2/SDL_opengl_glext.h>
-#include <cglm/mat4.h>
-#include "types.h"
+#include <glm/mat4x4.hpp>
 
-typedef struct {
-	uint program;
-	uint vertex_id;
-	uint fragment_id;
-} Shader;
+struct Shader {
+	unsigned int program;
+	unsigned int vertex_id;
+	unsigned int fragment_id;
 
-Shader *shader_new();
-void shader_delete(Shader *);
+	Shader();
+	~Shader();
+};
+
 void shader_create(Shader *, GLenum, char *);
 void shader_create_program(Shader *);
 void shader_reload(Shader *);
@@ -23,6 +23,6 @@ void shader_use(Shader *);
 void shader_set_float(Shader *, char *, float);
 void shader_set_int(Shader *, char *, int);
 void shader_set_vec3(Shader *, char *, float, float, float);
-void shader_set_mat4(Shader *, char *, mat4);
+void shader_set_mat4(Shader *, char *, glm::mat4 &);
 
 #endif

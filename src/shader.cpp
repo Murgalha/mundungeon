@@ -1,21 +1,17 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <cglm/vec3.h>
 #include "shader.h"
 #include "file.h"
 
-Shader *shader_new() {
-	Shader *s = malloc(sizeof(Shader));
-	s->program = 0;
-	s->vertex_id = 0;
-	s->fragment_id = 0;
-	return s;
+Shader::Shader() {
+	program = 0;
+	vertex_id = 0;
+	fragment_id = 0;
 }
 
-void shader_delete(Shader *s) {
-	glDeleteShader(s->vertex_id);
-	glDeleteShader(s->fragment_id);
-	free(s);
+Shader::~Shader() {
+	glDeleteShader(vertex_id);
+	glDeleteShader(fragment_id);
 }
 
 void shader_create(Shader *s, GLenum shader_type, char *filename) {
@@ -46,8 +42,8 @@ void shader_create_program(Shader *s) {
 }
 
 void shader_reload(Shader *s) {
-	shader_create(s, GL_VERTEX_SHADER, "shaders/shader.vert");
-	shader_create(s, GL_FRAGMENT_SHADER, "shaders/shader.frag");
+	shader_create(s, GL_VERTEX_SHADER, (char *)"shaders/shader.vert");
+	shader_create(s, GL_FRAGMENT_SHADER, (char *)"shaders/shader.frag");
 	shader_create_program(s);
 }
 
@@ -64,12 +60,11 @@ void shader_set_int(Shader *s, char *name, int value) {
 }
 
 void shader_set_vec3(Shader *s, char *name, float x, float y, float z) {
-	vec3 v;
-	v[0] = x; v[1] = y; v[2] = z;
-    glUniform3fv(glGetUniformLocation(s->program, name), 1, v);
+	glm::vec3 v = glm::vec3(x, y, z);
+    glUniform3fv(glGetUniformLocation(s->program, name), 1, &v[0]);
 }
 
-void shader_set_mat4(Shader *s, char *name, mat4 m) {
+void shader_set_mat4(Shader *s, char *name, glm::mat4 &m) {
 	unsigned int loc = glGetUniformLocation(s->program, name);
-	glUniformMatrix4fv(loc, 1, GL_FALSE, *m);
+	glUniformMatrix4fv(loc, 1, GL_FALSE, &m[0][0]);
 }

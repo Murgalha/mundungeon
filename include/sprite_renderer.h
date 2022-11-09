@@ -1,23 +1,19 @@
 #ifndef _SPRITE_RENDERER_H_
 #define _SPRITE_RENDERER_H_
 
-#include "types.h"
 #include "shader.h"
-#include <cglm/vec3.h>
-#include <cglm/vec2.h>
+#include <glm/vec2.hpp>
 
-#define SPRITE_HEIGHT 100.0
-#define SPRITE_WIDTH 100.0
-
-typedef struct {
+struct SpriteRenderer {
 	Shader *shader;
-	uint quad_VAO;
-	uint sprite_width;
-	uint sprite_height;
-} SpriteRenderer;
+	unsigned int quad_VAO;
+	unsigned int sprite_width;
+	unsigned int sprite_height;
 
-SpriteRenderer *sprite_renderer_new(Shader *);
-void sprite_renderer_delete(SpriteRenderer *);
-void sprite_renderer_draw_sprite(SpriteRenderer *, uint, vec2);
+	SpriteRenderer(Shader *);
+	~SpriteRenderer();
+	void draw_sprite(unsigned int, glm::vec2);
+	void draw_sprite_with_rotation(unsigned int, glm::vec2, float);
+};
 
 #endif

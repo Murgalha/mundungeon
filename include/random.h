@@ -3,8 +3,8 @@
 
 #include "types.h"
 
-void random_init(u32);
-u64 random();
-u64 random_rangei(u64, u64);
+void random_init(unsigned int);
+unsigned long random_long();
+unsigned long random_rangei(unsigned long, unsigned long);
 
 #endif
