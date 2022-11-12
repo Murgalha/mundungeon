@@ -80,16 +80,6 @@ V2 direction_vector(Direction d) {
 // END TILE FUNCTIONS
 // ======================
 
-
-void dungeon_generator_print(DungeonGenerator *dungeon) {
-	for(int y = 0; y < dungeon->size; y++) {
-		for(int x = 0; x < dungeon->size; x++) {
-			printf("%c", dungeon->map[y][x]);
-		}
-		printf("| Row %d\n", y);
-	}
-}
-
 void dungeon_generator_fill_rect(DungeonGenerator *dungeon, V2 begin, int width, int height, DungeonTile element) {
 	V2 end;
 	end.x = begin.x + width;

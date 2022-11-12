@@ -16,6 +16,4 @@ struct DungeonGenerator {
 	static DungeonTile **new_map(unsigned short);
 };
 
-void dungeon_generator_print(DungeonGenerator *);
-
 #endif
