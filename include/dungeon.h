@@ -1,11 +1,13 @@
 #ifndef _DUNGEON_H_
 #define _DUNGEON_H_
 
+#include <map>
 #include "sprite_renderer.h"
+#include "dungeon_tile.h"
 
 struct Dungeon {
-	unsigned int door_texture, floor_texture, wall_texture;
-	char **map;
+	std::map<DungeonTile, unsigned int> sprites;
+	DungeonTile **map;
 	unsigned short size;
 
 	Dungeon(unsigned short);

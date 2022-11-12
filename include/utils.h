@@ -3,12 +3,6 @@
 
 #include <glm/vec2.hpp>
 
-#define FLOOR 1
-#define CORRIDOR 1
-#define WALL 0
-#define EMPTY 4
-#define DOOR 2
-
 extern glm::vec2 dir_array[4];
 
 #define SCREEN_WIDTH 1280.0f

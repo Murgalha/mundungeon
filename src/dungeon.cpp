@@ -7,7 +7,7 @@
 void dungeon_print(Dungeon *dungeon) {
 	for(int y = 0; y < dungeon->size; y++) {
 		for(int x = 0; x < dungeon->size; x++) {
-			printf("%c", dungeon->map[y][x]);
+			printf("%c", to_char(dungeon->map[y][x]));
 		}
 		printf("\n");
 	}
@@ -16,9 +16,19 @@ void dungeon_print(Dungeon *dungeon) {
 Dungeon::Dungeon(unsigned short dungeon_size) {
 	size = dungeon_size;
 	map = DungeonGenerator::new_map(size);
-	door_texture = texture_new((char *)"assets/door.png", GL_RGBA, false);
-	floor_texture = texture_new((char *)"assets/floor.png", GL_RGBA, false);
-	wall_texture = texture_new((char *)"assets/wall.png", GL_RGBA, false);
+
+	unsigned int door_texture = texture_new((char *)"assets/door.png", GL_RGBA, false);
+	unsigned int floor_texture = texture_new((char *)"assets/floor.png", GL_RGBA, false);
+	unsigned int wall_texture = texture_new((char *)"assets/wall.png", GL_RGBA, false);
+	unsigned int unknown_texture = texture_new((char *)"assets/unknown.png", GL_RGBA, false);
+
+	sprites = std::map<DungeonTile, unsigned int>();
+	sprites.insert(std::pair<DungeonTile, unsigned int>(DungeonTile::Unknown, unknown_texture));
+	sprites.insert(std::pair<DungeonTile, unsigned int>(DungeonTile::Floor, floor_texture));
+	sprites.insert(std::pair<DungeonTile, unsigned int>(DungeonTile::Door, door_texture));
+	sprites.insert(std::pair<DungeonTile, unsigned int>(DungeonTile::Corridor, floor_texture));
+	sprites.insert(std::pair<DungeonTile, unsigned int>(DungeonTile::Wall, wall_texture));
+	sprites.insert(std::pair<DungeonTile, unsigned int>(DungeonTile::Empty, wall_texture));
 }
 
 Dungeon::~Dungeon() {
@@ -29,11 +39,9 @@ Dungeon::~Dungeon() {
 }
 
 void dungeon_render(Dungeon *dungeon, SpriteRenderer *renderer) {
-	char tile;
+	DungeonTile tile;
 	unsigned int texture;
-	glm::vec3 color;
 	glm::vec2 position;
-	color[0] = color[1] = color[2] = 1.0f;
 
 	for(int y = 0; y < dungeon->size; y++) {
 		for(int x = 0; x < dungeon->size; x++) {
@@ -41,24 +49,7 @@ void dungeon_render(Dungeon *dungeon, SpriteRenderer *renderer) {
 			position[0] = x * renderer->sprite_width;
 			position[1] = y * renderer->sprite_height;
 
-			switch(tile) {
-			case 0:
-				texture = dungeon->wall_texture;
-				color[0] = color[1] = color[2] = 1.0f;
-				break;
-			case 1:
-				texture = dungeon->floor_texture;
-				color[0] = color[1] = color[2] = 1.0f;
-				break;
-			case 2:
-				texture = dungeon->door_texture;
-				color[0] = color[1] = color[2] = 1.0f;
-				break;
-			default:
-				texture = dungeon->wall_texture;
-				color[0] = color[1] = color[2] = 0.0f;
-				break;
-			}
+			texture = dungeon->sprites[tile];
 			renderer->draw_sprite(texture, position);
 		}
 	}

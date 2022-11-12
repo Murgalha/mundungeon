@@ -2,9 +2,12 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include "dungeon_generator.h"
+#include "dungeon_tile.h"
 #include "random.h"
 
 #define MAX_TRIES 20
+
+// TODO: Create a DungeonTile map instead of char
 
 // ======================
 // BEGIN TILE FUNCTIONS
@@ -16,10 +19,10 @@ bool tile_is_corner(DungeonGenerator *dungeon, V2 tile) {
 	   (tile.y - 1) < 0 || (tile.y + 1) >= dungeon->size) {
 		return false;
 	}
-	if((dungeon->map[tile.y - 1][tile.x] == EMPTY ||
-		dungeon->map[tile.y + 1][tile.x] == EMPTY) &&
-	   (dungeon->map[tile.y][tile.x - 1] == EMPTY ||
-		dungeon->map[tile.y][tile.x + 1] == EMPTY)) {
+	if((dungeon->map[tile.y - 1][tile.x] == DungeonTile::Empty ||
+		dungeon->map[tile.y + 1][tile.x] == DungeonTile::Empty) &&
+	   (dungeon->map[tile.y][tile.x - 1] == DungeonTile::Empty ||
+		dungeon->map[tile.y][tile.x + 1] == DungeonTile::Empty)) {
 		return true;
 	}
 	return false;
@@ -87,7 +90,7 @@ void dungeon_generator_print(DungeonGenerator *dungeon) {
 	}
 }
 
-void dungeon_generator_fill_rect(DungeonGenerator *dungeon, V2 begin, int width, int height, char element) {
+void dungeon_generator_fill_rect(DungeonGenerator *dungeon, V2 begin, int width, int height, DungeonTile element) {
 	V2 end;
 	end.x = begin.x + width;
 	end.y = begin.y + height;
@@ -112,11 +115,11 @@ void dungeon_generator_make_room_at(DungeonGenerator *dungeon, V2 begin, int wid
 		tile.x = x;
 
 		tile.y = begin.y;
-		dungeon->map[tile.y][tile.x] = WALL;
+		dungeon->map[tile.y][tile.x] = DungeonTile::Wall;
 		dungeon->walls[dungeon->nwalls++] = tile;
 
 		tile.y = end.y - 1;
-		dungeon->map[tile.y][tile.x] = WALL;
+		dungeon->map[tile.y][tile.x] = DungeonTile::Wall;
 		dungeon->walls[dungeon->nwalls++] = tile;
 	}
 
@@ -125,11 +128,11 @@ void dungeon_generator_make_room_at(DungeonGenerator *dungeon, V2 begin, int wid
 		tile.y = y;
 
 		tile.x = begin.x;
-		dungeon->map[tile.y][tile.x] = WALL;
+		dungeon->map[tile.y][tile.x] = DungeonTile::Wall;
 		dungeon->walls[dungeon->nwalls++] = tile;
 
 		tile.x = end.x - 1;
-		dungeon->map[tile.y][tile.x] = WALL;
+		dungeon->map[tile.y][tile.x] = DungeonTile::Wall;
 		dungeon->walls[dungeon->nwalls++] = tile;
 	}
 	begin.x++;
@@ -137,7 +140,7 @@ void dungeon_generator_make_room_at(DungeonGenerator *dungeon, V2 begin, int wid
 	width -= 2;
 	height -= 2;
 
-	dungeon_generator_fill_rect(dungeon, begin, width, height, FLOOR);
+	dungeon_generator_fill_rect(dungeon, begin, width, height, DungeonTile::Floor);
 }
 
 bool dungeon_generator_has_room_space(DungeonGenerator *dungeon, V2 door, int width, int height, Direction d) {
@@ -152,7 +155,7 @@ bool dungeon_generator_has_room_space(DungeonGenerator *dungeon, V2 door, int wi
 				   (y < 0 || y >= dungeon->size)) {
 					return false;
 				}
-				if(dungeon->map[y][x] != EMPTY && dungeon->map[y][x] != WALL) {
+				if(dungeon->map[y][x] != DungeonTile::Empty && dungeon->map[y][x] != DungeonTile::Wall) {
 					return false;
 				}
 			}
@@ -167,7 +170,7 @@ bool dungeon_generator_has_room_space(DungeonGenerator *dungeon, V2 door, int wi
 				   (y < 0 || y >= dungeon->size)) {
 					return false;
 				}
-				if(dungeon->map[y][x] != EMPTY && dungeon->map[y][x] != WALL) {
+				if(dungeon->map[y][x] != DungeonTile::Empty && dungeon->map[y][x] != DungeonTile::Wall) {
 					return false;
 				}
 			}
@@ -182,7 +185,7 @@ bool dungeon_generator_has_room_space(DungeonGenerator *dungeon, V2 door, int wi
 				   (y < 0 || y >= dungeon->size)) {
 					return false;
 				}
-				if(dungeon->map[y][x] != EMPTY && dungeon->map[y][x] != WALL) {
+				if(dungeon->map[y][x] != DungeonTile::Empty && dungeon->map[y][x] != DungeonTile::Wall) {
 					return false;
 				}
 			}
@@ -197,7 +200,7 @@ bool dungeon_generator_has_room_space(DungeonGenerator *dungeon, V2 door, int wi
 				   (y < 0 || y >= dungeon->size)) {
 					return false;
 				}
-				if(dungeon->map[y][x] != EMPTY && dungeon->map[y][x] != WALL) {
+				if(dungeon->map[y][x] != DungeonTile::Empty && dungeon->map[y][x] != DungeonTile::Wall) {
 					return false;
 				}
 			}
@@ -263,7 +266,7 @@ bool dungeon_generator_make_random_room(DungeonGenerator *dungeon) {
 				break;
 			}
 			dungeon_generator_make_room_at(dungeon, begin, size, size);
-			dungeon->map[door.y][door.x] = DOOR;
+			dungeon->map[door.y][door.x] = DungeonTile::Door;
 			return true;
 		}
 	}
@@ -281,11 +284,11 @@ void dungeon_generator_make_corridor_at(DungeonGenerator *dungeon, V2 door, int 
 	V2 tmp;
 	int i;
 
-	dungeon->map[door.y][door.x] = DOOR;
+	dungeon->map[door.y][door.x] = DungeonTile::Door;
 	for(i = 1; i < size; i++) {
 		tmp.x = door.x + (vector.x * i);
 		tmp.y = door.y + (vector.y * i);
-		dungeon->map[tmp.y][tmp.x] = CORRIDOR;
+		dungeon->map[tmp.y][tmp.x] = DungeonTile::Corridor;
 	}
 	// TODO: Add every corridor to the array
 	dungeon->corridors[dungeon->ncorridors++] = tmp;
@@ -304,7 +307,7 @@ bool dungeon_generator_has_corridor_space(DungeonGenerator *dungeon, V2 begin, i
 			return false;
 		}
 
-		if(dungeon->map[tmp.y][tmp.x] != EMPTY) {
+		if(dungeon->map[tmp.y][tmp.x] != DungeonTile::Empty) {
 			return false;
 		}
 	}
@@ -343,14 +346,14 @@ void dungeon_generator_make_random_corridor(DungeonGenerator *dungeon) {
 // END CORRIDOR FUNCTIONS
 // =========================
 
-char **DungeonGenerator::new_map(unsigned short size) {
+DungeonTile **DungeonGenerator::new_map(unsigned short size) {
 	DungeonGenerator *dungeon = (DungeonGenerator *)malloc(sizeof(DungeonGenerator));
 	dungeon->size = size;
 
 	// Allocating the dungeon map
-	dungeon->map = (char **)malloc(sizeof(char *) * dungeon->size);
+	dungeon->map = (DungeonTile **)malloc(sizeof(DungeonTile *) * dungeon->size);
 	for(int i = 0; i < dungeon->size; i++) {
-		(dungeon->map)[i] = (char *)malloc(sizeof(char) * dungeon->size);
+		(dungeon->map)[i] = (DungeonTile *)malloc(sizeof(DungeonTile) * dungeon->size);
 	}
 	// TODO: Make them dynamically resizable
 	dungeon->walls = (V2 *)malloc(sizeof(V2) * dungeon->size * dungeon->size);
@@ -361,7 +364,7 @@ char **DungeonGenerator::new_map(unsigned short size) {
 	// Filling map with EMPTY
 	V2 d_begin;
 	d_begin.x = d_begin.y = 0;
-	dungeon_generator_fill_rect(dungeon, d_begin, size, size, EMPTY);
+	dungeon_generator_fill_rect(dungeon, d_begin, size, size, DungeonTile::Empty);
 
 	// Creating initial room in the middle of the map
 	d_begin.x = size/2 - 5;
@@ -378,7 +381,7 @@ char **DungeonGenerator::new_map(unsigned short size) {
 			k = 0;
 		}
 	}
-	char **map = dungeon->map;
+	DungeonTile **map = dungeon->map;
 
 	free(dungeon->corridors);
 	free(dungeon->walls);

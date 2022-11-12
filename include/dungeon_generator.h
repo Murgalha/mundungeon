@@ -3,24 +3,17 @@
 
 #include "utils.h"
 #include "types.h"
-
-/*
-#define FLOOR 32 // <Space>
-#define WALL 35  // #
-#define EMPTY 46 // .
-#define DOOR 68  // D
-#define CORRIDOR 67  // C
-*/
+#include "dungeon_tile.h"
 
 struct DungeonGenerator {
-	char **map;
+	DungeonTile **map;
 	unsigned short size;
 	V2 *walls;
 	unsigned short nwalls;
 	V2 *corridors;
 	unsigned short ncorridors;
 
-	static char **new_map(unsigned short);
+	static DungeonTile **new_map(unsigned short);
 };
 
 void dungeon_generator_print(DungeonGenerator *);

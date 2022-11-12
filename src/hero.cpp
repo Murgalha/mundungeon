@@ -24,8 +24,8 @@ void hero_move(Hero *hero, Dungeon *dungeon, Direction d, Camera *camera, float 
 	int x = (int)new_position[0];
 	int y = (int)new_position[1];
 
-	char tile = dungeon->map[y][x];
-	if(tile != WALL && tile != EMPTY) {
+	DungeonTile tile = dungeon->map[y][x];
+	if(tile != DungeonTile::Wall && tile != DungeonTile::Empty) {
 		hero->position = new_position;
 		camera_move(camera, d, delta_time);
 		hero->facing_direction = d;
