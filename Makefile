@@ -1,36 +1,33 @@
-CXX ?= g++
-SRCDIR=src/
-INCLUDEDIR=include/
-WARNFLAGS=-Wall -Wextra -Werror
-LIBS=-lGL -lSDL2 -lm -lfreetype
-STD=-std=c++14
+# DIRS
+WRKDIR = build
+SRC_DIR = src
+BIN_DIR = $(WRKDIR)/bin
+BIN = mundungeon
 
-WRKDIR=build/
-OBJDIR := ${WRKDIR}obj/
-HEADERFILES := $(wildcard ${INCLUDEDIR}*.h)
-SRCFILES := $(wildcard ${SRCDIR}*.cpp)
-OBJFILES := ${addprefix ${OBJDIR}, ${notdir ${SRCFILES:.cpp=.o}}}
+#FILES
+SRCS := $(shell find $(SRC_DIR) -name *.cpp)
+OBJS := $(SRCS:%.cpp=$(WRKDIR)/%.o)
 
-# EXECUTABLE STUFF
-BIN=mundungeon
-BINDIR := ${WRKDIR}bin/
-BINFILE := ${BINDIR}${BIN}
+# FLAGS
+LDLIBS_LOCAL := -lGL -lSDL2 -lm $(shell pkg-config --libs freetype2)
+LDLIBS += $(LDLIBS_LOCAL)
 
-all: prepare ${BINFILE}
+CPPFLAGS_LOCAL := -Iinclude $(shell pkg-config --cflags freetype2)
+CPPFLAGS += $(CPPFLAGS_LOCAL)
+CXXFLAGS += -Wall -Wextra -Werror
 
-${OBJDIR}%.o: ${SRCDIR}%.cpp ${HEADERFILES}
-	$(CXX) -c $< ${WARNFLAGS} -I${INCLUDEDIR} -o $@ ${STD} -g -I/usr/include/freetype2 -I/usr/include/libpng16 -I/usr/include/harfbuzz -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include -I/usr/include/sysprof-4 -pthread
+$(BIN_DIR)/$(BIN): $(OBJS)
+	@mkdir -p $(dir $@)
+	$(CXX) $(OBJS) -o $@ $(LDFLAGS) $(LDLIBS)
 
-${BINFILE}: ${OBJFILES}
-	$(CXX) $^ ${WARNFLAGS} -I${INCLUDEDIR} -o $@ ${STD} ${LIBS} -g -I/usr/include/freetype2 -I/usr/include/libpng16 -I/usr/include/harfbuzz -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include -I/usr/include/sysprof-4 -pthread
+$(WRKDIR)/%.o: %.cpp
+	@mkdir -p $(dir $@)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@ -g
 
-run: all
-	@./${BINFILE}
-
-prepare:
-	@if [ ! -d "${WRKDIR}" ]; then mkdir ${WRKDIR}; fi
-	@if [ ! -d "${OBJDIR}" ]; then mkdir ${OBJDIR}; fi
-	@if [ ! -d "${BINDIR}" ]; then mkdir ${BINDIR}; fi
+.PHONY: clear
 
 clear:
-	rm -rf ${WRKDIR}
+	$(RM) -r $(WRKDIR)
+
+run: $(BIN_DIR)/$(BIN)
+	@$(BIN_DIR)/$(BIN)
