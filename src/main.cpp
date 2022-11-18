@@ -3,6 +3,9 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
 #include <SDL2/SDL_opengl_glext.h>
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_sdl.h"
+#include "imgui/imgui_impl_opengl3.h"
 #include "log.h"
 #include "app.h"
 #include "random.h"
@@ -19,6 +22,8 @@ void process_input(App *app, Game *game, float delta_time) {
 	SDL_Event e;
 
 	while(SDL_PollEvent(&e)) {
+		ImGui_ImplSDL2_ProcessEvent(&e);
+
 		switch(e.type) {
 		case SDL_WINDOWEVENT:
 			switch(e.window.event) {
@@ -97,6 +102,14 @@ int main(int argc, char *argv[]) {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+	const char* glsl_version = "#version 100";
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGui::StyleColorsDark();
+
+    ImGui_ImplSDL2_InitForOpenGL(app->window, app->gl_context);
+    ImGui_ImplOpenGL3_Init(glsl_version);
+
 	game_init(game);
 
     float delta_time = 0.0f;
@@ -111,18 +124,33 @@ int main(int argc, char *argv[]) {
         game_process_input(game, delta_time);
 		process_input(app, game, delta_time);
 
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplSDL2_NewFrame();
+
+        ImGui::NewFrame();
+		ImGui::Begin("Window info");
+		ImGui::Text("Framerate: %.1f FPS", ImGui::GetIO().Framerate);
+		ImGui::Text("Delta time: %.2f ms", delta_time);
+		ImGui::End();
+
         game_update(game, delta_time);
 
 		shader_use(game->sprite_renderer->shader);
 		view = camera_view_matrix(game->camera);
 		shader_set_mat4(game->sprite_renderer->shader, (char *)"view", view);
 
+        ImGui::Render();
         glClearColor(0.165f, 0.114f, 0.31f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
         game_render(game);
 
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 		SDL_GL_SwapWindow(app->window);
 	}
+
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplSDL2_Shutdown();
+    ImGui::DestroyContext();
 
 	delete game;
 	delete app;
