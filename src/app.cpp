@@ -1,5 +1,4 @@
 #include "app.h"
-#include "log.h"
 
 App::App(int window_width, int window_height) {
 	window = window_new(window_width, window_height);
@@ -12,6 +11,33 @@ App::~App() {
 	SDL_DestroyWindow(window);
 }
 
+void App::process_input(Game *game, float delta_time) {
+	SDL_Event e;
+
+	while(SDL_PollEvent(&e)) {
+		switch(e.type) {
+		case SDL_WINDOWEVENT:
+			switch(e.window.event) {
+			case SDL_WINDOWEVENT_RESIZED:
+				resize_viewport(e.window.data1, e.window.data2);
+				break;
+			default:
+				break;
+			}
+			break;
+		case SDL_QUIT:
+			should_quit = true;
+			break;
+		default:
+			game->process_input(e, delta_time);
+		}
+	}
+}
+
+void App::resize_viewport(int width, int height) {
+	glViewport(0, 0, width, height);
+}
+
 SDL_Window *App::window_new(int width, int height) {
 	SDL_Window *window = NULL;
 	int flags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE;
@@ -19,7 +45,8 @@ SDL_Window *App::window_new(int width, int height) {
 	window = SDL_CreateWindow("Mundungeon", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, flags);
 
 	if(!window) {
-		log_print(ERROR, "Could not create window: %s\n", SDL_GetError());
+		//log_print(ERROR, "Could not create window: %s\n", SDL_GetError());
+		printf("ERROR: Could not create window: %s\n", SDL_GetError());
 	}
 
 	return window;
@@ -38,7 +65,7 @@ SDL_GLContext App::gl_context_init(SDL_Window *window) {
 
     SDL_GLContext context = SDL_GL_CreateContext(window);
 	if(!context) {
-		log_print(ERROR, "Could not create context: %s\n", SDL_GetError());
+		printf("Could not create context: %s\n", SDL_GetError());
 		exit(1);
 	}
 

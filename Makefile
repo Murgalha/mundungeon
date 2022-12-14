@@ -22,7 +22,7 @@ $(BIN_DIR)/$(BIN): $(OBJS)
 
 $(WRKDIR)/%.o: %.cpp
 	@mkdir -p $(dir $@)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@ -g
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@ -g -DDEBUG
 
 .PHONY: clear
 

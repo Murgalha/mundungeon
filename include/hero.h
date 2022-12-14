@@ -3,8 +3,9 @@
 
 #include <glm/vec2.hpp>
 #include "sprite_renderer.h"
-#include "dungeon.h"
 #include "camera.h"
+
+struct Dungeon;
 
 struct Hero {
 	unsigned int texture_id;

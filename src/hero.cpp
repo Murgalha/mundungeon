@@ -2,10 +2,13 @@
 #include <stdio.h>
 #include "hero.h"
 #include "texture.h"
+#include "dungeon_tile.h"
 #include "sprite_renderer.h"
 #include "utils.h"
+#include "dungeon.h"
 
 float get_sprite_rotation(Direction);
+bool can_walk(Dungeon *, glm::vec2 &);
 
 Hero::Hero() {
 	texture_id = texture_new((char *)"assets/hero.png", GL_RGBA, false);
@@ -21,32 +24,18 @@ void hero_render(Hero *hero, SpriteRenderer *renderer) {
 
 void hero_move(Hero *hero, Dungeon *dungeon, Direction d, Camera *camera, float delta_time) {
 	glm::vec2 new_position = hero->position + dir_array[d];
-	int x = (int)new_position[0];
-	int y = (int)new_position[1];
 
-	DungeonTile tile = dungeon->map[y][x];
-	if(tile != DungeonTile::Wall && tile != DungeonTile::Empty) {
+	if(can_walk(dungeon, new_position)) {
 		hero->position = new_position;
 		camera_move(camera, d, delta_time);
 		hero->facing_direction = d;
 	}
 }
 
-float get_sprite_rotation(Direction direction) {
-	switch(direction) {
-	case UP:
-		return 0.0f;
-		break;
-	case DOWN:
-		return 180.0f;
-		break;
-	case LEFT:
-		return 270.0f;
-		break;
-	case RIGHT:
-		return 90.0f;
-		break;
-	default:
-		return 0.0f;
-	}
+bool can_walk(Dungeon *dungeon, glm::vec2 &position) {
+	DungeonTile tile = dungeon->map[(int)position.y][(int)position.x];
+
+	return tile != DungeonTile::Wall &&
+		tile != DungeonTile::Empty &&
+		dungeon->enemies[(int)position.y][(int)position.x] != 1;
 }
