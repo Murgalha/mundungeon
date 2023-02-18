@@ -21,6 +21,7 @@ struct Enemy {
 private:
 	Direction get_direction_from_positions(glm::vec2 &, glm::vec2 &);
 	std::vector<glm::vec2> generate_enemy_path(Dungeon &, glm::vec2 &);
+	bool can_attack(glm::vec2 &);
 };
 
 #endif

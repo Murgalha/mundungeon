@@ -27,17 +27,26 @@ void Enemy::draw(SpriteRenderer *renderer) {
 }
 
 void Enemy::walk(Dungeon &dungeon, glm::vec2 &hero_position) {
-	if (walk_path.size() > 0) {
-		auto new_position = walk_path[0];
-		facing_direction = get_direction_from_positions(position, new_position);
-		position = walk_path[0];
-
-		// TODO: Make a smarter path-finding here instead of recalculating every move
-		walk_path = generate_enemy_path(dungeon, hero_position);
+	if (can_attack(hero_position)) {
+		facing_direction = get_direction_from_positions(position, hero_position);
+		printf("Now we attack.\n");
 	}
 	else {
-		printf("Enemy should attack\n");
+		walk_path = generate_enemy_path(dungeon, hero_position);
+		auto new_position = walk_path[0];
+
+		facing_direction = get_direction_from_positions(position, new_position);
+
+		position = new_position;
 	}
+ }
+
+bool Enemy::can_attack(glm::vec2 &hero_position) {
+	auto diff = position - hero_position;
+	auto val = glm::length(glm::abs(diff));
+	printf("Diff: %.1f\n", val);
+
+	return val == 1.0;
 }
 
 Direction Enemy::get_direction_from_positions(glm::vec2 &old_position, glm::vec2 &new_position) {

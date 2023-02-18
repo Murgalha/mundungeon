@@ -25,10 +25,10 @@ void hero_render(Hero *hero, SpriteRenderer *renderer) {
 void hero_move(Hero *hero, Dungeon *dungeon, Direction d, Camera *camera, float delta_time) {
 	glm::vec2 new_position = hero->position + dir_array[d];
 
+	hero->facing_direction = d;
 	if(can_walk(dungeon, new_position)) {
 		hero->position = new_position;
 		camera_move(camera, d, delta_time);
-		hero->facing_direction = d;
 	}
 }
 
