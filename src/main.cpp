@@ -9,6 +9,7 @@
 #include "app.h"
 #include "random.h"
 #include "game.h"
+#include "clock.h"
 #include "utils.h"
 
 #ifdef DEBUG
@@ -30,6 +31,7 @@ int main(int argc, char *argv[]) {
 
 	App *app = new App(SCREEN_WIDTH, SCREEN_HEIGHT);
 	Game *game = new Game(SCREEN_WIDTH, SCREEN_HEIGHT);
+	Clock clock = Clock();
 
 	SDL_GL_SetSwapInterval(1);
 	glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -52,18 +54,15 @@ int main(int argc, char *argv[]) {
 
 	game->init();
 
-    float delta_time = 0.0f;
-    float last_frame = 0.0f;
-	float current_frame;
+	double delta_time;
 	while(!app->should_quit) {
-		current_frame = SDL_GetTicks();
-        delta_time = current_frame - last_frame;
-        last_frame = current_frame;
+		delta_time = clock.delta_time();
 
+		// Process input and update game
 		app->process_input(game, delta_time);
-
         game->update(delta_time);
 
+		// Clear screen and render
         glClearColor(0.165f, 0.114f, 0.31f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
         game->render();
