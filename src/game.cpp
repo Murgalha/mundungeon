@@ -17,10 +17,10 @@ Game::Game(unsigned int viewport_width, unsigned int viewport_height) {
 	camera = new Camera(dungeon->hero->position);
 
 	direction_map = std::map<SDL_Keycode, Direction> {
-		{ SDLK_w, UP },
-		{ SDLK_a, LEFT },
-		{ SDLK_s, DOWN },
-		{ SDLK_d, RIGHT }
+		{ SDLK_UP, UP },
+		{ SDLK_LEFT, LEFT },
+		{ SDLK_DOWN, DOWN },
+		{ SDLK_RIGHT, RIGHT }
 	};
 }
 
@@ -56,6 +56,7 @@ void Game::process_input(SDL_Event e, float delta_time) {
 	case SDL_KEYDOWN:
 		switch(e.key.keysym.sym) {
 			// TODO: make camera-only movement as free-roam and not tile-based
+			/*
 		case SDLK_RIGHT:
 			camera_move(camera, RIGHT, delta_time);
 			break;
@@ -68,12 +69,17 @@ void Game::process_input(SDL_Event e, float delta_time) {
 		case SDLK_UP:
 			camera_move(camera, UP, delta_time);
 			break;
-		case SDLK_d:
-		case SDLK_a:
-		case SDLK_s:
-		case SDLK_w:
+			*/
+		case SDLK_UP:
+		case SDLK_DOWN:
+		case SDLK_LEFT:
+		case SDLK_RIGHT:
 			direction = direction_map[e.key.keysym.sym];
 			hero_move(dungeon->hero, dungeon, direction, camera, delta_time);
+			has_moved = true;
+			break;
+		case SDLK_x:
+			dungeon->hero->attack(*dungeon);
 			has_moved = true;
 			break;
 		case SDLK_SPACE:
@@ -87,11 +93,14 @@ void Game::process_input(SDL_Event e, float delta_time) {
 	if(has_moved) {
 		glm::vec2 enemy_pos = dungeon->enemy.position;
 		dungeon->enemies[(int)enemy_pos.y][(int)enemy_pos.x] = 0;
-		dungeon->enemy.walk(*dungeon, dungeon->hero->position);
+		dungeon->enemy.walk(*dungeon, *(dungeon->hero));
 
 		enemy_pos = dungeon->enemy.position;
 		dungeon->enemies[(int)enemy_pos.y][(int)enemy_pos.x] = 1;
+
 	}
+
+	dungeon->post_turn_cleanup();
 }
 
 void Game::update(float delta_time) {

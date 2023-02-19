@@ -90,6 +90,10 @@ std::vector<glm::vec2> makePath(std::vector<std::vector<Node>> map, glm::vec2 de
 std::vector<glm::vec2> AStar::find_path(Dungeon &dungeon, glm::vec2 &start, glm::vec2 &goal) {
 	std::vector<glm::vec2> empty;
 
+#ifdef DEBUG
+	printf("Starting A* from (%.1f, %.1f) to (%.1f, %.1f)\n", start[0], start[1], goal[0], goal[1]);
+#endif
+
 	if (are_same_position(start, goal)) {
 		printf("Start and goal are the same\n");
 		return empty;

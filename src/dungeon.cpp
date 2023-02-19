@@ -5,6 +5,7 @@
 #include "dungeon.h"
 #include "dungeon_generator.h"
 #include "texture.h"
+#include "imgui.h"
 
 void spawn_enemies(Dungeon *);
 void dungeon_print(Dungeon *);
@@ -41,6 +42,23 @@ Dungeon::~Dungeon() {
 	delete hero;
 }
 
+void Dungeon::post_turn_cleanup() {
+	if (enemy.check_death()) {
+		auto old_position = enemy.position;
+		auto old_x = (int)old_position.x;
+		auto old_y = (int)old_position.y;
+		enemies[old_y][old_x] = 0;
+
+		enemy = Enemy(glm::vec2(13.0f, 21.0f));
+
+		auto new_position = enemy.position;
+		auto new_x = (int)new_position.x;
+		auto new_y = (int)new_position.y;
+
+		enemies[new_y][new_x] = 1;
+	}
+}
+
 void dungeon_render(Dungeon *dungeon, SpriteRenderer *renderer) {
 	DungeonTile tile;
 	unsigned int texture;
@@ -72,7 +90,7 @@ void spawn_enemies(Dungeon *dungeon) {
 	}
 
 	for (glm::vec2 position : positions) {
-		dungeon->enemy = Enemy(position, *dungeon, dungeon->hero->position);
+		dungeon->enemy = Enemy(position);
 		dungeon->enemies[(int)position.y][(int)position.x] = 1;
 	}
 }

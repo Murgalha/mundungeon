@@ -19,6 +19,7 @@ struct Dungeon {
 
 	Dungeon(unsigned short);
 	~Dungeon();
+	void post_turn_cleanup();
 };
 
 void dungeon_print(Dungeon *);

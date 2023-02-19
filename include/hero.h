@@ -11,9 +11,11 @@ struct Hero {
 	unsigned int texture_id;
 	glm::vec2 position;
 	Direction facing_direction;
+	int hp;
 
 	Hero();
 	~Hero();
+	void attack(Dungeon &);
 };
 
 void hero_render(Hero *, SpriteRenderer *);

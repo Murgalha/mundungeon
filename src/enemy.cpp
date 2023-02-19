@@ -4,19 +4,24 @@
 #include "texture.h"
 #include "utils.h"
 #include "a_star.h"
+#include "random.h"
 
 Enemy::Enemy() {
 	texture_id = -1;
 	position = glm::vec2(0.0f);
+	starting_position = glm::vec2(0.0f);
 	walk_path = std::vector<glm::vec2>();
 	facing_direction = DOWN;
+	hp = 0;
 }
 
-Enemy::Enemy(glm::vec2 start_position, Dungeon &dungeon, glm::vec2 &hero_position) {
+Enemy::Enemy(glm::vec2 start_position) {
 	texture_id = texture_new((char *)"assets/enemy.png", GL_RGBA, false);
-	position = start_position;
+	starting_position[0] = start_position[0]; starting_position[1] = start_position[1];
+	position[0] = start_position[0]; position[1] = start_position[1];
 
-	walk_path = generate_enemy_path(dungeon, hero_position);
+	hp = 30;
+	walk_path = std::vector<glm::vec2>();
 }
 
 Enemy::~Enemy() { }
@@ -26,13 +31,14 @@ void Enemy::draw(SpriteRenderer *renderer) {
 	renderer->draw_sprite_with_rotation(texture_id, window_position, get_sprite_rotation(facing_direction));
 }
 
-void Enemy::walk(Dungeon &dungeon, glm::vec2 &hero_position) {
-	if (can_attack(hero_position)) {
-		facing_direction = get_direction_from_positions(position, hero_position);
+void Enemy::walk(Dungeon &dungeon, Hero &hero) {
+	if (can_attack(hero.position)) {
+		facing_direction = get_direction_from_positions(position, hero.position);
 		printf("Now we attack.\n");
+		attack(hero);
 	}
 	else {
-		walk_path = generate_enemy_path(dungeon, hero_position);
+		walk_path = generate_enemy_path(dungeon, hero.position);
 		auto new_position = walk_path[0];
 
 		facing_direction = get_direction_from_positions(position, new_position);
@@ -81,4 +87,16 @@ std::vector<glm::vec2> Enemy::generate_enemy_path(Dungeon &dungeon, glm::vec2 &h
 #endif
 
 	return path;
+}
+
+void Enemy::attack(Hero &hero) {
+	int r = random_rangei(1, 11);
+
+	printf("HP before attack: %d\n", hero.hp);
+	hero.hp -= r;
+	printf("HP after attack: %d\n", hero.hp);
+}
+
+bool Enemy::check_death() {
+	return hp <= 0;
 }
