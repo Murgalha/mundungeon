@@ -12,6 +12,10 @@
 #include "game.h"
 #include "utils.h"
 
+#ifdef DEBUG
+#include "opengl_debug.h"
+#endif
+
 #define UNUSED(X) (void)(X)
 
 void resize_viewport(int width, int height) {
@@ -102,7 +106,13 @@ int main(int argc, char *argv[]) {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	const char* glsl_version = "#version 100";
+#ifdef DEBUG
+	// Enable OpenGL debug
+	glEnable(GL_DEBUG_OUTPUT);
+	glDebugMessageCallback(message_callback, 0);
+#endif
+
+	const char* glsl_version = "#version 330 core";
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGui::StyleColorsDark();
