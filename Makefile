@@ -9,10 +9,10 @@ SRCS := $(shell find $(SRC_DIR) -name *.cpp)
 OBJS := $(SRCS:%.cpp=$(WRKDIR)/%.o)
 
 # FLAGS
-LDLIBS_LOCAL := -lGL -lSDL2 -lm $(shell pkg-config --libs freetype2)
+LDLIBS_LOCAL := -lGL -lm $(shell pkg-config --libs freetype2) $(shell sdl2-config --libs)
 LDLIBS += $(LDLIBS_LOCAL)
 
-CPPFLAGS_LOCAL := -Iinclude $(shell pkg-config --cflags freetype2)
+CPPFLAGS_LOCAL := -Iinclude $(shell pkg-config --cflags freetype2) $(shell sdl2-config --cflags)
 CPPFLAGS += $(CPPFLAGS_LOCAL)
 CXXFLAGS += -Wall -Wextra -Werror
 
