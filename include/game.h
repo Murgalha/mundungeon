@@ -1,14 +1,15 @@
 #ifndef _GAME_H_
 #define _GAME_H_
 
+#include <SDL2/SDL.h>
 #include "types.h"
 #include "shader.h"
 #include "sprite_renderer.h"
 #include "text_renderer.h"
 #include "texture.h"
 #include "camera.h"
-#include "dungeon.h"
 #include "hero.h"
+#include "dungeon.h"
 
 typedef enum {
     GAME_ACTIVE,
@@ -26,15 +27,15 @@ struct Game {
 	unsigned int texture_id;
 	Camera *camera;
 	Dungeon *dungeon;
-	Hero *hero;
+	std::map<SDL_Keycode, Direction> direction_map;
 
 	Game(unsigned int, unsigned int);
 	~Game();
-};
+	void process_input(SDL_Event, float);
+	void init();
+	void update(float);
+	void render();
 
-void game_init(Game *);
-void game_process_input(Game *, float);
-void game_update(Game *, float);
-void game_render(Game *);
+};
 
 #endif
