@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include "text_renderer.h"
-#include "text_alignment.h"
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
@@ -106,7 +105,7 @@ TextRenderer::~TextRenderer() {
 	delete shader;
 }
 
-void TextRenderer::draw(std::string text, glm::vec2 position, float font_size, glm::vec3 color, TextAlignment alignment) {
+void TextRenderer::draw(std::string text, glm::vec2 position, float font_size, glm::vec3 color) {
     // activate corresponding render state
 	auto x = position.x;
 	auto y = position.y;
@@ -118,8 +117,8 @@ void TextRenderer::draw(std::string text, glm::vec2 position, float font_size, g
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(vao);
 
-	auto offset = calculate_text_offset(text, scale, alignment);
-
+	//auto offset = calculate_text_offset(text, scale, alignment);
+	auto offset = glm::vec2(0.0f);
     // iterate through all characters
     for (long unsigned int i = 0; i != text.size(); i++) {
 		char c = text[i];
@@ -156,18 +155,18 @@ void TextRenderer::draw(std::string text, glm::vec2 position, float font_size, g
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-glm::vec2 TextRenderer::calculate_text_offset(std::string text, float scale, TextAlignment alignment) {
-	auto offset = glm::vec2(0.0f);
-
-	if (alignment == TextAlignment::Left)
-		return glm::vec2(0.0f);
-
-	for (auto c : text) {
-        Character ch = characters[(int)c];
-
-		offset.x -= ch.size.x * scale;
-	}
-	offset.x = offset.x / 2.0f;
-
-	return offset;
-}
+//glm::vec2 TextRenderer::calculate_text_offset(std::string text, float scale, TextAlignment alignment) {
+//	auto offset = glm::vec2(0.0f);
+//
+//	if (alignment == TextAlignment::Left)
+//		return glm::vec2(0.0f);
+//
+//	for (auto c : text) {
+//        Character ch = characters[(int)c];
+//
+//		offset.x -= ch.size.x * scale;
+//	}
+//	offset.x = offset.x / 2.0f;
+//
+//	return offset;
+//}
