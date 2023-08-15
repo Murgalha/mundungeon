@@ -3,6 +3,7 @@
 #include "imgui/imgui_impl_sdl.h"
 #include "imgui/imgui_impl_opengl3.h"
 #include "game.h"
+#include "hero_action.h"
 
 #define UNUSED(X) (void)(X)
 
@@ -16,11 +17,11 @@ Game::Game(unsigned int viewport_width, unsigned int viewport_height) {
 	dungeon = new Dungeon(50);
 	camera = new Camera(dungeon->hero->grid_position);
 
-	direction_map = std::map<SDL_Keycode, Direction> {
-		{ SDLK_UP, UP },
-		{ SDLK_LEFT, LEFT },
-		{ SDLK_DOWN, DOWN },
-		{ SDLK_RIGHT, RIGHT }
+	direction_map = std::map<SDL_Keycode, HeroAction> {
+		{ SDLK_UP, HeroAction::WalkUp },
+		{ SDLK_LEFT, HeroAction::WalkLeft },
+		{ SDLK_DOWN, HeroAction::WalkDown },
+		{ SDLK_RIGHT, HeroAction::WalkRight }
 	};
 }
 
@@ -48,8 +49,8 @@ void Game::init() {
 }
 
 void Game::process_input(SDL_Event e, float delta_time) {
+	HeroAction action;
 	bool has_moved = false;
-	Direction direction;
 	ImGui_ImplSDL2_ProcessEvent(&e);
 
 	switch(e.type) {
@@ -71,15 +72,23 @@ void Game::process_input(SDL_Event e, float delta_time) {
 			break;
 			*/
 		case SDLK_UP:
+			action = HeroAction::WalkUp;
+			has_moved = true;
+			break;
 		case SDLK_DOWN:
+			action = HeroAction::WalkDown;
+			has_moved = true;
+			break;
 		case SDLK_LEFT:
+			action = HeroAction::WalkLeft;
+			has_moved = true;
+			break;
 		case SDLK_RIGHT:
-			direction = direction_map[e.key.keysym.sym];
-			hero_move(dungeon->hero, dungeon, direction, camera, delta_time);
+			action = HeroAction::WalkRight;
 			has_moved = true;
 			break;
 		case SDLK_x:
-			dungeon->hero->attack(*dungeon);
+			action = HeroAction::Attack;
 			has_moved = true;
 			break;
 		case SDLK_SPACE:
@@ -89,6 +98,8 @@ void Game::process_input(SDL_Event e, float delta_time) {
 	default:
 		break;
 	}
+
+	dungeon->hero->update(action, *dungeon, delta_time);
 
 	if(has_moved) {
 		glm::vec2 enemy_pos = dungeon->enemy.position;

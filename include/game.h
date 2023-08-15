@@ -10,6 +10,7 @@
 #include "camera.h"
 #include "hero.h"
 #include "dungeon.h"
+#include "hero_action.h"
 
 typedef enum {
     GAME_ACTIVE,
@@ -27,7 +28,7 @@ struct Game {
 	unsigned int texture_id;
 	Camera *camera;
 	Dungeon *dungeon;
-	std::map<SDL_Keycode, Direction> direction_map;
+	std::map<SDL_Keycode, HeroAction> direction_map;
 
 	Game(unsigned int, unsigned int);
 	~Game();

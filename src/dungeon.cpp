@@ -76,7 +76,7 @@ void dungeon_render(Dungeon *dungeon, SpriteRenderer *renderer, float delta_time
 	}
 
 	dungeon->enemy.draw(renderer);
-	hero_render(dungeon->hero, renderer, delta_time);
+	dungeon->hero->draw(renderer, delta_time);
 }
 
 void spawn_enemies(Dungeon *dungeon) {

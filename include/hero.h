@@ -4,6 +4,8 @@
 #include <glm/vec2.hpp>
 #include "sprite_renderer.h"
 #include "camera.h"
+#include "animation_calculator.h"
+#include "hero_action.h"
 
 struct Dungeon;
 
@@ -12,17 +14,16 @@ struct Hero {
 	glm::vec2 grid_position;
 	glm::vec2 real_position;
 	Direction facing_direction;
-	int hp;
 	bool is_moving;
-	float elapsed_time;
-	float movement_time;
+	int hp;
+	AnimationCalculator *animation;
 
 	Hero();
 	~Hero();
+	void update(HeroAction, Dungeon &, float);
+	void draw(SpriteRenderer *, float);
+private:
 	void attack(Dungeon &);
 };
-
-void hero_render(Hero *, SpriteRenderer *, float);
-void hero_move(Hero *, Dungeon *, Direction, Camera *, float);
 
 #endif
