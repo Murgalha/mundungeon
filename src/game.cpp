@@ -14,7 +14,7 @@ Game::Game(unsigned int viewport_width, unsigned int viewport_height) {
 	sprite_renderer = NULL;
 	text_renderer = NULL;
 	dungeon = new Dungeon(50);
-	camera = new Camera(dungeon->hero->position);
+	camera = new Camera(dungeon->hero->grid_position);
 
 	direction_map = std::map<SDL_Keycode, Direction> {
 		{ SDLK_UP, UP },
@@ -119,9 +119,9 @@ void Game::update(float delta_time) {
 
 }
 
-void Game::render() {
+void Game::render(float delta_time) {
 	ImGui::Render();
 
 	//text_renderer_draw(game->text_renderer, (char *)"hello", 0.0, 0.0, 1.0, glm::vec3(1.0f));
-	dungeon_render(dungeon, sprite_renderer);
+	dungeon_render(dungeon, sprite_renderer, delta_time);
 }

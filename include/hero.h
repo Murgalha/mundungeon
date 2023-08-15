@@ -9,16 +9,20 @@ struct Dungeon;
 
 struct Hero {
 	unsigned int texture_id;
-	glm::vec2 position;
+	glm::vec2 grid_position;
+	glm::vec2 real_position;
 	Direction facing_direction;
 	int hp;
+	bool is_moving;
+	float elapsed_time;
+	float movement_time;
 
 	Hero();
 	~Hero();
 	void attack(Dungeon &);
 };
 
-void hero_render(Hero *, SpriteRenderer *);
+void hero_render(Hero *, SpriteRenderer *, float);
 void hero_move(Hero *, Dungeon *, Direction, Camera *, float);
 
 #endif

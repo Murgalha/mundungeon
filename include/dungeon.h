@@ -23,6 +23,6 @@ struct Dungeon {
 };
 
 void dungeon_print(Dungeon *);
-void dungeon_render(Dungeon *, SpriteRenderer *);
+void dungeon_render(Dungeon *, SpriteRenderer *, float);
 
 #endif

@@ -32,13 +32,13 @@ void Enemy::draw(SpriteRenderer *renderer) {
 }
 
 void Enemy::walk(Dungeon &dungeon, Hero &hero) {
-	if (can_attack(hero.position)) {
-		facing_direction = get_direction_from_positions(position, hero.position);
+	if (can_attack(hero.grid_position)) {
+		facing_direction = get_direction_from_positions(position, hero.grid_position);
 		printf("Now we attack.\n");
 		attack(hero);
 	}
 	else {
-		walk_path = generate_enemy_path(dungeon, hero.position);
+		walk_path = generate_enemy_path(dungeon, hero.grid_position);
 		auto new_position = walk_path[0];
 
 		facing_direction = get_direction_from_positions(position, new_position);

@@ -63,7 +63,7 @@ int main(int argc, char *argv[]) {
 		// Clear screen and render
         glClearColor(0.165f, 0.114f, 0.31f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
-        game->render();
+        game->render(delta_time);
 
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 		SDL_GL_SwapWindow(app->window);

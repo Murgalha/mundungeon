@@ -59,7 +59,7 @@ void Dungeon::post_turn_cleanup() {
 	}
 }
 
-void dungeon_render(Dungeon *dungeon, SpriteRenderer *renderer) {
+void dungeon_render(Dungeon *dungeon, SpriteRenderer *renderer, float delta_time) {
 	DungeonTile tile;
 	unsigned int texture;
 	glm::vec2 position;
@@ -76,7 +76,7 @@ void dungeon_render(Dungeon *dungeon, SpriteRenderer *renderer) {
 	}
 
 	dungeon->enemy.draw(renderer);
-	hero_render(dungeon->hero, renderer);
+	hero_render(dungeon->hero, renderer, delta_time);
 }
 
 void spawn_enemies(Dungeon *dungeon) {

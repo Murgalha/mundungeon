@@ -34,7 +34,7 @@ struct Game {
 	void process_input(SDL_Event, float);
 	void init();
 	void update(float);
-	void render();
+	void render(float);
 
 };
 
