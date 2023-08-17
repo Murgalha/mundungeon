@@ -2,7 +2,8 @@
 #define _HERO_ACTION_H_
 
 enum struct HeroAction {
-	WalkRight = 1,
+	NoAction = 0,
+	WalkRight,
 	WalkLeft,
 	WalkUp,
 	WalkDown,

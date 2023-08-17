@@ -13,6 +13,7 @@ void dungeon_print(Dungeon *);
 Dungeon::Dungeon(unsigned short dungeon_size) {
 	hero = new Hero();
 	size = dungeon_size;
+	turn_action = HeroAction::NoAction;
 	map = DungeonGenerator::new_map(size);
 
 	spawn_enemies(this);
@@ -42,6 +43,23 @@ Dungeon::~Dungeon() {
 	delete hero;
 }
 
+void Dungeon::update(float delta_time) {
+	hero->update(turn_action, *this, delta_time);
+
+	if (turn_action != HeroAction::NoAction) {
+		glm::vec2 enemy_pos = enemy.position;
+		enemies[(int)enemy_pos.y][(int)enemy_pos.x] = 0;
+		enemy.walk(*this, *hero);
+
+		enemy_pos = enemy.position;
+		enemies[(int)enemy_pos.y][(int)enemy_pos.x] = 1;
+	}
+
+	post_turn_cleanup();
+
+	turn_action = HeroAction::NoAction;
+}
+
 void Dungeon::post_turn_cleanup() {
 	if (enemy.check_death()) {
 		auto old_position = enemy.position;
@@ -49,6 +67,7 @@ void Dungeon::post_turn_cleanup() {
 		auto old_y = (int)old_position.y;
 		enemies[old_y][old_x] = 0;
 
+		// TODO: Hardcoded respawn of enemies should not exist
 		enemy = Enemy(glm::vec2(13.0f, 21.0f));
 
 		auto new_position = enemy.position;

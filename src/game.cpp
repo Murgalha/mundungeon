@@ -49,8 +49,7 @@ void Game::init() {
 }
 
 void Game::process_input(SDL_Event e, float delta_time) {
-	HeroAction action;
-	bool has_moved = false;
+	HeroAction action = HeroAction::NoAction;
 	ImGui_ImplSDL2_ProcessEvent(&e);
 
 	switch(e.type) {
@@ -72,24 +71,15 @@ void Game::process_input(SDL_Event e, float delta_time) {
 			break;
 			*/
 		case SDLK_UP:
-			action = HeroAction::WalkUp;
-			has_moved = true;
-			break;
 		case SDLK_DOWN:
-			action = HeroAction::WalkDown;
-			has_moved = true;
-			break;
 		case SDLK_LEFT:
-			action = HeroAction::WalkLeft;
-			has_moved = true;
-			break;
 		case SDLK_RIGHT:
-			action = HeroAction::WalkRight;
-			has_moved = true;
+			if (!dungeon->hero->is_moving) {
+				action = direction_map[e.key.keysym.sym];
+			}
 			break;
 		case SDLK_x:
 			action = HeroAction::Attack;
-			has_moved = true;
 			break;
 		case SDLK_SPACE:
 			break;
@@ -99,19 +89,7 @@ void Game::process_input(SDL_Event e, float delta_time) {
 		break;
 	}
 
-	dungeon->hero->update(action, *dungeon, delta_time);
-
-	if(has_moved) {
-		glm::vec2 enemy_pos = dungeon->enemy.position;
-		dungeon->enemies[(int)enemy_pos.y][(int)enemy_pos.x] = 0;
-		dungeon->enemy.walk(*dungeon, *(dungeon->hero));
-
-		enemy_pos = dungeon->enemy.position;
-		dungeon->enemies[(int)enemy_pos.y][(int)enemy_pos.x] = 1;
-
-	}
-
-	dungeon->post_turn_cleanup();
+	dungeon->turn_action = action;
 }
 
 void Game::update(float delta_time) {
@@ -128,6 +106,7 @@ void Game::update(float delta_time) {
 		auto view = camera_view_matrix(camera);
 		shader_set_mat4(sprite_renderer->shader, (char *)"view", view);
 
+		dungeon->update(delta_time);
 }
 
 void Game::render(float delta_time) {

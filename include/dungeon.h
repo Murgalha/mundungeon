@@ -16,9 +16,11 @@ struct Dungeon {
 	Enemy enemy;
 	Hero *hero;
 	unsigned short size;
+	HeroAction turn_action;
 
 	Dungeon(unsigned short);
 	~Dungeon();
+	void update(float);
 	void post_turn_cleanup();
 };
 

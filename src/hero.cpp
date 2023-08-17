@@ -43,6 +43,10 @@ void Hero::attack(Dungeon &dungeon) {
 }
 
 void Hero::draw(SpriteRenderer *renderer, float delta_time) {
+	renderer->draw_sprite_with_rotation(texture_id, real_position, get_sprite_rotation(facing_direction));
+}
+
+void Hero::update(HeroAction action, Dungeon &dungeon, float delta_time) {
 	if (is_moving) {
 		if (animation->has_ended()) {
 			is_moving = false;
@@ -54,26 +58,24 @@ void Hero::draw(SpriteRenderer *renderer, float delta_time) {
 			real_position = new_position;
 		}
 	}
-	renderer->draw_sprite_with_rotation(texture_id, real_position, get_sprite_rotation(facing_direction));
-}
-
-void Hero::update(HeroAction action, Dungeon &dungeon, float delta_time) {
-	switch (action) {
-	case HeroAction::WalkRight:
-		hero_move(this, dungeon, RIGHT, delta_time);
-		break;
-	case HeroAction::WalkLeft:
-		hero_move(this, dungeon, LEFT, delta_time);
-		break;
-	case HeroAction::WalkDown:
-		hero_move(this, dungeon, DOWN, delta_time);
-		break;
-	case HeroAction::WalkUp:
-		hero_move(this, dungeon, UP, delta_time);
-		break;
-	case HeroAction::Attack:
-		attack(dungeon);
-		break;
+	else {
+		switch (action) {
+		case HeroAction::WalkRight:
+			hero_move(this, dungeon, RIGHT, delta_time);
+			break;
+		case HeroAction::WalkLeft:
+			hero_move(this, dungeon, LEFT, delta_time);
+			break;
+		case HeroAction::WalkDown:
+			hero_move(this, dungeon, DOWN, delta_time);
+			break;
+		case HeroAction::WalkUp:
+			hero_move(this, dungeon, UP, delta_time);
+			break;
+		case HeroAction::Attack:
+			attack(dungeon);
+			break;
+		}
 	}
 }
 
@@ -83,12 +85,10 @@ void hero_move(Hero *hero, Dungeon &dungeon, Direction d, float delta_time) {
 
 		hero->facing_direction = d;
 		if(can_walk(dungeon, new_grid_position)) {
+			glm::vec2 pixel_position = new_grid_position * SPRITE_WIDTH;
 			hero->is_moving = true;
 
-			printf("Walking to: (%.1f, %.1f)\n", new_grid_position.x, new_grid_position.y);
 			if (hero->animation != nullptr) delete hero->animation;
-
-			glm::vec2 pixel_position = new_grid_position * SPRITE_WIDTH;
 			hero->animation = new AnimationCalculator(hero->real_position, pixel_position, 300.0f);
 		}
 	}
