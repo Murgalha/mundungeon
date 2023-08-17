@@ -73,6 +73,8 @@ void Hero::_move(Dungeon &dungeon, Direction d) {
 
 			if (animation != nullptr) delete animation;
 			animation = new AnimationCalculator(real_position, pixel_position, 300.0f);
+
+			grid_position = new_grid_position;
 		}
 	}
 }
