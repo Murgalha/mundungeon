@@ -26,9 +26,9 @@ Enemy::Enemy(glm::vec2 start_position) {
 
 Enemy::~Enemy() { }
 
-void Enemy::draw(SpriteRenderer *renderer) {
+void Enemy::render(SpriteRenderer &renderer) {
 	glm::vec2 window_position = position * SPRITE_WIDTH;
-	renderer->draw_sprite_with_rotation(texture_id, window_position, get_sprite_rotation(facing_direction));
+	renderer.draw_sprite_with_rotation(texture_id, window_position, get_sprite_rotation(facing_direction));
 }
 
 void Enemy::walk(Dungeon &dungeon, Hero &hero) {

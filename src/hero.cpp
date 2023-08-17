@@ -10,8 +10,6 @@
 #include "random.h"
 
 float get_sprite_rotation(Direction);
-bool can_walk(Dungeon &, glm::vec2 &);
-void hero_move(Hero *, Dungeon &, Direction, float);
 
 Hero::Hero() {
 	texture_id = texture_new((char *)"assets/hero.png", GL_RGBA, false);
@@ -24,26 +22,8 @@ Hero::Hero() {
 
 Hero::~Hero() {}
 
-void Hero::attack(Dungeon &dungeon) {
-	auto offset = dir_array[facing_direction];
-	auto x = (int)(grid_position[0] + offset[0]);
-	auto y = (int)(grid_position[1] + offset[1]);
-
-	auto has_enemy = dungeon.enemies[y][x];
-
-	printf("Hero is attacking\n");
-	if (has_enemy) {
-		auto r = random_rangei(1, 11);
-
-		printf("Enemy HP before: %d\n", dungeon.enemy.hp);
-		dungeon.enemy.hp -= r;
-		printf("Enemy HP after: %d\n", dungeon.enemy.hp);
-		dungeon.enemy.check_death();
-	}
-}
-
-void Hero::draw(SpriteRenderer *renderer, float delta_time) {
-	renderer->draw_sprite_with_rotation(texture_id, real_position, get_sprite_rotation(facing_direction));
+void Hero::render(SpriteRenderer &renderer) {
+	renderer.draw_sprite_with_rotation(texture_id, real_position, get_sprite_rotation(facing_direction));
 }
 
 void Hero::update(HeroAction action, Dungeon &dungeon, float delta_time) {
@@ -61,43 +41,56 @@ void Hero::update(HeroAction action, Dungeon &dungeon, float delta_time) {
 	else {
 		switch (action) {
 		case HeroAction::WalkRight:
-			hero_move(this, dungeon, RIGHT, delta_time);
+			_move(dungeon, RIGHT);
 			break;
 		case HeroAction::WalkLeft:
-			hero_move(this, dungeon, LEFT, delta_time);
+			_move(dungeon, LEFT);
 			break;
 		case HeroAction::WalkDown:
-			hero_move(this, dungeon, DOWN, delta_time);
+			_move(dungeon, DOWN);
 			break;
 		case HeroAction::WalkUp:
-			hero_move(this, dungeon, UP, delta_time);
+			_move(dungeon, UP);
 			break;
 		case HeroAction::Attack:
-			attack(dungeon);
+			_attack(dungeon);
+			break;
+		case HeroAction::NoAction:
+		default:
 			break;
 		}
 	}
 }
 
-void hero_move(Hero *hero, Dungeon &dungeon, Direction d, float delta_time) {
-	if (!hero->is_moving) {
-		glm::vec2 new_grid_position = hero->grid_position + dir_array[d];
+void Hero::_move(Dungeon &dungeon, Direction d) {
+	if (!is_moving) {
+		glm::vec2 new_grid_position = grid_position + dir_array[d];
 
-		hero->facing_direction = d;
-		if(can_walk(dungeon, new_grid_position)) {
+		facing_direction = d;
+		if(dungeon.can_move_to(new_grid_position)) {
 			glm::vec2 pixel_position = new_grid_position * SPRITE_WIDTH;
-			hero->is_moving = true;
+			is_moving = true;
 
-			if (hero->animation != nullptr) delete hero->animation;
-			hero->animation = new AnimationCalculator(hero->real_position, pixel_position, 300.0f);
+			if (animation != nullptr) delete animation;
+			animation = new AnimationCalculator(real_position, pixel_position, 300.0f);
 		}
 	}
 }
 
-bool can_walk(Dungeon &dungeon, glm::vec2 &position) {
-	DungeonTile tile = dungeon.map[(int)position.y][(int)position.x];
+void Hero::_attack(Dungeon &dungeon) {
+	auto offset = dir_array[facing_direction];
+	auto x = (int)(grid_position[0] + offset[0]);
+	auto y = (int)(grid_position[1] + offset[1]);
 
-	return tile != DungeonTile::Wall &&
-		tile != DungeonTile::Empty &&
-		dungeon.enemies[(int)position.y][(int)position.x] != 1;
+	auto has_enemy = dungeon.enemies[y][x];
+
+	printf("Hero is attacking\n");
+	if (has_enemy) {
+		auto r = random_rangei(1, 11);
+
+		printf("Enemy HP before: %d\n", dungeon.enemy.hp);
+		dungeon.enemy.hp -= r;
+		printf("Enemy HP after: %d\n", dungeon.enemy.hp);
+		dungeon.enemy.check_death();
+	}
 }

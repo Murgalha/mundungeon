@@ -8,7 +8,6 @@
 #include "imgui.h"
 
 void spawn_enemies(Dungeon *);
-void dungeon_print(Dungeon *);
 
 Dungeon::Dungeon(unsigned short dungeon_size) {
 	hero = new Hero();
@@ -78,24 +77,32 @@ void Dungeon::post_turn_cleanup() {
 	}
 }
 
-void dungeon_render(Dungeon *dungeon, SpriteRenderer *renderer, float delta_time) {
+void Dungeon::render(SpriteRenderer &renderer) {
 	DungeonTile tile;
 	unsigned int texture;
 	glm::vec2 position;
 
-	for(int y = 0; y < dungeon->size; y++) {
-		for(int x = 0; x < dungeon->size; x++) {
-			tile = dungeon->map[y][x];
-			position[0] = x * renderer->sprite_width;
-			position[1] = y * renderer->sprite_height;
+	for(int y = 0; y < size; y++) {
+		for(int x = 0; x < size; x++) {
+			tile = map[y][x];
+			position[0] = x * renderer.sprite_width;
+			position[1] = y * renderer.sprite_height;
 
-			texture = dungeon->sprites[tile];
-			renderer->draw_sprite(texture, position);
+			texture = sprites[tile];
+			renderer.draw_sprite(texture, position);
 		}
 	}
 
-	dungeon->enemy.draw(renderer);
-	dungeon->hero->draw(renderer, delta_time);
+	enemy.render(renderer);
+	hero->render(renderer);
+}
+
+bool Dungeon::can_move_to(glm::vec2 &position) {
+	DungeonTile tile = map[(int)position.y][(int)position.x];
+
+	return tile != DungeonTile::Wall &&
+		tile != DungeonTile::Empty &&
+		enemies[(int)position.y][(int)position.x] != 1;
 }
 
 void spawn_enemies(Dungeon *dungeon) {
@@ -114,10 +121,10 @@ void spawn_enemies(Dungeon *dungeon) {
 	}
 }
 
-void dungeon_print(Dungeon *dungeon) {
-	for(int y = 0; y < dungeon->size; y++) {
-		for(int x = 0; x < dungeon->size; x++) {
-			printf("%c", to_char(dungeon->map[y][x]));
+void Dungeon::print() {
+	for(int y = 0; y < size; y++) {
+		for(int x = 0; x < size; x++) {
+			printf("%c", to_char(map[y][x]));
 		}
 		printf("\n");
 	}

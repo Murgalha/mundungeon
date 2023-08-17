@@ -109,9 +109,9 @@ void Game::update(float delta_time) {
 		dungeon->update(delta_time);
 }
 
-void Game::render(float delta_time) {
+void Game::render() {
 	ImGui::Render();
 
 	//text_renderer_draw(game->text_renderer, (char *)"hello", 0.0, 0.0, 1.0, glm::vec3(1.0f));
-	dungeon_render(dungeon, sprite_renderer, delta_time);
+	dungeon->render(*sprite_renderer);
 }

@@ -22,9 +22,9 @@ struct Dungeon {
 	~Dungeon();
 	void update(float);
 	void post_turn_cleanup();
+	void render(SpriteRenderer &);
+	void print();
+	bool can_move_to(glm::vec2 &);
 };
-
-void dungeon_print(Dungeon *);
-void dungeon_render(Dungeon *, SpriteRenderer *, float);
 
 #endif

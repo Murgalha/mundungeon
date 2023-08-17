@@ -18,7 +18,7 @@ struct Enemy {
 	Enemy();
 	Enemy(glm::vec2);
 	~Enemy();
-	void draw(SpriteRenderer *);
+	void render(SpriteRenderer &);
 	void walk(Dungeon &, Hero &);
 	bool check_death();
 

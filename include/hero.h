@@ -21,9 +21,10 @@ struct Hero {
 	Hero();
 	~Hero();
 	void update(HeroAction, Dungeon &, float);
-	void draw(SpriteRenderer *, float);
+	void render(SpriteRenderer &);
 private:
-	void attack(Dungeon &);
+	void _attack(Dungeon &);
+	void _move(Dungeon &, Direction);
 };
 
 #endif
