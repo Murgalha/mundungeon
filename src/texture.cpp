@@ -3,7 +3,7 @@
 #include "stb_image.h"
 #include "texture.h"
 
-unsigned int texture_new(char *filename, GLenum format, int flip) {
+uint32_t texture_new(char *filename, GLenum format, int flip) {
 	unsigned int texture;
 	int width, height, nchannels;
 	unsigned char *data;
@@ -31,6 +31,6 @@ unsigned int texture_new(char *filename, GLenum format, int flip) {
 	return texture;
 }
 
-void texture_bind(unsigned int id) {
+void texture_bind(uint32_t id) {
 	glBindTexture(GL_TEXTURE_2D, id);
 }

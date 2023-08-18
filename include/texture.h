@@ -2,8 +2,9 @@
 #define _TEXTURE_H_
 
 #include <SDL2/SDL_opengl.h>
+#include <stdint.h>
 
-unsigned int texture_new(char *, GLenum, int);
-void texture_bind(unsigned int);
+uint32_t texture_new(char *, GLenum, int);
+void texture_bind(uint32_t);
 
 #endif

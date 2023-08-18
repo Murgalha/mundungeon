@@ -11,10 +11,8 @@
 
 float get_sprite_rotation(Direction);
 
-Hero::Hero() {
-	texture_id = texture_new((char *)"assets/hero.png", GL_RGBA, false);
-	grid_position = glm::vec2(25.0, 25.0);
-	real_position = grid_position * SPRITE_WIDTH;
+Hero::Hero(uint32_t texture, glm::vec2 grid_start_pos) : Entity(texture, grid_start_pos * SPRITE_WIDTH) {
+	grid_position = grid_start_pos;
 	hp = 100;
 	is_moving = false;
 	animation = nullptr;
@@ -23,19 +21,19 @@ Hero::Hero() {
 Hero::~Hero() {}
 
 void Hero::render(SpriteRenderer &renderer) {
-	renderer.draw_sprite_with_rotation(texture_id, real_position, get_sprite_rotation(facing_direction));
+	renderer.draw_sprite_with_rotation(texture_id, position, get_sprite_rotation(facing_direction));
 }
 
 void Hero::update(HeroAction action, Dungeon &dungeon, float delta_time) {
 	if (is_moving) {
 		if (animation->has_ended()) {
 			is_moving = false;
-			real_position = animation->target;
-			grid_position = real_position / SPRITE_WIDTH;
+			position = animation->target;
+			grid_position = position / SPRITE_WIDTH;
 		}
 		else {
 			glm::vec2 new_position = animation->get_animation_position(delta_time);
-			real_position = new_position;
+			position = new_position;
 		}
 	}
 	else {
@@ -72,7 +70,7 @@ void Hero::_move(Dungeon &dungeon, Direction d) {
 			is_moving = true;
 
 			if (animation != nullptr) delete animation;
-			animation = new AnimationCalculator(real_position, pixel_position, 300.0f);
+			animation = new AnimationCalculator(position, pixel_position, 300.0f);
 
 			grid_position = new_grid_position;
 		}

@@ -10,17 +10,17 @@
 void spawn_enemies(Dungeon *);
 
 Dungeon::Dungeon(unsigned short dungeon_size) {
-	hero = new Hero();
+	_create_hero();
 	size = dungeon_size;
 	turn_action = HeroAction::NoAction;
 	map = DungeonGenerator::new_map(size);
 
 	spawn_enemies(this);
 
-	unsigned int door_texture = texture_new((char *)"assets/door.png", GL_RGBA, false);
-	unsigned int floor_texture = texture_new((char *)"assets/floor.png", GL_RGBA, false);
-	unsigned int wall_texture = texture_new((char *)"assets/wall.png", GL_RGBA, false);
-	unsigned int unknown_texture = texture_new((char *)"assets/unknown.png", GL_RGBA, false);
+	uint32_t door_texture = texture_new((char *)"assets/door.png", GL_RGBA, false);
+	uint32_t floor_texture = texture_new((char *)"assets/floor.png", GL_RGBA, false);
+	uint32_t wall_texture = texture_new((char *)"assets/wall.png", GL_RGBA, false);
+	uint32_t unknown_texture = texture_new((char *)"assets/unknown.png", GL_RGBA, false);
 
 	sprites = std::map<DungeonTile, unsigned int>();
 	sprites.insert(std::pair<DungeonTile, unsigned int>(DungeonTile::Unknown, unknown_texture));
@@ -46,11 +46,11 @@ void Dungeon::update(float delta_time) {
 	hero->update(turn_action, *this, delta_time);
 
 	if (turn_action != HeroAction::NoAction) {
-		glm::vec2 enemy_pos = enemy.position;
+		glm::vec2 enemy_pos = enemy.grid_position;
 		enemies[(int)enemy_pos.y][(int)enemy_pos.x] = 0;
 		enemy.walk(*this, *hero);
 
-		enemy_pos = enemy.position;
+		enemy_pos = enemy.grid_position;
 		enemies[(int)enemy_pos.y][(int)enemy_pos.x] = 1;
 	}
 
@@ -61,15 +61,15 @@ void Dungeon::update(float delta_time) {
 
 void Dungeon::post_turn_cleanup() {
 	if (enemy.check_death()) {
-		auto old_position = enemy.position;
+		auto old_position = enemy.grid_position;
 		auto old_x = (int)old_position.x;
 		auto old_y = (int)old_position.y;
 		enemies[old_y][old_x] = 0;
 
 		// TODO: Hardcoded respawn of enemies should not exist
-		enemy = Enemy(glm::vec2(13.0f, 21.0f));
+		enemy = Enemy(enemy.texture_id, glm::vec2(13.0f, 21.0f));
 
-		auto new_position = enemy.position;
+		auto new_position = enemy.grid_position;
 		auto new_x = (int)new_position.x;
 		auto new_y = (int)new_position.y;
 
@@ -106,6 +106,7 @@ bool Dungeon::can_move_to(glm::vec2 &position) {
 }
 
 void spawn_enemies(Dungeon *dungeon) {
+	auto tex_id = texture_new((char *)"assets/enemy.png", GL_RGBA, false);
 	glm::vec2 positions[] = {
 		glm::vec2(13.0f, 21.0f),
 	};
@@ -116,7 +117,7 @@ void spawn_enemies(Dungeon *dungeon) {
 	}
 
 	for (glm::vec2 position : positions) {
-		dungeon->enemy = Enemy(position);
+		dungeon->enemy = Enemy(tex_id, position);
 		dungeon->enemies[(int)position.y][(int)position.x] = 1;
 	}
 }
@@ -128,4 +129,11 @@ void Dungeon::print() {
 		}
 		printf("\n");
 	}
+}
+
+void Dungeon::_create_hero() {
+	auto texture = texture_new((char *)"assets/hero.png", GL_RGBA, false);
+	auto starting_position = glm::vec2(25.0, 25.0);
+
+	hero = new Hero(texture, starting_position);
 }

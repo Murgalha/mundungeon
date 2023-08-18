@@ -6,19 +6,18 @@
 #include "camera.h"
 #include "animation_calculator.h"
 #include "hero_action.h"
+#include "entity.h"
 
 struct Dungeon;
 
-struct Hero {
-	unsigned int texture_id;
+struct Hero : public Entity {
 	glm::vec2 grid_position;
-	glm::vec2 real_position;
 	Direction facing_direction;
 	bool is_moving;
 	int hp;
 	AnimationCalculator *animation;
 
-	Hero();
+	Hero(uint32_t, glm::vec2);
 	~Hero();
 	void update(HeroAction, Dungeon &, float);
 	void render(SpriteRenderer &);

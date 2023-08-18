@@ -25,6 +25,9 @@ struct Dungeon {
 	void render(SpriteRenderer &);
 	void print();
 	bool can_move_to(glm::vec2 &);
+
+private:
+	void _create_hero();
 };
 
 #endif
