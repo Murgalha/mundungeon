@@ -3,6 +3,7 @@
 #include "imgui/imgui_impl_sdl.h"
 #include "imgui/imgui_impl_opengl3.h"
 #include "game.h"
+#include "hero_action.h"
 
 #define UNUSED(X) (void)(X)
 
@@ -14,13 +15,13 @@ Game::Game(unsigned int viewport_width, unsigned int viewport_height) {
 	sprite_renderer = NULL;
 	text_renderer = NULL;
 	dungeon = new Dungeon(50);
-	camera = new Camera(dungeon->hero->position);
+	camera = new Camera(dungeon->hero->grid_position);
 
-	direction_map = std::map<SDL_Keycode, Direction> {
-		{ SDLK_UP, UP },
-		{ SDLK_LEFT, LEFT },
-		{ SDLK_DOWN, DOWN },
-		{ SDLK_RIGHT, RIGHT }
+	direction_map = std::map<SDL_Keycode, HeroAction> {
+		{ SDLK_UP, HeroAction::WalkUp },
+		{ SDLK_LEFT, HeroAction::WalkLeft },
+		{ SDLK_DOWN, HeroAction::WalkDown },
+		{ SDLK_RIGHT, HeroAction::WalkRight }
 	};
 }
 
@@ -48,8 +49,7 @@ void Game::init() {
 }
 
 void Game::process_input(SDL_Event e, float delta_time) {
-	bool has_moved = false;
-	Direction direction;
+	HeroAction action = HeroAction::NoAction;
 	ImGui_ImplSDL2_ProcessEvent(&e);
 
 	switch(e.type) {
@@ -74,13 +74,12 @@ void Game::process_input(SDL_Event e, float delta_time) {
 		case SDLK_DOWN:
 		case SDLK_LEFT:
 		case SDLK_RIGHT:
-			direction = direction_map[e.key.keysym.sym];
-			hero_move(dungeon->hero, dungeon, direction, camera, delta_time);
-			has_moved = true;
+			if (!dungeon->hero->is_moving) {
+				action = direction_map[e.key.keysym.sym];
+			}
 			break;
 		case SDLK_x:
-			dungeon->hero->attack(*dungeon);
-			has_moved = true;
+			action = HeroAction::Attack;
 			break;
 		case SDLK_SPACE:
 			break;
@@ -90,17 +89,7 @@ void Game::process_input(SDL_Event e, float delta_time) {
 		break;
 	}
 
-	if(has_moved) {
-		glm::vec2 enemy_pos = dungeon->enemy.position;
-		dungeon->enemies[(int)enemy_pos.y][(int)enemy_pos.x] = 0;
-		dungeon->enemy.walk(*dungeon, *(dungeon->hero));
-
-		enemy_pos = dungeon->enemy.position;
-		dungeon->enemies[(int)enemy_pos.y][(int)enemy_pos.x] = 1;
-
-	}
-
-	dungeon->post_turn_cleanup();
+	dungeon->turn_action = action;
 }
 
 void Game::update(float delta_time) {
@@ -117,11 +106,12 @@ void Game::update(float delta_time) {
 		auto view = camera_view_matrix(camera);
 		shader_set_mat4(sprite_renderer->shader, (char *)"view", view);
 
+		dungeon->update(delta_time);
 }
 
 void Game::render() {
 	ImGui::Render();
 
 	//text_renderer_draw(game->text_renderer, (char *)"hello", 0.0, 0.0, 1.0, glm::vec3(1.0f));
-	dungeon_render(dungeon, sprite_renderer);
+	dungeon->render(*sprite_renderer);
 }

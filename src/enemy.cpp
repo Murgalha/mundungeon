@@ -5,53 +5,73 @@
 #include "utils.h"
 #include "a_star.h"
 #include "random.h"
+#include "dungeon.h"
 
-Enemy::Enemy() {
-	texture_id = -1;
-	position = glm::vec2(0.0f);
-	starting_position = glm::vec2(0.0f);
+Enemy::Enemy() : Entity(-1, glm::vec2(0.0f)){
+	grid_position = glm::vec2(0.0f);
 	walk_path = std::vector<glm::vec2>();
 	facing_direction = DOWN;
 	hp = 0;
+	animation = nullptr;
+	is_moving = false;
 }
 
-Enemy::Enemy(glm::vec2 start_position) {
-	texture_id = texture_new((char *)"assets/enemy.png", GL_RGBA, false);
-	starting_position[0] = start_position[0]; starting_position[1] = start_position[1];
-	position[0] = start_position[0]; position[1] = start_position[1];
-
+Enemy::Enemy(uint32_t texture, glm::vec2 grid_start_pos) : Entity(texture, grid_start_pos * SPRITE_WIDTH) {
+	grid_position = grid_start_pos;
 	hp = 30;
 	walk_path = std::vector<glm::vec2>();
+	is_moving = false;
+	animation = nullptr;
 }
 
 Enemy::~Enemy() { }
 
-void Enemy::draw(SpriteRenderer *renderer) {
-	glm::vec2 window_position = position * SPRITE_WIDTH;
-	renderer->draw_sprite_with_rotation(texture_id, window_position, get_sprite_rotation(facing_direction));
+void Enemy::update(Dungeon &dungeon, float delta_time) {
+	if (is_moving) {
+		if (animation->has_ended()) {
+			is_moving = false;
+			position = animation->target;
+			grid_position = position / SPRITE_WIDTH;
+		}
+		else {
+			glm::vec2 new_position = animation->get_animation_position(delta_time);
+			position = new_position;
+		}
+	}
+	else if (dungeon.turn_action != HeroAction::NoAction) {
+		auto hero = dungeon.hero;
+		if (_can_attack(hero->grid_position)) {
+			facing_direction = get_direction_from_positions(grid_position, hero->grid_position);
+			printf("Now we attack.\n");
+			_attack(*hero);
+		}
+		else {
+			_walk(dungeon);
+		}
+	}
 }
 
-void Enemy::walk(Dungeon &dungeon, Hero &hero) {
-	if (can_attack(hero.position)) {
-		facing_direction = get_direction_from_positions(position, hero.position);
-		printf("Now we attack.\n");
-		attack(hero);
-	}
-	else {
-		walk_path = generate_enemy_path(dungeon, hero.position);
-		auto new_position = walk_path[0];
+void Enemy::render(SpriteRenderer &renderer) {
+	renderer.draw_sprite_with_rotation(texture_id, position, get_sprite_rotation(facing_direction));
+}
 
-		facing_direction = get_direction_from_positions(position, new_position);
+void Enemy::_walk(Dungeon &dungeon) {
+	auto hero = dungeon.hero;
+	// TODO: Avoid generating new path all the time
+	walk_path = generate_enemy_path(dungeon, hero->grid_position);
+	auto new_grid_position = walk_path[0];
+	auto new_position = new_grid_position * SPRITE_WIDTH;
 
-		position = new_position;
-	}
- }
+	facing_direction = get_direction_from_positions(grid_position, new_grid_position);
 
-bool Enemy::can_attack(glm::vec2 &hero_position) {
-	auto diff = position - hero_position;
+	if (animation != nullptr) delete animation;
+	animation = new AnimationCalculator(position, new_position, 300.0f);
+	is_moving = true;
+}
+
+bool Enemy::_can_attack(glm::vec2 &hero_position) {
+	auto diff = grid_position - hero_position;
 	auto val = glm::length(glm::abs(diff));
-	printf("Diff: %.1f\n", val);
-
 	return val == 1.0;
 }
 
@@ -74,7 +94,7 @@ Direction Enemy::get_direction_from_positions(glm::vec2 &old_position, glm::vec2
 }
 
 std::vector<glm::vec2> Enemy::generate_enemy_path(Dungeon &dungeon, glm::vec2 &hero_position) {
-	std::vector<glm::vec2> path = AStar::find_path(dungeon, position, hero_position);
+	std::vector<glm::vec2> path = AStar::find_path(dungeon, grid_position, hero_position);
 	path.erase(path.begin());
 	path.erase(path.end() - 1);
 
@@ -89,7 +109,7 @@ std::vector<glm::vec2> Enemy::generate_enemy_path(Dungeon &dungeon, glm::vec2 &h
 	return path;
 }
 
-void Enemy::attack(Hero &hero) {
+void Enemy::_attack(Hero &hero) {
 	int r = random_rangei(1, 11);
 
 	printf("HP before attack: %d\n", hero.hp);

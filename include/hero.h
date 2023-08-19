@@ -4,21 +4,26 @@
 #include <glm/vec2.hpp>
 #include "sprite_renderer.h"
 #include "camera.h"
+#include "animation_calculator.h"
+#include "hero_action.h"
+#include "entity.h"
 
 struct Dungeon;
 
-struct Hero {
-	unsigned int texture_id;
-	glm::vec2 position;
+struct Hero : public Entity {
+	glm::vec2 grid_position;
 	Direction facing_direction;
+	bool is_moving;
 	int hp;
+	AnimationCalculator *animation;
 
-	Hero();
+	Hero(uint32_t, glm::vec2);
 	~Hero();
-	void attack(Dungeon &);
+	void update(Dungeon &, float);
+	void render(SpriteRenderer &);
+private:
+	void _attack(Dungeon &);
+	void _move(Dungeon &, Direction);
 };
-
-void hero_render(Hero *, SpriteRenderer *);
-void hero_move(Hero *, Dungeon *, Direction, Camera *, float);
 
 #endif
