@@ -19,7 +19,7 @@ struct Hero : public Entity {
 
 	Hero(uint32_t, glm::vec2);
 	~Hero();
-	void update(HeroAction, Dungeon &, float);
+	void update(Dungeon &, float);
 	void render(SpriteRenderer &);
 private:
 	void _attack(Dungeon &);

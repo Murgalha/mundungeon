@@ -43,16 +43,14 @@ Dungeon::~Dungeon() {
 }
 
 void Dungeon::update(float delta_time) {
-	hero->update(turn_action, *this, delta_time);
+	hero->update(*this, delta_time);
 
-	if (turn_action != HeroAction::NoAction) {
-		glm::vec2 enemy_pos = enemy.grid_position;
-		enemies[(int)enemy_pos.y][(int)enemy_pos.x] = 0;
-		enemy.walk(*this, *hero);
+	glm::vec2 enemy_pos = enemy.grid_position;
+	enemies[(int)enemy_pos.y][(int)enemy_pos.x] = 0;
+	enemy.update(*this, delta_time);
 
-		enemy_pos = enemy.grid_position;
-		enemies[(int)enemy_pos.y][(int)enemy_pos.x] = 1;
-	}
+	enemy_pos = enemy.grid_position;
+	enemies[(int)enemy_pos.y][(int)enemy_pos.x] = 1;
 
 	post_turn_cleanup();
 

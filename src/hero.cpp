@@ -24,7 +24,8 @@ void Hero::render(SpriteRenderer &renderer) {
 	renderer.draw_sprite_with_rotation(texture_id, position, get_sprite_rotation(facing_direction));
 }
 
-void Hero::update(HeroAction action, Dungeon &dungeon, float delta_time) {
+void Hero::update(Dungeon &dungeon, float delta_time) {
+	HeroAction action = dungeon.turn_action;
 	if (is_moving) {
 		if (animation->has_ended()) {
 			is_moving = false;
