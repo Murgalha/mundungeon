@@ -56,8 +56,8 @@ int main(int argc, char *argv[]) {
 	while(!app->should_quit) {
 		delta_time = clock.delta_time();
 
-		// Process input and update game
-		app->process_input(game, delta_time);
+		// Handle input and update game
+		app->handle_input(game);
         game->update(delta_time);
 
 		// Clear screen and render

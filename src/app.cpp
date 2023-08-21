@@ -11,7 +11,7 @@ App::~App() {
 	SDL_DestroyWindow(window);
 }
 
-void App::process_input(Game *game, float delta_time) {
+void App::handle_input(Game *game) {
 	SDL_Event e;
 
 	while(SDL_PollEvent(&e)) {
@@ -29,7 +29,7 @@ void App::process_input(Game *game, float delta_time) {
 			should_quit = true;
 			break;
 		default:
-			game->process_input(e, delta_time);
+			game->handle_input(e);
 		}
 	}
 }

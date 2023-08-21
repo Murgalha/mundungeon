@@ -2,12 +2,13 @@
 #define _DUNGEON_H_
 
 #include <map>
-#include "sprite_renderer.h"
-#include "dungeon_tile.h"
+#include <vector>
 #include <glm/vec2.hpp>
 #include "sprite_renderer.h"
-#include <vector>
+#include "dungeon_tile.h"
+#include "sprite_renderer.h"
 #include "enemy.h"
+#include "input.h"
 
 struct Dungeon {
 	std::map<DungeonTile, unsigned int> sprites;
@@ -21,13 +22,14 @@ struct Dungeon {
 	Dungeon(unsigned short);
 	~Dungeon();
 	void update(float);
-	void post_turn_cleanup();
 	void render(SpriteRenderer &);
+	bool handle_input(Input);
 	void print();
 	bool can_move_to(glm::vec2 &);
 
 private:
 	void _create_hero();
+	void _post_turn_cleanup();
 };
 
 #endif

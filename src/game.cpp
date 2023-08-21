@@ -3,7 +3,6 @@
 #include "imgui/imgui_impl_sdl.h"
 #include "imgui/imgui_impl_opengl3.h"
 #include "game.h"
-#include "hero_action.h"
 
 #define UNUSED(X) (void)(X)
 
@@ -17,11 +16,11 @@ Game::Game(unsigned int viewport_width, unsigned int viewport_height) {
 	dungeon = new Dungeon(50);
 	camera = new Camera(dungeon->hero->grid_position);
 
-	direction_map = std::map<SDL_Keycode, HeroAction> {
-		{ SDLK_UP, HeroAction::WalkUp },
-		{ SDLK_LEFT, HeroAction::WalkLeft },
-		{ SDLK_DOWN, HeroAction::WalkDown },
-		{ SDLK_RIGHT, HeroAction::WalkRight }
+	input_map = std::map<SDL_Keycode, Input> {
+		{ SDLK_UP, Input::MoveUp },
+		{ SDLK_LEFT, Input::MoveLeft },
+		{ SDLK_DOWN, Input::MoveDown },
+		{ SDLK_RIGHT, Input::MoveRight }
 	};
 }
 
@@ -48,48 +47,22 @@ void Game::init() {
     //game->text_renderer = new TextRenderer();
 }
 
-void Game::process_input(SDL_Event e, float delta_time) {
-	HeroAction action = HeroAction::NoAction;
+bool Game::handle_input(SDL_Event e) {
+	Input input = Input::Unknown;
+	bool handled = false;
 	ImGui_ImplSDL2_ProcessEvent(&e);
 
+	// TODO: Maybe this translation should be done on App level
 	switch(e.type) {
 	case SDL_KEYDOWN:
-		switch(e.key.keysym.sym) {
-			// TODO: make camera-only movement as free-roam and not tile-based
-			/*
-		case SDLK_RIGHT:
-			camera_move(camera, RIGHT, delta_time);
-			break;
-		case SDLK_LEFT:
-			camera_move(camera, LEFT, delta_time);
-			break;
-		case SDLK_DOWN:
-			camera_move(camera, DOWN, delta_time);
-			break;
-		case SDLK_UP:
-			camera_move(camera, UP, delta_time);
-			break;
-			*/
-		case SDLK_UP:
-		case SDLK_DOWN:
-		case SDLK_LEFT:
-		case SDLK_RIGHT:
-			if (!dungeon->hero->is_moving) {
-				action = direction_map[e.key.keysym.sym];
-			}
-			break;
-		case SDLK_x:
-			action = HeroAction::Attack;
-			break;
-		case SDLK_SPACE:
-			break;
-		}
+		input = input_map[e.key.keysym.sym];
+		handled = dungeon->handle_input(input);
 		break;
 	default:
 		break;
 	}
 
-	dungeon->turn_action = action;
+	return handled;
 }
 
 void Game::update(float delta_time) {

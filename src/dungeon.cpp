@@ -42,6 +42,35 @@ Dungeon::~Dungeon() {
 	delete hero;
 }
 
+bool Dungeon::handle_input(Input input) {
+	HeroAction action = HeroAction::NoAction;
+	bool handled = false;
+
+	switch(input) {
+	case Input::MoveUp:
+		action = HeroAction::WalkUp;
+		handled = true;
+		break;
+	case Input::MoveDown:
+		action = HeroAction::WalkDown;
+		handled = true;
+		break;
+	case Input::MoveLeft:
+		action = HeroAction::WalkLeft;
+		handled = true;
+		break;
+	case Input::MoveRight:
+		action = HeroAction::WalkRight;
+		handled = true;
+		break;
+	default:
+		break;
+	}
+	turn_action = action;
+
+	return handled;
+}
+
 void Dungeon::update(float delta_time) {
 	hero->update(*this, delta_time);
 
@@ -52,12 +81,12 @@ void Dungeon::update(float delta_time) {
 	enemy_pos = enemy.grid_position;
 	enemies[(int)enemy_pos.y][(int)enemy_pos.x] = 1;
 
-	post_turn_cleanup();
+	_post_turn_cleanup();
 
 	turn_action = HeroAction::NoAction;
 }
 
-void Dungeon::post_turn_cleanup() {
+void Dungeon::_post_turn_cleanup() {
 	if (enemy.check_death()) {
 		auto old_position = enemy.grid_position;
 		auto old_x = (int)old_position.x;
