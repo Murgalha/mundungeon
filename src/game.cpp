@@ -75,11 +75,12 @@ void Game::update(float delta_time) {
 		ImGui::Text("Delta time: %.2f ms", delta_time);
 		ImGui::End();
 
-		shader_use(sprite_renderer->shader);
-		auto view = camera_view_matrix(camera);
-		shader_set_mat4(sprite_renderer->shader, (char *)"view", view);
-
 		dungeon->update(delta_time);
+
+		shader_use(sprite_renderer->shader);
+		camera->focus_on(dungeon->hero->position);
+		auto view = camera->view_matrix();
+		shader_set_mat4(sprite_renderer->shader, (char *)"view", view);
 }
 
 void Game::render() {

@@ -3,46 +3,24 @@
 #include "sprite_renderer.h"
 #include "utils.h"
 
-Camera::Camera(glm::vec2 &hero_position) {
-	int nsprites_x = SCREEN_WIDTH / SPRITE_WIDTH;
-	int nsprites_y = SCREEN_HEIGHT / SPRITE_HEIGHT;
+Camera::Camera(glm::vec2 &focus_position) {
+	position.z = 3.0f;
 
-	position[0] = ((hero_position[0] - (nsprites_x / 2)) * SPRITE_WIDTH) + (SPRITE_WIDTH / 2);
-	position[1] = ((hero_position[1] - (nsprites_y / 2)) * SPRITE_HEIGHT) + (SPRITE_HEIGHT / 2);
-	position[2] = 3.0f;
-	zoom = 45.0f;
+	up = glm::vec3(0.0f, 1.0f, 0.0f);
+	front = glm::vec3(0.0f, 0.0f, -1.0f);
 
-	this->up = glm::vec3(0.0f, 1.0f, 0.0f);
-	this->front = glm::vec3(0.0f, 0.0f, -1.0f);
+	right = glm::normalize(glm::cross(front, up));
 
-	this->right = glm::normalize(glm::cross(front, up));
-	this->movement_speed = 2.5;
+	focus_on(focus_position);
 }
 
 Camera::~Camera() {}
 
-glm::mat4 camera_view_matrix(Camera *camera) {
-	return glm::lookAt(camera->position, camera->position + camera->front, camera->up);
+glm::mat4 Camera::view_matrix() {
+	return glm::lookAt(position, position + front, up);
 }
 
-void camera_move(Camera *camera, Direction direction, float delta_time) {
-	float velocity = camera->movement_speed * delta_time;
-	velocity = SPRITE_WIDTH;
-
-	if (direction == UP) {
-		// position -= up * velocity
-		camera->position -= camera->up * velocity;
-	}
-	if (direction == DOWN) {
-		// position += up * velocity
-		camera->position += camera->up * velocity;
-	}
-	if (direction == LEFT) {
-		// position -= right * velocity
-		camera->position -= camera->right * velocity;
-	}
-	if (direction == RIGHT) {
-		// position += right * velocity
-		camera->position += camera->right * velocity;
-	}
+void Camera::focus_on(glm::vec2 &focus_position) {
+	position.x = focus_position.x + (SPRITE_WIDTH / 2) - SCREEN_WIDTH / 2;
+	position.y = focus_position.y + (SPRITE_HEIGHT / 2) - SCREEN_HEIGHT / 2;
 }

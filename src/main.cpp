@@ -77,6 +77,5 @@ int main(int argc, char *argv[]) {
 	delete app;
 	SDL_Quit();
 
-
 	return 0;
 }

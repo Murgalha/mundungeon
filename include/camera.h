@@ -10,14 +10,11 @@ struct Camera {
 	glm::vec3 front;
 	glm::vec3 up;
 	glm::vec3 right;
-	float zoom;
-    float movement_speed;
 
 	Camera(glm::vec2 &);
 	~Camera();
+	glm::mat4 view_matrix();
+	void focus_on(glm::vec2 &);
 };
-
-glm::mat4 camera_view_matrix(Camera *);
-void camera_move(Camera *, Direction, float);
 
 #endif
