@@ -14,16 +14,15 @@ struct Shader {
 
 	Shader();
 	~Shader();
-};
 
-void shader_create(Shader *, GLenum, char *);
-void shader_create_program(Shader *);
-void shader_reload(Shader *);
-void shader_use(Shader *);
-void shader_set_float(Shader *, char *, float);
-void shader_set_int(Shader *, char *, int);
-void shader_set_vec3(Shader *, char *, float, float, float);
-void shader_set_vec4(Shader *, char *, glm::vec4 &);
-void shader_set_mat4(Shader *, char *, glm::mat4 &);
+	void create(GLenum, char *);
+	void create_program();
+	void use();
+	void set_float(char *, float);
+	void set_int(char *, int);
+	void set_vec3(char *, glm::vec3 &);
+	void set_vec4(char *, glm::vec4 &);
+	void set_mat4(char *, glm::mat4 &);
+};
 
 #endif

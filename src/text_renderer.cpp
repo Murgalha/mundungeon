@@ -77,12 +77,12 @@ TextRenderer::TextRenderer(glm::mat4 &projection) {
 	bitmap_font_size = 100.0f;
 
 	shader = new Shader();
-	shader_create(shader, GL_VERTEX_SHADER, (char *)"shaders/text.vert");
-	shader_create(shader, GL_FRAGMENT_SHADER, (char *)"shaders/text.frag");
-	shader_create_program(shader);
+	shader->create(GL_VERTEX_SHADER, (char *)"shaders/text.vert");
+	shader->create(GL_FRAGMENT_SHADER, (char *)"shaders/text.frag");
+	shader->create_program();
 
-	shader_use(shader);
-	shader_set_mat4(shader, (char *)"projection", projection);
+	shader->use();
+	shader->set_mat4((char *)"projection", projection);
 
 	create_characters();
 
@@ -111,8 +111,8 @@ void TextRenderer::draw(std::string text, glm::vec2 position, float font_size, g
 	auto y = position.y;
 	auto scale = font_size / bitmap_font_size;
 
-    shader_use(shader);
-	shader_set_vec3(shader, (char *)"textColor", color[0], color[1], color[2]);
+    shader->use();
+	shader->set_vec3((char *)"textColor", color);
 
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(vao);

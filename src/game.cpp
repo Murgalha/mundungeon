@@ -34,15 +34,15 @@ Game::~Game() {
 
 void Game::init() {
 	Shader *shader = new Shader();
-	shader_create(shader, GL_VERTEX_SHADER, (char *)"shaders/shader.vert");
-	shader_create(shader, GL_FRAGMENT_SHADER, (char *)"shaders/shader.frag");
-	shader_create_program(shader);
+	shader->create(GL_VERTEX_SHADER, (char *)"shaders/shader.vert");
+	shader->create(GL_FRAGMENT_SHADER, (char *)"shaders/shader.frag");
+	shader->create_program();
 
 	glm::mat4 projection = glm::ortho(0.0f, (float)width, (float)height, 0.0f, -10.0f, 10.0f);
 
-	shader_use(shader);
-	shader_set_int(shader, (char *)"image", 0);
-	shader_set_mat4(shader, (char *)"projection", projection);
+	shader->use();
+	shader->set_int((char *)"image", 0);
+	shader->set_mat4((char *)"projection", projection);
     sprite_renderer = new SpriteRenderer(shader);
     //game->text_renderer = new TextRenderer();
 }
@@ -77,10 +77,11 @@ void Game::update(float delta_time) {
 
 		dungeon->update(delta_time);
 
-		shader_use(sprite_renderer->shader);
+		auto shader = sprite_renderer->shader;
+		shader->use();
 		camera->focus_on(dungeon->hero->position);
 		auto view = camera->view_matrix();
-		shader_set_mat4(sprite_renderer->shader, (char *)"view", view);
+		shader->set_mat4((char *)"view", view);
 }
 
 void Game::render() {
