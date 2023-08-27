@@ -23,6 +23,7 @@ void shader_use(Shader *);
 void shader_set_float(Shader *, char *, float);
 void shader_set_int(Shader *, char *, int);
 void shader_set_vec3(Shader *, char *, float, float, float);
+void shader_set_vec4(Shader *, char *, glm::vec4 &);
 void shader_set_mat4(Shader *, char *, glm::mat4 &);
 
 #endif

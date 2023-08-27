@@ -64,6 +64,10 @@ void shader_set_vec3(Shader *s, char *name, float x, float y, float z) {
     glUniform3fv(glGetUniformLocation(s->program, name), 1, &v[0]);
 }
 
+void shader_set_vec4(Shader *s, char *name, glm::vec4 &v) {
+    glUniform4fv(glGetUniformLocation(s->program, name), 1, &v[0]);
+}
+
 void shader_set_mat4(Shader *s, char *name, glm::mat4 &m) {
 	unsigned int loc = glGetUniformLocation(s->program, name);
 	glUniformMatrix4fv(loc, 1, GL_FALSE, &m[0][0]);

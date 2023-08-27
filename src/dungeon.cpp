@@ -116,7 +116,7 @@ void Dungeon::render(SpriteRenderer &renderer) {
 			position[1] = y * renderer.sprite_height;
 
 			texture = sprites[tile];
-			renderer.draw_sprite(texture, position);
+			renderer.render(texture, position);
 		}
 	}
 

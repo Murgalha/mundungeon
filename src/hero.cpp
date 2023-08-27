@@ -21,7 +21,7 @@ Hero::Hero(uint32_t texture, glm::vec2 grid_start_pos) : Entity(texture, grid_st
 Hero::~Hero() {}
 
 void Hero::render(SpriteRenderer &renderer) {
-	renderer.draw_sprite_with_rotation(texture_id, position, get_sprite_rotation(facing_direction));
+	renderer.render(texture_id, position, get_sprite_rotation(facing_direction));
 }
 
 void Hero::update(Dungeon &dungeon, float delta_time) {

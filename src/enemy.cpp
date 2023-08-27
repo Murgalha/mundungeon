@@ -52,7 +52,7 @@ void Enemy::update(Dungeon &dungeon, float delta_time) {
 }
 
 void Enemy::render(SpriteRenderer &renderer) {
-	renderer.draw_sprite_with_rotation(texture_id, position, get_sprite_rotation(facing_direction));
+	renderer.render(texture_id, position, get_sprite_rotation(facing_direction));
 }
 
 void Enemy::_walk(Dungeon &dungeon) {
