@@ -7,28 +7,29 @@
 #include "texture.h"
 #include "imgui.h"
 
-void spawn_enemies(Dungeon *);
-
-Dungeon::Dungeon(unsigned short dungeon_size) {
+Dungeon::Dungeon(uint16_t dungeon_size) {
+	is_game_over = false;
 	_create_hero();
 	size = dungeon_size;
 	turn_action = HeroAction::NoAction;
 	map = DungeonGenerator::new_map(size);
 
-	spawn_enemies(this);
+	_spawn_enemies();
 
 	uint32_t door_texture = texture_new((char *)"assets/door.png", GL_RGBA, false);
 	uint32_t floor_texture = texture_new((char *)"assets/floor.png", GL_RGBA, false);
 	uint32_t wall_texture = texture_new((char *)"assets/wall.png", GL_RGBA, false);
 	uint32_t unknown_texture = texture_new((char *)"assets/unknown.png", GL_RGBA, false);
+	uint32_t white_texture = texture_new((char *)"assets/white.png", GL_RGBA, false);
 
-	sprites = std::map<DungeonTile, unsigned int>();
-	sprites.insert(std::pair<DungeonTile, unsigned int>(DungeonTile::Unknown, unknown_texture));
-	sprites.insert(std::pair<DungeonTile, unsigned int>(DungeonTile::Floor, floor_texture));
-	sprites.insert(std::pair<DungeonTile, unsigned int>(DungeonTile::Door, door_texture));
-	sprites.insert(std::pair<DungeonTile, unsigned int>(DungeonTile::Corridor, floor_texture));
-	sprites.insert(std::pair<DungeonTile, unsigned int>(DungeonTile::Wall, wall_texture));
-	sprites.insert(std::pair<DungeonTile, unsigned int>(DungeonTile::Empty, wall_texture));
+	sprites = std::map<DungeonTile, uint32_t>();
+	sprites.insert(std::pair<DungeonTile, uint32_t>(DungeonTile::Unknown, unknown_texture));
+	sprites.insert(std::pair<DungeonTile, uint32_t>(DungeonTile::Floor, floor_texture));
+	sprites.insert(std::pair<DungeonTile, uint32_t>(DungeonTile::Door, door_texture));
+	sprites.insert(std::pair<DungeonTile, uint32_t>(DungeonTile::Corridor, floor_texture));
+	sprites.insert(std::pair<DungeonTile, uint32_t>(DungeonTile::Wall, wall_texture));
+	sprites.insert(std::pair<DungeonTile, uint32_t>(DungeonTile::Empty, wall_texture));
+	sprites.insert(std::pair<DungeonTile, uint32_t>(DungeonTile::White, white_texture));
 }
 
 Dungeon::~Dungeon() {
@@ -43,6 +44,9 @@ Dungeon::~Dungeon() {
 }
 
 bool Dungeon::handle_input(Input input) {
+	if (is_game_over)
+		return true;
+
 	HeroAction action = HeroAction::NoAction;
 	bool handled = false;
 
@@ -102,9 +106,13 @@ void Dungeon::_post_turn_cleanup() {
 
 		enemies[new_y][new_x] = 1;
 	}
+
+	if (hero->is_dead()) {
+		is_game_over = true;
+	}
 }
 
-void Dungeon::render(SpriteRenderer &renderer) {
+void Dungeon::render(SpriteRenderer &renderer, TextRenderer &text_renderer) {
 	DungeonTile tile;
 	unsigned int texture;
 	glm::vec2 position;
@@ -122,6 +130,10 @@ void Dungeon::render(SpriteRenderer &renderer) {
 
 	enemy.render(renderer);
 	hero->render(renderer);
+
+	if (is_game_over) {
+		_draw_gameover(renderer, text_renderer);
+	}
 }
 
 bool Dungeon::can_move_to(glm::vec2 &position) {
@@ -132,20 +144,20 @@ bool Dungeon::can_move_to(glm::vec2 &position) {
 		enemies[(int)position.y][(int)position.x] != 1;
 }
 
-void spawn_enemies(Dungeon *dungeon) {
+void Dungeon::_spawn_enemies() {
 	auto tex_id = texture_new((char *)"assets/enemy.png", GL_RGBA, false);
 	glm::vec2 positions[] = {
 		glm::vec2(13.0f, 21.0f),
 	};
 
-	dungeon->enemies = (unsigned char **) malloc (sizeof(unsigned char *) * dungeon->size);
-	for(int i = 0; i < dungeon->size; i++) {
-		dungeon->enemies[i] = (unsigned char *) calloc (dungeon->size, sizeof(unsigned char));
+	enemies = (unsigned char **) malloc (sizeof(unsigned char *) * size);
+	for(int i = 0; i < size; i++) {
+		enemies[i] = (unsigned char *) calloc (size, sizeof(unsigned char));
 	}
 
 	for (glm::vec2 position : positions) {
-		dungeon->enemy = Enemy(tex_id, position);
-		dungeon->enemies[(int)position.y][(int)position.x] = 1;
+		enemy = Enemy(tex_id, position);
+		enemies[(int)position.y][(int)position.x] = 1;
 	}
 }
 
@@ -163,4 +175,22 @@ void Dungeon::_create_hero() {
 	auto starting_position = glm::vec2(25.0, 25.0);
 
 	hero = new Hero(texture, starting_position);
+}
+
+void Dungeon::_draw_gameover(SpriteRenderer &renderer, TextRenderer &text_renderer) {
+	// draw white transparent square
+	auto tex = sprites[DungeonTile::White];
+	auto scale = glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT);
+	auto transparent_white = glm::vec4(1.0f, 1.0f, 1.0f, 0.5f);
+
+	auto pos = glm::vec2(0.0f);
+	pos.x = hero->position.x - SCREEN_WIDTH / 2 + SPRITE_WIDTH / 2;
+	pos.y = hero->position.y - SCREEN_HEIGHT / 2 + SPRITE_HEIGHT / 2;
+
+
+	renderer.render(tex, pos, 0.0f, transparent_white, scale);
+
+	auto dark_red = glm::vec3(0.8f, 0.0f, 0.0f);
+	// TODO: Have perspective working properly without needing to draw text after graphics
+	text_renderer.draw((char *)"GAME OVER", glm::vec2(SCREEN_WIDTH/2, SCREEN_HEIGHT/2), 40.0, dark_red);
 }

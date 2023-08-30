@@ -61,6 +61,10 @@ void Hero::update(Dungeon &dungeon, float delta_time) {
 	}
 }
 
+bool Hero::is_dead() {
+	return hp == 0;
+}
+
 void Hero::_move(Dungeon &dungeon, Direction d) {
 	if (!is_moving) {
 		glm::vec2 new_grid_position = grid_position + dir_array[d];

@@ -21,6 +21,7 @@ struct Hero : public Entity {
 	~Hero();
 	void update(Dungeon &, float);
 	void render(SpriteRenderer &);
+	bool is_dead();
 private:
 	void _attack(Dungeon &);
 	void _move(Dungeon &, Direction);

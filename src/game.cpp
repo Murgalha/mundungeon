@@ -44,7 +44,7 @@ void Game::init() {
 	shader->set_int((char *)"image", 0);
 	shader->set_mat4((char *)"projection", projection);
     sprite_renderer = new SpriteRenderer(shader);
-    //game->text_renderer = new TextRenderer();
+    text_renderer = new TextRenderer(projection);
 }
 
 bool Game::handle_input(SDL_Event e) {
@@ -87,6 +87,5 @@ void Game::update(float delta_time) {
 void Game::render() {
 	ImGui::Render();
 
-	//text_renderer_draw(game->text_renderer, (char *)"hello", 0.0, 0.0, 1.0, glm::vec3(1.0f));
-	dungeon->render(*sprite_renderer);
+	dungeon->render(*sprite_renderer, *text_renderer);
 }

@@ -8,6 +8,7 @@ enum class DungeonTile {
 	Corridor,
 	Wall,
 	Empty,
+	White,
 };
 
 char to_char(DungeonTile);
