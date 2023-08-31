@@ -37,7 +37,7 @@ SpriteRenderer::~SpriteRenderer() {
 	delete shader;
 }
 
-void SpriteRenderer::render(uint32_t texture_id, glm::vec2 position, float rotation, glm::vec4 color, glm::vec2 scale) {
+void SpriteRenderer::render(Texture texture, glm::vec2 position, float rotation, glm::vec4 color, glm::vec2 scale) {
 	shader->use();
 
 	glm::mat4 model = glm::mat4(1.0f);
@@ -54,7 +54,7 @@ void SpriteRenderer::render(uint32_t texture_id, glm::vec2 position, float rotat
     shader->set_vec4((char *)"spriteColor", color);
 
     glActiveTexture(GL_TEXTURE0);
-    texture_bind(texture_id);
+    texture.bind();
 
     glBindVertexArray(quad_VAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);

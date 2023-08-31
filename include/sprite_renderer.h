@@ -3,6 +3,7 @@
 
 #include "shader.h"
 #include "utils.h"
+#include "texture.h"
 #include <glm/vec2.hpp>
 #include <stdint.h>
 
@@ -14,7 +15,7 @@ struct SpriteRenderer {
 
 	SpriteRenderer(Shader *);
 	~SpriteRenderer();
-	void render(uint32_t, glm::vec2, float = 0.0f, glm::vec4 = glm::vec4(1.0f), glm::vec2 = glm::vec2(SPRITE_WIDTH, SPRITE_HEIGHT));
+	void render(Texture, glm::vec2, float = 0.0f, glm::vec4 = glm::vec4(1.0f), glm::vec2 = glm::vec2(SPRITE_WIDTH, SPRITE_HEIGHT));
 };
 
 #endif

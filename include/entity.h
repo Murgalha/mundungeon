@@ -3,12 +3,13 @@
 
 #include <stdint.h>
 #include <glm/vec2.hpp>
+#include "texture.h"
 
 struct Entity {
-	uint32_t texture_id;
+	Texture texture;
 	glm::vec2 position;
 
-	Entity(uint32_t, glm::vec2);
+	Entity(Texture, glm::vec2);
 };
 
 #endif

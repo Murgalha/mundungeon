@@ -16,20 +16,20 @@ Dungeon::Dungeon(uint16_t dungeon_size) {
 
 	_spawn_enemies();
 
-	uint32_t door_texture = texture_new((char *)"assets/door.png", GL_RGBA, false);
-	uint32_t floor_texture = texture_new((char *)"assets/floor.png", GL_RGBA, false);
-	uint32_t wall_texture = texture_new((char *)"assets/wall.png", GL_RGBA, false);
-	uint32_t unknown_texture = texture_new((char *)"assets/unknown.png", GL_RGBA, false);
-	uint32_t white_texture = texture_new((char *)"assets/white.png", GL_RGBA, false);
+	auto door_texture = Texture((char *)"assets/door.png");
+	auto floor_texture = Texture((char *)"assets/floor.png");
+	auto wall_texture = Texture((char *)"assets/wall.png");
+	auto unknown_texture = Texture((char *)"assets/unknown.png");
+	auto white_texture = Texture((char *)"assets/white.png");
 
-	sprites = std::map<DungeonTile, uint32_t>();
-	sprites.insert(std::pair<DungeonTile, uint32_t>(DungeonTile::Unknown, unknown_texture));
-	sprites.insert(std::pair<DungeonTile, uint32_t>(DungeonTile::Floor, floor_texture));
-	sprites.insert(std::pair<DungeonTile, uint32_t>(DungeonTile::Door, door_texture));
-	sprites.insert(std::pair<DungeonTile, uint32_t>(DungeonTile::Corridor, floor_texture));
-	sprites.insert(std::pair<DungeonTile, uint32_t>(DungeonTile::Wall, wall_texture));
-	sprites.insert(std::pair<DungeonTile, uint32_t>(DungeonTile::Empty, wall_texture));
-	sprites.insert(std::pair<DungeonTile, uint32_t>(DungeonTile::White, white_texture));
+	sprites = std::map<DungeonTile, Texture>();
+	sprites.insert(std::pair<DungeonTile, Texture>(DungeonTile::Unknown, unknown_texture));
+	sprites.insert(std::pair<DungeonTile, Texture>(DungeonTile::Floor, floor_texture));
+	sprites.insert(std::pair<DungeonTile, Texture>(DungeonTile::Door, door_texture));
+	sprites.insert(std::pair<DungeonTile, Texture>(DungeonTile::Corridor, floor_texture));
+	sprites.insert(std::pair<DungeonTile, Texture>(DungeonTile::Wall, wall_texture));
+	sprites.insert(std::pair<DungeonTile, Texture>(DungeonTile::Empty, wall_texture));
+	sprites.insert(std::pair<DungeonTile, Texture>(DungeonTile::White, white_texture));
 }
 
 Dungeon::~Dungeon() {
@@ -98,7 +98,7 @@ void Dungeon::_post_turn_cleanup() {
 		enemies[old_y][old_x] = 0;
 
 		// TODO: Hardcoded respawn of enemies should not exist
-		enemy = Enemy(enemy.texture_id, glm::vec2(13.0f, 21.0f));
+		enemy = Enemy(enemy.texture, glm::vec2(13.0f, 21.0f));
 
 		auto new_position = enemy.grid_position;
 		auto new_x = (int)new_position.x;
@@ -114,7 +114,7 @@ void Dungeon::_post_turn_cleanup() {
 
 void Dungeon::render(SpriteRenderer &renderer, TextRenderer &text_renderer) {
 	DungeonTile tile;
-	unsigned int texture;
+	Texture texture;
 	glm::vec2 position;
 
 	for(int y = 0; y < size; y++) {
@@ -145,7 +145,7 @@ bool Dungeon::can_move_to(glm::vec2 &position) {
 }
 
 void Dungeon::_spawn_enemies() {
-	auto tex_id = texture_new((char *)"assets/enemy.png", GL_RGBA, false);
+	auto tex_id = Texture((char *)"assets/enemy.png");
 	glm::vec2 positions[] = {
 		glm::vec2(13.0f, 21.0f),
 	};
@@ -171,7 +171,7 @@ void Dungeon::print() {
 }
 
 void Dungeon::_create_hero() {
-	auto texture = texture_new((char *)"assets/hero.png", GL_RGBA, false);
+	auto texture = Texture((char *)"assets/hero.png");
 	auto starting_position = glm::vec2(25.0, 25.0);
 
 	hero = new Hero(texture, starting_position);

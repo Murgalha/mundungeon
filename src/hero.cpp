@@ -11,7 +11,7 @@
 
 float get_sprite_rotation(Direction);
 
-Hero::Hero(uint32_t texture, glm::vec2 grid_start_pos) : Entity(texture, grid_start_pos * SPRITE_WIDTH) {
+Hero::Hero(Texture texture, glm::vec2 grid_start_pos) : Entity(texture, grid_start_pos * SPRITE_WIDTH) {
 	grid_position = grid_start_pos;
 	hp = 100;
 	is_moving = false;
@@ -21,7 +21,7 @@ Hero::Hero(uint32_t texture, glm::vec2 grid_start_pos) : Entity(texture, grid_st
 Hero::~Hero() {}
 
 void Hero::render(SpriteRenderer &renderer) {
-	renderer.render(texture_id, position, get_sprite_rotation(facing_direction));
+	renderer.render(texture, position, get_sprite_rotation(facing_direction));
 }
 
 void Hero::update(Dungeon &dungeon, float delta_time) {

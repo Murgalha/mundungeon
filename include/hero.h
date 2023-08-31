@@ -3,9 +3,7 @@
 
 #include <glm/vec2.hpp>
 #include "sprite_renderer.h"
-#include "camera.h"
 #include "animation_calculator.h"
-#include "hero_action.h"
 #include "entity.h"
 
 struct Dungeon;
@@ -17,7 +15,7 @@ struct Hero : public Entity {
 	int hp;
 	AnimationCalculator *animation;
 
-	Hero(uint32_t, glm::vec2);
+	Hero(Texture, glm::vec2);
 	~Hero();
 	void update(Dungeon &, float);
 	void render(SpriteRenderer &);

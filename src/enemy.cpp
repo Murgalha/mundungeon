@@ -7,7 +7,7 @@
 #include "random.h"
 #include "dungeon.h"
 
-Enemy::Enemy() : Entity(-1, glm::vec2(0.0f)){
+Enemy::Enemy() : Entity(Texture(), glm::vec2(0.0f)){
 	grid_position = glm::vec2(0.0f);
 	walk_path = std::vector<glm::vec2>();
 	facing_direction = DOWN;
@@ -16,7 +16,7 @@ Enemy::Enemy() : Entity(-1, glm::vec2(0.0f)){
 	is_moving = false;
 }
 
-Enemy::Enemy(uint32_t texture, glm::vec2 grid_start_pos) : Entity(texture, grid_start_pos * SPRITE_WIDTH) {
+Enemy::Enemy(Texture texture, glm::vec2 grid_start_pos) : Entity(texture, grid_start_pos * SPRITE_WIDTH) {
 	grid_position = grid_start_pos;
 	hp = 30;
 	walk_path = std::vector<glm::vec2>();
@@ -52,7 +52,7 @@ void Enemy::update(Dungeon &dungeon, float delta_time) {
 }
 
 void Enemy::render(SpriteRenderer &renderer) {
-	renderer.render(texture_id, position, get_sprite_rotation(facing_direction));
+	renderer.render(texture, position, get_sprite_rotation(facing_direction));
 }
 
 void Enemy::_walk(Dungeon &dungeon) {

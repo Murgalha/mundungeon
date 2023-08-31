@@ -3,7 +3,11 @@
 #include "stb_image.h"
 #include "texture.h"
 
-uint32_t texture_new(char *filename, GLenum format, int flip) {
+Texture::Texture() {
+	id = -1;
+}
+
+Texture::Texture(char *filename, GLenum format, bool flip) {
 	unsigned int texture;
 	int width, height, nchannels;
 	unsigned char *data;
@@ -13,7 +17,8 @@ uint32_t texture_new(char *filename, GLenum format, int flip) {
 
 	if(!data) {
 		printf("Could not load '%s'\n", filename);
-		return -1;
+		id = -1;
+		return;
 	}
 
 	glGenTextures(1, &texture);
@@ -28,9 +33,10 @@ uint32_t texture_new(char *filename, GLenum format, int flip) {
     glBindTexture(GL_TEXTURE_2D, 0);
 
 	stbi_image_free(data);
-	return texture;
+
+	id = texture;
 }
 
-void texture_bind(uint32_t id) {
+void Texture::bind() {
 	glBindTexture(GL_TEXTURE_2D, id);
 }

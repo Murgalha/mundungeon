@@ -4,7 +4,12 @@
 #include <SDL2/SDL_opengl.h>
 #include <stdint.h>
 
-uint32_t texture_new(char *, GLenum, int);
-void texture_bind(uint32_t);
+struct Texture {
+	uint32_t id;
+
+	Texture();
+	Texture(char *, GLenum = GL_RGBA, bool = false);
+	void bind();
+};
 
 #endif

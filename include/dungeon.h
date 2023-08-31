@@ -10,9 +10,11 @@
 #include "text_renderer.h"
 #include "enemy.h"
 #include "input.h"
+#include "hero_action.h"
+#include "texture.h"
 
 struct Dungeon {
-	std::map<DungeonTile, uint32_t> sprites;
+	std::map<DungeonTile, Texture> sprites;
 	DungeonTile **map;
 	unsigned char **enemies;
 	Enemy enemy;
