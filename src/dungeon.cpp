@@ -6,6 +6,7 @@
 #include "dungeon_generator.h"
 #include "texture.h"
 #include "imgui.h"
+#include "text_render_options_builder.h"
 
 Dungeon::Dungeon(uint16_t dungeon_size) {
 	is_game_over = false;
@@ -190,7 +191,13 @@ void Dungeon::_draw_gameover(SpriteRenderer &renderer, TextRenderer &text_render
 
 	renderer.render(tex, pos, 0.0f, transparent_white, scale);
 
-	auto dark_red = glm::vec3(0.8f, 0.0f, 0.0f);
+	auto dark_red = glm::vec4(0.8f, 0.0f, 0.0f, 1.0f);
 	// TODO: Have perspective working properly without needing to draw text after graphics
-	text_renderer.draw((char *)"GAME OVER", glm::vec2(SCREEN_WIDTH/2, SCREEN_HEIGHT/2), 40.0, dark_red);
+	TextRenderOptions options = TextRenderOptionsBuilder()
+		.with_position(glm::vec2(SCREEN_WIDTH/2, SCREEN_HEIGHT/2))
+		.with_font_size(40.0)
+		.with_color(dark_red)
+		.build();
+
+	text_renderer.render("GAME OVER", options);
 }

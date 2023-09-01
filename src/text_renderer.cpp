@@ -105,14 +105,14 @@ TextRenderer::~TextRenderer() {
 	delete shader;
 }
 
-void TextRenderer::draw(std::string text, glm::vec2 position, float font_size, glm::vec3 color) {
-    // activate corresponding render state
-	auto x = position.x;
-	auto y = position.y;
-	auto scale = font_size / bitmap_font_size;
+void TextRenderer::render(std::string text, TextRenderOptions const &options) {
+	auto x = options.position.x;
+	auto y = options.position.y;
+	auto scale = options.font_size / bitmap_font_size;
 
     shader->use();
-	shader->set_vec3((char *)"textColor", color);
+	glm::vec3 color3 = glm::vec3(options.color.r, options.color.g, options.color.b);
+	shader->set_vec3((char *)"textColor", color3);
 
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(vao);
