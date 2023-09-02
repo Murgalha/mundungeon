@@ -93,9 +93,6 @@ void Hero::_attack(Dungeon &dungeon) {
 	if (has_enemy) {
 		auto r = random_rangei(1, 11);
 
-		printf("Enemy HP before: %d\n", dungeon.enemy.hp);
 		dungeon.enemy.hp -= r;
-		printf("Enemy HP after: %d\n", dungeon.enemy.hp);
-		dungeon.enemy.check_death();
 	}
 }

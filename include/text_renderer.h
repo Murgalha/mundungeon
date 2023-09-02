@@ -27,7 +27,8 @@ struct TextRenderer {
 	void RenderText(std::string, float, float, float, glm::vec3);
 	void render(std::string, TextRenderOptions const &);
 private:
-	int create_characters();
+	int _create_characters();
+	glm::vec2 _calculate_offset(std::string, float, TextAlignment);
 };
 
 #endif

@@ -112,9 +112,7 @@ std::vector<glm::vec2> Enemy::generate_enemy_path(Dungeon &dungeon, glm::vec2 &h
 void Enemy::_attack(Hero &hero) {
 	int r = random_rangei(1, 11);
 
-	printf("HP before attack: %d\n", hero.hp);
 	hero.hp -= r;
-	printf("HP after attack: %d\n", hero.hp);
 }
 
 bool Enemy::check_death() {

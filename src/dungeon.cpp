@@ -182,21 +182,22 @@ void Dungeon::_draw_gameover(SpriteRenderer &renderer, TextRenderer &text_render
 	// draw white transparent square
 	auto tex = sprites[DungeonTile::White];
 	auto scale = glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT);
-	auto transparent_white = glm::vec4(1.0f, 1.0f, 1.0f, 0.5f);
+	auto transparent_gray = glm::vec4(0.6f, 0.6f, 0.6f, 0.8f);
 
 	auto pos = glm::vec2(0.0f);
 	pos.x = hero->position.x - SCREEN_WIDTH / 2 + SPRITE_WIDTH / 2;
 	pos.y = hero->position.y - SCREEN_HEIGHT / 2 + SPRITE_HEIGHT / 2;
 
 
-	renderer.render(tex, pos, 0.0f, transparent_white, scale);
+	renderer.render(tex, pos, 0.0f, transparent_gray, scale);
 
-	auto dark_red = glm::vec4(0.8f, 0.0f, 0.0f, 1.0f);
+	auto dark_red = glm::vec4(0.4f, 0.0f, 0.0f, 1.0f);
 	// TODO: Have perspective working properly without needing to draw text after graphics
 	TextRenderOptions options = TextRenderOptionsBuilder()
 		.with_position(glm::vec2(SCREEN_WIDTH/2, SCREEN_HEIGHT/2))
 		.with_font_size(40.0)
 		.with_color(dark_red)
+		.with_alignment(TextAlignment::Center)
 		.build();
 
 	text_renderer.render("GAME OVER", options);
