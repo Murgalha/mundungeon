@@ -5,7 +5,7 @@
 #include "dungeon.h"
 #include "dungeon_generator.h"
 #include "texture.h"
-#include "text_render_options_builder.h"
+#include "text_rendering/text_render_options_builder.h"
 
 Dungeon::Dungeon(uint16_t dungeon_size) {
 	is_game_over = false;

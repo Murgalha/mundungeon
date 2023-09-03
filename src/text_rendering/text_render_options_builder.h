@@ -3,8 +3,8 @@
 
 #include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
-#include "text_alignment.h"
-#include "text_render_options.h"
+#include "text_rendering/text_alignment.h"
+#include "text_rendering/text_render_options.h"
 
 struct TextRenderOptionsBuilder {
 	TextRenderOptionsBuilder();

@@ -5,7 +5,7 @@
 #include "types.h"
 #include "shader.h"
 #include "sprite_renderer.h"
-#include "text_renderer.h"
+#include "text_rendering/text_renderer.h"
 #include "texture.h"
 #include "camera.h"
 #include "hero.h"

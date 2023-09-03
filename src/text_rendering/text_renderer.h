@@ -6,7 +6,7 @@
 #include <glm/mat4x4.hpp>
 #include <string>
 #include "shader.h"
-#include "text_render_options.h"
+#include "text_rendering/text_render_options.h"
 
 struct Character {
     unsigned int texture;

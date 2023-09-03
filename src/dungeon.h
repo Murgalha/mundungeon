@@ -7,7 +7,7 @@
 #include <cstdint>
 #include "sprite_renderer.h"
 #include "dungeon_tile.h"
-#include "text_renderer.h"
+#include "text_rendering/text_renderer.h"
 #include "enemy.h"
 #include "input.h"
 #include "hero_action.h"
