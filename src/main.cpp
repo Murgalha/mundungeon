@@ -3,7 +3,6 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
 #include <SDL2/SDL_opengl_glext.h>
-#include "imgui.h"
 #include "app.h"
 #include "random.h"
 #include "game.h"
@@ -42,14 +41,6 @@ int main(int argc, char *argv[]) {
 	glDebugMessageCallback(message_callback, 0);
 #endif
 
-	const char* glsl_version = "#version 330 core";
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGui::StyleColorsDark();
-
-    ImGui_ImplSDL2_InitForOpenGL(app->window, app->gl_context);
-    ImGui_ImplOpenGL3_Init(glsl_version);
-
 	game->init();
 
 	double delta_time;
@@ -65,13 +56,8 @@ int main(int argc, char *argv[]) {
         glClear(GL_COLOR_BUFFER_BIT);
         game->render();
 
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 		SDL_GL_SwapWindow(app->window);
 	}
-
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplSDL2_Shutdown();
-    ImGui::DestroyContext();
 
 	delete game;
 	delete app;

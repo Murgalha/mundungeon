@@ -1,7 +1,4 @@
 #include <glm/gtc/matrix_transform.hpp>
-#include "imgui/imgui.h"
-#include "imgui/imgui_impl_sdl.h"
-#include "imgui/imgui_impl_opengl3.h"
 #include "game.h"
 
 #define UNUSED(X) (void)(X)
@@ -50,7 +47,6 @@ void Game::init() {
 bool Game::handle_input(SDL_Event e) {
 	Input input = Input::Unknown;
 	bool handled = false;
-	ImGui_ImplSDL2_ProcessEvent(&e);
 
 	// TODO: Maybe this translation should be done on App level
 	switch(e.type) {
@@ -66,15 +62,6 @@ bool Game::handle_input(SDL_Event e) {
 }
 
 void Game::update(float delta_time) {
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplSDL2_NewFrame();
-
-        ImGui::NewFrame();
-		ImGui::Begin("Window info");
-		ImGui::Text("Framerate: %.1f FPS", ImGui::GetIO().Framerate);
-		ImGui::Text("Delta time: %.2f ms", delta_time);
-		ImGui::End();
-
 		dungeon->update(delta_time);
 
 		auto shader = sprite_renderer->shader;
@@ -85,7 +72,5 @@ void Game::update(float delta_time) {
 }
 
 void Game::render() {
-	ImGui::Render();
-
 	dungeon->render(*sprite_renderer, *text_renderer);
 }

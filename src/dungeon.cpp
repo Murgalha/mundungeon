@@ -5,7 +5,6 @@
 #include "dungeon.h"
 #include "dungeon_generator.h"
 #include "texture.h"
-#include "imgui.h"
 #include "text_render_options_builder.h"
 
 Dungeon::Dungeon(uint16_t dungeon_size) {

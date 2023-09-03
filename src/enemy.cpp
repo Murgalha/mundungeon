@@ -42,7 +42,6 @@ void Enemy::update(Dungeon &dungeon, float delta_time) {
 		auto hero = dungeon.hero;
 		if (_can_attack(hero->grid_position)) {
 			facing_direction = get_direction_from_positions(grid_position, hero->grid_position);
-			printf("Now we attack.\n");
 			_attack(*hero);
 		}
 		else {
