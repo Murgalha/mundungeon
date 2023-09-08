@@ -9,7 +9,7 @@
 #include "texture.h"
 #include "camera.h"
 #include "hero.h"
-#include "dungeon.h"
+#include "dungeon/dungeon.h"
 #include "hero_action.h"
 #include "input.h"
 

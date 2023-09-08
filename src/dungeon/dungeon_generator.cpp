@@ -1,8 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
-#include "dungeon_generator.h"
-#include "dungeon_tile.h"
+#include "dungeon/dungeon_generator.h"
+#include "dungeon/dungeon_tile.h"
 #include "random.h"
 
 #define MAX_TRIES 20

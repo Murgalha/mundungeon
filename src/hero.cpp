@@ -3,10 +3,10 @@
 #include <glm/gtx/compatibility.hpp>
 #include "hero.h"
 #include "texture.h"
-#include "dungeon_tile.h"
+#include "dungeon/dungeon_tile.h"
 #include "sprite_renderer.h"
 #include "utils.h"
-#include "dungeon.h"
+#include "dungeon/dungeon.h"
 #include "random.h"
 
 float get_sprite_rotation(Direction);

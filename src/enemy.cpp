@@ -5,7 +5,7 @@
 #include "utils.h"
 #include "a_star.h"
 #include "random.h"
-#include "dungeon.h"
+#include "dungeon/dungeon.h"
 
 Enemy::Enemy() : Entity(Texture(), glm::vec2(0.0f)){
 	grid_position = glm::vec2(0.0f);

@@ -1,4 +1,4 @@
-#include "dungeon_tile.h"
+#include "dungeon/dungeon_tile.h"
 
 char to_char(DungeonTile tile) {
 	switch(tile) {

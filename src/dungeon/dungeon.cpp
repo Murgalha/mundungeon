@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include <glm/vec2.hpp>
 #include "hero.h"
-#include "dungeon.h"
-#include "dungeon_generator.h"
+#include "dungeon/dungeon.h"
+#include "dungeon/dungeon_generator.h"
 #include "texture.h"
 #include "text_rendering/text_render_options_builder.h"
 
