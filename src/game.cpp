@@ -11,7 +11,6 @@ Game::Game(unsigned int viewport_width, unsigned int viewport_height) {
 	sprite_renderer = NULL;
 	text_renderer = NULL;
 	dungeon = new Dungeon(50);
-	camera = new Camera(dungeon->hero->grid_position);
 
 	input_map = std::map<SDL_Keycode, Input> {
 		{ SDLK_UP, Input::MoveUp },
@@ -24,7 +23,6 @@ Game::Game(unsigned int viewport_width, unsigned int viewport_height) {
 Game::~Game() {
 	delete sprite_renderer;
 	delete text_renderer;
-	delete camera;
 	delete dungeon;
 	free(keys);
 }
@@ -66,8 +64,8 @@ void Game::update(float delta_time) {
 
 		auto shader = sprite_renderer->shader;
 		shader->use();
-		camera->focus_on(dungeon->hero->position);
-		auto view = camera->view_matrix();
+
+		auto view = dungeon->camera->view_matrix();
 		shader->set_mat4((char *)"view", view);
 }
 

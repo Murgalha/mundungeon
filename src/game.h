@@ -27,7 +27,6 @@ struct Game {
 	SpriteRenderer *sprite_renderer;
 	TextRenderer *text_renderer;
 	unsigned int texture_id;
-	Camera *camera;
 	Dungeon *dungeon;
 	std::map<SDL_Keycode, Input> input_map;
 

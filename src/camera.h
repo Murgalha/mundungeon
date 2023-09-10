@@ -11,10 +11,10 @@ struct Camera {
 	glm::vec3 up;
 	glm::vec3 right;
 
-	Camera(glm::vec2 &);
+	Camera(glm::vec2 const &);
 	~Camera();
 	glm::mat4 view_matrix();
-	void focus_on(glm::vec2 &);
+	void focus_on(glm::vec2 const &);
 };
 
 #endif

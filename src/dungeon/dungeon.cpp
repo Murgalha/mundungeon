@@ -13,6 +13,8 @@ Dungeon::Dungeon(uint16_t dungeon_size) {
 	size = dungeon_size;
 	turn_action = HeroAction::NoAction;
 	map = DungeonGenerator::new_map(size);
+	game_over = GameOverScreen();
+	camera = new Camera(hero->position);
 
 	_spawn_enemies();
 
@@ -20,7 +22,6 @@ Dungeon::Dungeon(uint16_t dungeon_size) {
 	auto floor_texture = Texture((char *)"assets/floor.png");
 	auto wall_texture = Texture((char *)"assets/wall.png");
 	auto unknown_texture = Texture((char *)"assets/unknown.png");
-	auto white_texture = Texture((char *)"assets/white.png");
 
 	sprites = std::map<DungeonTile, Texture>();
 	sprites.insert(std::pair<DungeonTile, Texture>(DungeonTile::Unknown, unknown_texture));
@@ -29,7 +30,6 @@ Dungeon::Dungeon(uint16_t dungeon_size) {
 	sprites.insert(std::pair<DungeonTile, Texture>(DungeonTile::Corridor, floor_texture));
 	sprites.insert(std::pair<DungeonTile, Texture>(DungeonTile::Wall, wall_texture));
 	sprites.insert(std::pair<DungeonTile, Texture>(DungeonTile::Empty, wall_texture));
-	sprites.insert(std::pair<DungeonTile, Texture>(DungeonTile::White, white_texture));
 }
 
 Dungeon::~Dungeon() {
@@ -40,12 +40,14 @@ Dungeon::~Dungeon() {
 	free(map);
 	free(enemies);
 
+	delete camera;
 	delete hero;
 }
 
 bool Dungeon::handle_input(Input input) {
-	if (is_game_over)
-		return true;
+	if (is_game_over) {
+		return game_over.handle_input(input);
+	}
 
 	HeroAction action = HeroAction::NoAction;
 	bool handled = false;
@@ -88,6 +90,9 @@ void Dungeon::update(float delta_time) {
 	_post_turn_cleanup();
 
 	turn_action = HeroAction::NoAction;
+
+	// This should be done last
+	camera->focus_on(hero->position);
 }
 
 void Dungeon::_post_turn_cleanup() {
@@ -132,7 +137,7 @@ void Dungeon::render(SpriteRenderer &renderer, TextRenderer &text_renderer) {
 	hero->render(renderer);
 
 	if (is_game_over) {
-		_draw_gameover(renderer, text_renderer);
+		game_over.render(renderer, text_renderer, camera->position);
 	}
 }
 
@@ -175,29 +180,4 @@ void Dungeon::_create_hero() {
 	auto starting_position = glm::vec2(25.0, 25.0);
 
 	hero = new Hero(texture, starting_position);
-}
-
-void Dungeon::_draw_gameover(SpriteRenderer &renderer, TextRenderer &text_renderer) {
-	// draw white transparent square
-	auto tex = sprites[DungeonTile::White];
-	auto scale = glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT);
-	auto transparent_gray = glm::vec4(0.6f, 0.6f, 0.6f, 0.8f);
-
-	auto pos = glm::vec2(0.0f);
-	pos.x = hero->position.x - SCREEN_WIDTH / 2 + SPRITE_WIDTH / 2;
-	pos.y = hero->position.y - SCREEN_HEIGHT / 2 + SPRITE_HEIGHT / 2;
-
-
-	renderer.render(tex, pos, 0.0f, transparent_gray, scale);
-
-	auto dark_red = glm::vec4(0.4f, 0.0f, 0.0f, 1.0f);
-	// TODO: Have perspective working properly without needing to draw text after graphics
-	TextRenderOptions options = TextRenderOptionsBuilder()
-		.with_position(glm::vec2(SCREEN_WIDTH/2, SCREEN_HEIGHT/2))
-		.with_font_size(40.0)
-		.with_color(dark_red)
-		.with_alignment(TextAlignment::Center)
-		.build();
-
-	text_renderer.render("GAME OVER", options);
 }
