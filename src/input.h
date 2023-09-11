@@ -3,10 +3,11 @@
 
 enum struct Input {
 	Unknown = 0,
-	MoveUp,
-	MoveDown,
-	MoveLeft,
-	MoveRight
+	ArrowUp,
+	ArrowDown,
+	ArrowLeft,
+	ArrowRight,
+	Enter
 };
 
 #endif

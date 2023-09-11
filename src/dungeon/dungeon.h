@@ -8,6 +8,7 @@
 #include "sprite_renderer.h"
 #include "dungeon/dungeon_tile.h"
 #include "dungeon/game_over_screen.h"
+#include "dungeon/game_over_action.h"
 #include "text_rendering/text_renderer.h"
 #include "enemy.h"
 #include "input.h"
@@ -26,6 +27,7 @@ struct Dungeon {
 	HeroAction turn_action;
 	bool is_game_over;
 	GameOverScreen game_over;
+	GameOverAction game_over_action;
 
 	Dungeon(uint16_t);
 	~Dungeon();

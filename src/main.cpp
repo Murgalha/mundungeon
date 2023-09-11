@@ -44,7 +44,7 @@ int main(int argc, char *argv[]) {
 	game->init();
 
 	double delta_time;
-	while(!app->should_quit) {
+	while(!game->should_quit && !app->should_quit) {
 		delta_time = clock.delta_time();
 
 		// Handle input and update game

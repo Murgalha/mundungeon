@@ -11,12 +11,14 @@ Game::Game(unsigned int viewport_width, unsigned int viewport_height) {
 	sprite_renderer = NULL;
 	text_renderer = NULL;
 	dungeon = new Dungeon(50);
+	should_quit = false;
 
 	input_map = std::map<SDL_Keycode, Input> {
-		{ SDLK_UP, Input::MoveUp },
-		{ SDLK_LEFT, Input::MoveLeft },
-		{ SDLK_DOWN, Input::MoveDown },
-		{ SDLK_RIGHT, Input::MoveRight }
+		{ SDLK_UP, Input::ArrowUp },
+		{ SDLK_LEFT, Input::ArrowLeft },
+		{ SDLK_DOWN, Input::ArrowDown },
+		{ SDLK_RIGHT, Input::ArrowRight },
+		{ SDLK_RETURN, Input::Enter}
 	};
 }
 
@@ -60,6 +62,14 @@ bool Game::handle_input(SDL_Event e) {
 }
 
 void Game::update(float delta_time) {
+	if (dungeon->game_over_action == GameOverAction::Quit) {
+		should_quit = true;
+	}
+	else if (dungeon->game_over_action == GameOverAction::Restart) {
+		delete dungeon;
+		dungeon = new Dungeon(50);
+	}
+	else {
 		dungeon->update(delta_time);
 
 		auto shader = sprite_renderer->shader;
@@ -67,6 +77,7 @@ void Game::update(float delta_time) {
 
 		auto view = dungeon->camera->view_matrix();
 		shader->set_mat4((char *)"view", view);
+	}
 }
 
 void Game::render() {

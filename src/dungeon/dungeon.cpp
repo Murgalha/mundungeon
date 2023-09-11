@@ -15,6 +15,7 @@ Dungeon::Dungeon(uint16_t dungeon_size) {
 	map = DungeonGenerator::new_map(size);
 	game_over = GameOverScreen();
 	camera = new Camera(hero->position);
+	game_over_action = GameOverAction::None;
 
 	_spawn_enemies();
 
@@ -53,19 +54,19 @@ bool Dungeon::handle_input(Input input) {
 	bool handled = false;
 
 	switch(input) {
-	case Input::MoveUp:
+	case Input::ArrowUp:
 		action = HeroAction::WalkUp;
 		handled = true;
 		break;
-	case Input::MoveDown:
+	case Input::ArrowDown:
 		action = HeroAction::WalkDown;
 		handled = true;
 		break;
-	case Input::MoveLeft:
+	case Input::ArrowLeft:
 		action = HeroAction::WalkLeft;
 		handled = true;
 		break;
-	case Input::MoveRight:
+	case Input::ArrowRight:
 		action = HeroAction::WalkRight;
 		handled = true;
 		break;
@@ -78,6 +79,10 @@ bool Dungeon::handle_input(Input input) {
 }
 
 void Dungeon::update(float delta_time) {
+	if (game_over.is_closed) {
+		game_over_action = game_over.action;
+	}
+
 	hero->update(*this, delta_time);
 
 	glm::vec2 enemy_pos = enemy.grid_position;

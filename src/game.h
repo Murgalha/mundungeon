@@ -28,6 +28,7 @@ struct Game {
 	TextRenderer *text_renderer;
 	unsigned int texture_id;
 	Dungeon *dungeon;
+	bool should_quit;
 	std::map<SDL_Keycode, Input> input_map;
 
 	Game(unsigned int, unsigned int);
