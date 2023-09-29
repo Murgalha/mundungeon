@@ -1,11 +1,11 @@
 #include "hero.h"
-#include "dungeon.h"
+#include "dungeon/dungeon.h"
 #include <glm/vec2.hpp>
 #include <vector>
 #include "a_star.h"
 #include <array>
 #include <cfloat>
-#include "dungeon_tile.h"
+#include "dungeon/dungeon_tile.h"
 #include <iostream>
 #include <stack>
 #include <algorithm>

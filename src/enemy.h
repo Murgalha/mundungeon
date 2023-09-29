@@ -16,7 +16,7 @@ struct Enemy : public Entity {
 	bool is_moving;
 
 	Enemy();
-	Enemy(uint32_t, glm::vec2);
+	Enemy(Texture, glm::vec2);
 	~Enemy();
 	void update(Dungeon &, float);
 	void render(SpriteRenderer &);

@@ -14,7 +14,7 @@ Shader::~Shader() {
 	glDeleteShader(fragment_id);
 }
 
-void shader_create(Shader *s, GLenum shader_type, char *filename) {
+void Shader::create(GLenum shader_type, char *filename) {
 	int success;
 	unsigned int shader;
 	char info_log[512];
@@ -29,42 +29,39 @@ void shader_create(Shader *s, GLenum shader_type, char *filename) {
 		printf("Shader failed to compile: %s\n", info_log);
 	}
 	if(shader_type == GL_VERTEX_SHADER)
-		s->vertex_id = shader;
+		vertex_id = shader;
 	else
-		s->fragment_id = shader;
+		fragment_id = shader;
 }
 
-void shader_create_program(Shader *s) {
-	s->program = glCreateProgram();
-	glAttachShader(s->program, s->vertex_id);
-	glAttachShader(s->program, s->fragment_id);
-	glLinkProgram(s->program);
+void Shader::create_program() {
+	program = glCreateProgram();
+	glAttachShader(program, vertex_id);
+	glAttachShader(program, fragment_id);
+	glLinkProgram(program);
 }
 
-void shader_reload(Shader *s) {
-	shader_create(s, GL_VERTEX_SHADER, (char *)"shaders/shader.vert");
-	shader_create(s, GL_FRAGMENT_SHADER, (char *)"shaders/shader.frag");
-	shader_create_program(s);
+void Shader::use() {
+	glUseProgram(program);
 }
 
-void shader_use(Shader *s) {
-	glUseProgram(s->program);
+void Shader::set_float(char *name, float value) {
+    glUniform1f(glGetUniformLocation(program, name), value);
 }
 
-void shader_set_float(Shader *s, char *name, float value) {
-    glUniform1f(glGetUniformLocation(s->program, name), value);
+void Shader::set_int(char *name, int value) {
+    glUniform1i(glGetUniformLocation(program, name), value);
 }
 
-void shader_set_int(Shader *s, char *name, int value) {
-    glUniform1i(glGetUniformLocation(s->program, name), value);
+void Shader::set_vec3(char *name, glm::vec3 &v) {
+    glUniform3fv(glGetUniformLocation(program, name), 1, &v[0]);
 }
 
-void shader_set_vec3(Shader *s, char *name, float x, float y, float z) {
-	glm::vec3 v = glm::vec3(x, y, z);
-    glUniform3fv(glGetUniformLocation(s->program, name), 1, &v[0]);
+void Shader::set_vec4(char *name, glm::vec4 &v) {
+    glUniform4fv(glGetUniformLocation(program, name), 1, &v[0]);
 }
 
-void shader_set_mat4(Shader *s, char *name, glm::mat4 &m) {
-	unsigned int loc = glGetUniformLocation(s->program, name);
+void Shader::set_mat4(char *name, glm::mat4 &m) {
+	unsigned int loc = glGetUniformLocation(program, name);
 	glUniformMatrix4fv(loc, 1, GL_FALSE, &m[0][0]);
 }

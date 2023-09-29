@@ -1,9 +1,5 @@
 #include <glm/gtc/matrix_transform.hpp>
-#include "imgui/imgui.h"
-#include "imgui/imgui_impl_sdl.h"
-#include "imgui/imgui_impl_opengl3.h"
 #include "game.h"
-#include "hero_action.h"
 
 #define UNUSED(X) (void)(X)
 
@@ -15,103 +11,75 @@ Game::Game(unsigned int viewport_width, unsigned int viewport_height) {
 	sprite_renderer = NULL;
 	text_renderer = NULL;
 	dungeon = new Dungeon(50);
-	camera = new Camera(dungeon->hero->grid_position);
+	should_quit = false;
 
-	direction_map = std::map<SDL_Keycode, HeroAction> {
-		{ SDLK_UP, HeroAction::WalkUp },
-		{ SDLK_LEFT, HeroAction::WalkLeft },
-		{ SDLK_DOWN, HeroAction::WalkDown },
-		{ SDLK_RIGHT, HeroAction::WalkRight }
+	input_map = std::map<SDL_Keycode, Input> {
+		{ SDLK_UP, Input::ArrowUp },
+		{ SDLK_LEFT, Input::ArrowLeft },
+		{ SDLK_DOWN, Input::ArrowDown },
+		{ SDLK_RIGHT, Input::ArrowRight },
+		{ SDLK_RETURN, Input::Enter}
 	};
 }
 
 Game::~Game() {
 	delete sprite_renderer;
 	delete text_renderer;
-	delete camera;
 	delete dungeon;
 	free(keys);
 }
 
 void Game::init() {
 	Shader *shader = new Shader();
-	shader_create(shader, GL_VERTEX_SHADER, (char *)"shaders/shader.vert");
-	shader_create(shader, GL_FRAGMENT_SHADER, (char *)"shaders/shader.frag");
-	shader_create_program(shader);
+	shader->create(GL_VERTEX_SHADER, (char *)"shaders/shader.vert");
+	shader->create(GL_FRAGMENT_SHADER, (char *)"shaders/shader.frag");
+	shader->create_program();
 
 	glm::mat4 projection = glm::ortho(0.0f, (float)width, (float)height, 0.0f, -10.0f, 10.0f);
 
-	shader_use(shader);
-	shader_set_int(shader, (char *)"image", 0);
-	shader_set_mat4(shader, (char *)"projection", projection);
+	shader->use();
+	shader->set_int((char *)"image", 0);
+	shader->set_mat4((char *)"projection", projection);
     sprite_renderer = new SpriteRenderer(shader);
-    //game->text_renderer = new TextRenderer();
+    text_renderer = new TextRenderer(projection);
 }
 
-void Game::process_input(SDL_Event e, float delta_time) {
-	HeroAction action = HeroAction::NoAction;
-	ImGui_ImplSDL2_ProcessEvent(&e);
+bool Game::handle_input(SDL_Event e) {
+	Input input = Input::Unknown;
+	bool handled = false;
 
+	// TODO: Maybe this translation should be done on App level
 	switch(e.type) {
 	case SDL_KEYDOWN:
-		switch(e.key.keysym.sym) {
-			// TODO: make camera-only movement as free-roam and not tile-based
-			/*
-		case SDLK_RIGHT:
-			camera_move(camera, RIGHT, delta_time);
-			break;
-		case SDLK_LEFT:
-			camera_move(camera, LEFT, delta_time);
-			break;
-		case SDLK_DOWN:
-			camera_move(camera, DOWN, delta_time);
-			break;
-		case SDLK_UP:
-			camera_move(camera, UP, delta_time);
-			break;
-			*/
-		case SDLK_UP:
-		case SDLK_DOWN:
-		case SDLK_LEFT:
-		case SDLK_RIGHT:
-			if (!dungeon->hero->is_moving) {
-				action = direction_map[e.key.keysym.sym];
-			}
-			break;
-		case SDLK_x:
-			action = HeroAction::Attack;
-			break;
-		case SDLK_SPACE:
-			break;
-		}
+		input = input_map[e.key.keysym.sym];
+		handled = dungeon->handle_input(input);
 		break;
 	default:
 		break;
 	}
 
-	dungeon->turn_action = action;
+	return handled;
 }
 
 void Game::update(float delta_time) {
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplSDL2_NewFrame();
-
-        ImGui::NewFrame();
-		ImGui::Begin("Window info");
-		ImGui::Text("Framerate: %.1f FPS", ImGui::GetIO().Framerate);
-		ImGui::Text("Delta time: %.2f ms", delta_time);
-		ImGui::End();
-
-		shader_use(sprite_renderer->shader);
-		auto view = camera_view_matrix(camera);
-		shader_set_mat4(sprite_renderer->shader, (char *)"view", view);
-
+	if (dungeon->game_over_action == GameOverAction::Quit) {
+		should_quit = true;
+	}
+	else if (dungeon->game_over_action == GameOverAction::Restart) {
+		delete dungeon;
+		dungeon = new Dungeon(50);
+	}
+	else {
 		dungeon->update(delta_time);
+
+		auto shader = sprite_renderer->shader;
+		shader->use();
+
+		auto view = dungeon->camera->view_matrix();
+		shader->set_mat4((char *)"view", view);
+	}
 }
 
 void Game::render() {
-	ImGui::Render();
-
-	//text_renderer_draw(game->text_renderer, (char *)"hello", 0.0, 0.0, 1.0, glm::vec3(1.0f));
-	dungeon->render(*sprite_renderer);
+	dungeon->render(*sprite_renderer, *text_renderer);
 }

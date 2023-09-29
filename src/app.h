@@ -13,7 +13,7 @@ struct App {
 
 	App(int, int);
 	~App();
-	void process_input(Game *, float);
+	void handle_input(Game *);
 
 private:
 	SDL_GLContext gl_context_init(SDL_Window *);

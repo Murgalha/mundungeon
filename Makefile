@@ -12,7 +12,7 @@ OBJS := $(SRCS:%.cpp=$(WRKDIR)/%.o)
 LDLIBS_LOCAL := -lGL -lm $(shell pkg-config --libs freetype2) $(shell sdl2-config --libs)
 LDLIBS += $(LDLIBS_LOCAL)
 
-CPPFLAGS_LOCAL := -Iinclude $(shell pkg-config --cflags freetype2) $(shell sdl2-config --cflags)
+CPPFLAGS_LOCAL := -Isrc $(shell pkg-config --cflags freetype2) $(shell sdl2-config --cflags)
 CPPFLAGS += $(CPPFLAGS_LOCAL)
 CXXFLAGS += -Wall -Wextra -Werror
 

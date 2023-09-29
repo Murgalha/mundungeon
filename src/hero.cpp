@@ -3,15 +3,15 @@
 #include <glm/gtx/compatibility.hpp>
 #include "hero.h"
 #include "texture.h"
-#include "dungeon_tile.h"
+#include "dungeon/dungeon_tile.h"
 #include "sprite_renderer.h"
 #include "utils.h"
-#include "dungeon.h"
+#include "dungeon/dungeon.h"
 #include "random.h"
 
 float get_sprite_rotation(Direction);
 
-Hero::Hero(uint32_t texture, glm::vec2 grid_start_pos) : Entity(texture, grid_start_pos * SPRITE_WIDTH) {
+Hero::Hero(Texture texture, glm::vec2 grid_start_pos) : Entity(texture, grid_start_pos * SPRITE_WIDTH) {
 	grid_position = grid_start_pos;
 	hp = 100;
 	is_moving = false;
@@ -21,7 +21,7 @@ Hero::Hero(uint32_t texture, glm::vec2 grid_start_pos) : Entity(texture, grid_st
 Hero::~Hero() {}
 
 void Hero::render(SpriteRenderer &renderer) {
-	renderer.draw_sprite_with_rotation(texture_id, position, get_sprite_rotation(facing_direction));
+	renderer.render(texture, position, get_sprite_rotation(facing_direction));
 }
 
 void Hero::update(Dungeon &dungeon, float delta_time) {
@@ -61,6 +61,10 @@ void Hero::update(Dungeon &dungeon, float delta_time) {
 	}
 }
 
+bool Hero::is_dead() {
+	return hp == 0;
+}
+
 void Hero::_move(Dungeon &dungeon, Direction d) {
 	if (!is_moving) {
 		glm::vec2 new_grid_position = grid_position + dir_array[d];
@@ -89,9 +93,6 @@ void Hero::_attack(Dungeon &dungeon) {
 	if (has_enemy) {
 		auto r = random_rangei(1, 11);
 
-		printf("Enemy HP before: %d\n", dungeon.enemy.hp);
 		dungeon.enemy.hp -= r;
-		printf("Enemy HP after: %d\n", dungeon.enemy.hp);
-		dungeon.enemy.check_death();
 	}
 }

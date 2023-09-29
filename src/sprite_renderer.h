@@ -2,7 +2,10 @@
 #define _SPRITE_RENDERER_H_
 
 #include "shader.h"
+#include "utils.h"
+#include "texture.h"
 #include <glm/vec2.hpp>
+#include <stdint.h>
 
 struct SpriteRenderer {
 	Shader *shader;
@@ -12,8 +15,7 @@ struct SpriteRenderer {
 
 	SpriteRenderer(Shader *);
 	~SpriteRenderer();
-	void draw_sprite(unsigned int, glm::vec2);
-	void draw_sprite_with_rotation(unsigned int, glm::vec2, float);
+	void render(Texture, glm::vec2, float = 0.0f, glm::vec4 = glm::vec4(1.0f), glm::vec2 = glm::vec2(SPRITE_WIDTH, SPRITE_HEIGHT));
 };
 
 #endif

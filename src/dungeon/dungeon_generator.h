@@ -3,7 +3,7 @@
 
 #include "utils.h"
 #include "types.h"
-#include "dungeon_tile.h"
+#include "dungeon/dungeon_tile.h"
 
 struct DungeonGenerator {
 	DungeonTile **map;

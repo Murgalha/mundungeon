@@ -5,9 +5,9 @@
 #include "utils.h"
 #include "a_star.h"
 #include "random.h"
-#include "dungeon.h"
+#include "dungeon/dungeon.h"
 
-Enemy::Enemy() : Entity(-1, glm::vec2(0.0f)){
+Enemy::Enemy() : Entity(Texture(), glm::vec2(0.0f)){
 	grid_position = glm::vec2(0.0f);
 	walk_path = std::vector<glm::vec2>();
 	facing_direction = DOWN;
@@ -16,7 +16,7 @@ Enemy::Enemy() : Entity(-1, glm::vec2(0.0f)){
 	is_moving = false;
 }
 
-Enemy::Enemy(uint32_t texture, glm::vec2 grid_start_pos) : Entity(texture, grid_start_pos * SPRITE_WIDTH) {
+Enemy::Enemy(Texture texture, glm::vec2 grid_start_pos) : Entity(texture, grid_start_pos * SPRITE_WIDTH) {
 	grid_position = grid_start_pos;
 	hp = 30;
 	walk_path = std::vector<glm::vec2>();
@@ -42,7 +42,6 @@ void Enemy::update(Dungeon &dungeon, float delta_time) {
 		auto hero = dungeon.hero;
 		if (_can_attack(hero->grid_position)) {
 			facing_direction = get_direction_from_positions(grid_position, hero->grid_position);
-			printf("Now we attack.\n");
 			_attack(*hero);
 		}
 		else {
@@ -52,7 +51,7 @@ void Enemy::update(Dungeon &dungeon, float delta_time) {
 }
 
 void Enemy::render(SpriteRenderer &renderer) {
-	renderer.draw_sprite_with_rotation(texture_id, position, get_sprite_rotation(facing_direction));
+	renderer.render(texture, position, get_sprite_rotation(facing_direction));
 }
 
 void Enemy::_walk(Dungeon &dungeon) {
@@ -112,9 +111,7 @@ std::vector<glm::vec2> Enemy::generate_enemy_path(Dungeon &dungeon, glm::vec2 &h
 void Enemy::_attack(Hero &hero) {
 	int r = random_rangei(1, 11);
 
-	printf("HP before attack: %d\n", hero.hp);
 	hero.hp -= r;
-	printf("HP after attack: %d\n", hero.hp);
 }
 
 bool Enemy::check_death() {

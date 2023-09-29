@@ -6,6 +6,7 @@
 #include <glm/mat4x4.hpp>
 #include <string>
 #include "shader.h"
+#include "text_rendering/text_render_options.h"
 
 struct Character {
     unsigned int texture;
@@ -24,11 +25,10 @@ struct TextRenderer {
 	TextRenderer(glm::mat4 &);
 	~TextRenderer();
 	void RenderText(std::string, float, float, float, glm::vec3);
-	void draw(std::string, glm::vec2, float, glm::vec3);
+	void render(std::string, TextRenderOptions const &);
 private:
-	int create_characters();
+	int _create_characters();
+	glm::vec2 _calculate_offset(std::string, float, TextAlignment);
 };
-
-void text_renderer_draw(TextRenderer *, char *, float, float, float, glm::vec3);
 
 #endif
