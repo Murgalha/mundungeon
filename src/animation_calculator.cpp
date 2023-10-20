@@ -8,6 +8,21 @@ AnimationCalculator::AnimationCalculator(glm::vec2 &start_pos, glm::vec2 &target
 	movement_time = mov_time;
 }
 
+AnimationCalculator::AnimationCalculator(AnimationStep step) {
+	start = step.start_position;
+	target = step.end_position;
+	elapsed_time = 0.0f;
+	movement_time = step.duration;
+}
+
+
+AnimationCalculator::AnimationCalculator() {
+	start = glm::vec2(0.0f);
+	target = glm::vec2(0.0f);
+	elapsed_time = 0.0f;
+	movement_time = 0.0f;
+}
+
 AnimationCalculator::~AnimationCalculator() {}
 
 glm::vec2 AnimationCalculator::get_animation_position(float delta_time) {
