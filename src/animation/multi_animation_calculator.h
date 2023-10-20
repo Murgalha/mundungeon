@@ -5,7 +5,7 @@
 #include <stdint.h>
 #include "animation/animation_step.h"
 #include "animation/animation.h"
-#include "animation_calculator.h"
+#include "animation/animation_calculator.h"
 
 struct MultiAnimationCalculator : public Animation {
 	uint64_t elapsed_time;

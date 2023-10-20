@@ -1,5 +1,5 @@
 #include <glm/gtx/compatibility.hpp>
-#include "animation_calculator.h"
+#include "animation/animation_calculator.h"
 
 AnimationCalculator::AnimationCalculator(glm::vec2 &start_pos, glm::vec2 &target_pos, float mov_time) {
 	start = start_pos;

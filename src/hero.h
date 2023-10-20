@@ -3,7 +3,7 @@
 
 #include <glm/vec2.hpp>
 #include "sprite_renderer.h"
-#include "animation_calculator.h"
+#include "animation/animation_calculator.h"
 #include "entity.h"
 
 struct Dungeon;
