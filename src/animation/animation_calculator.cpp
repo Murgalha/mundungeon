@@ -25,7 +25,7 @@ AnimationCalculator::AnimationCalculator() {
 
 AnimationCalculator::~AnimationCalculator() {}
 
-glm::vec2 AnimationCalculator::get_animation_position(float delta_time) {
+glm::vec2 AnimationCalculator::get_animation_position(uint64_t delta_time) {
 	if (elapsed_time > movement_time) {
 		return target;
 	}

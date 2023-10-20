@@ -3,8 +3,9 @@
 
 #include <glm/vec2.hpp>
 #include "animation/animation_step.h"
+#include "animation/animation.h"
 
-struct AnimationCalculator {
+struct AnimationCalculator : public Animation {
 	float elapsed_time;
 	float movement_time;
 	glm::vec2 start;
@@ -14,7 +15,7 @@ struct AnimationCalculator {
 	AnimationCalculator(AnimationStep step);
 	AnimationCalculator();
 	~AnimationCalculator();
-	glm::vec2 get_animation_position(float);
+	glm::vec2 get_animation_position(uint64_t delta_time);
 	bool has_ended();
 };
 
