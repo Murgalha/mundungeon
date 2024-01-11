@@ -15,7 +15,6 @@ AnimationCalculator::AnimationCalculator(AnimationStep step) {
 	movement_time = step.duration;
 }
 
-
 AnimationCalculator::AnimationCalculator() {
 	start = glm::vec2(0.0f);
 	target = glm::vec2(0.0f);
@@ -26,7 +25,7 @@ AnimationCalculator::AnimationCalculator() {
 AnimationCalculator::~AnimationCalculator() {}
 
 glm::vec2 AnimationCalculator::get_animation_position(uint64_t delta_time) {
-	if (elapsed_time > movement_time) {
+	if (has_ended()) {
 		return target;
 	}
 
@@ -38,6 +37,6 @@ glm::vec2 AnimationCalculator::get_animation_position(uint64_t delta_time) {
 	return new_position;
 }
 
-bool AnimationCalculator::has_ended() {
+inline bool AnimationCalculator::has_ended() {
 	return elapsed_time >= movement_time;
 }
