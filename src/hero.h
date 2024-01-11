@@ -13,7 +13,7 @@ struct Hero : public Entity {
 	Direction facing_direction;
 	bool is_moving;
 	int hp;
-	AnimationCalculator *animation;
+	Animation *animation;
 
 	Hero(Texture, glm::vec2);
 	~Hero();

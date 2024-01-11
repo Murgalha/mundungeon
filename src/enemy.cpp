@@ -64,7 +64,7 @@ void Enemy::_walk(Dungeon &dungeon) {
 	facing_direction = get_direction_from_positions(grid_position, new_grid_position);
 
 	if (animation != nullptr) delete animation;
-	animation = new AnimationCalculator(position, new_position, 300.0f);
+	animation = new AnimationCalculator(position, new_position, 500.0f);
 	is_moving = true;
 }
 

@@ -7,7 +7,8 @@ enum struct Input {
 	ArrowDown,
 	ArrowLeft,
 	ArrowRight,
-	Enter
+	Enter,
+	X
 };
 
 #endif

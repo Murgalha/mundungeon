@@ -70,6 +70,9 @@ bool Dungeon::handle_input(Input input) {
 		action = HeroAction::WalkRight;
 		handled = true;
 		break;
+	case Input::X:
+		action = HeroAction::Attack;
+		break;
 	default:
 		break;
 	}

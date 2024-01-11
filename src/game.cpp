@@ -18,7 +18,8 @@ Game::Game(unsigned int viewport_width, unsigned int viewport_height) {
 		{ SDLK_LEFT, Input::ArrowLeft },
 		{ SDLK_DOWN, Input::ArrowDown },
 		{ SDLK_RIGHT, Input::ArrowRight },
-		{ SDLK_RETURN, Input::Enter}
+		{ SDLK_RETURN, Input::Enter },
+		{ SDLK_x, Input::X }
 	};
 }
 

@@ -29,13 +29,14 @@ void Hero::update(Dungeon &dungeon, float delta_time) {
 	if (is_moving) {
 		if (animation->has_ended()) {
 			is_moving = false;
-			position = animation->target;
+			position = animation->get_animation_position(delta_time);
 			grid_position = position / SPRITE_WIDTH;
 		}
 		else {
 			glm::vec2 new_position = animation->get_animation_position(delta_time);
 			position = new_position;
 		}
+		position = animation->get_animation_position(delta_time);
 	}
 	else {
 		switch (action) {
@@ -75,7 +76,9 @@ void Hero::_move(Dungeon &dungeon, Direction d) {
 			is_moving = true;
 
 			if (animation != nullptr) delete animation;
-			animation = new AnimationCalculator(position, pixel_position, 300.0f);
+
+			auto step = AnimationStep(position, pixel_position, 500);
+			animation = new AnimationCalculator(step);
 
 			grid_position = new_grid_position;
 		}
@@ -83,16 +86,27 @@ void Hero::_move(Dungeon &dungeon, Direction d) {
 }
 
 void Hero::_attack(Dungeon &dungeon) {
-	auto offset = dir_array[facing_direction];
-	auto x = (int)(grid_position[0] + offset[0]);
-	auto y = (int)(grid_position[1] + offset[1]);
+	if (!is_moving) {
+		auto offset = dir_array[facing_direction];
+		auto x = (int)(grid_position.x + offset.x);
+		auto y = (int)(grid_position.y + offset.y);
+		glm::vec2 target_position = glm::vec2(x, y);
 
-	auto has_enemy = dungeon.enemies[y][x];
+		auto has_enemy = dungeon.enemies[y][x];
 
-	printf("Hero is attacking\n");
-	if (has_enemy) {
-		auto r = random_rangei(1, 11);
+		if (has_enemy) {
+			auto r = random_rangei(1, 11);
+			dungeon.enemy.hp -= r;
+		}
 
-		dungeon.enemy.hp -= r;
+		if (animation != nullptr) delete animation;
+
+		glm::vec2 pixel_position = target_position * SPRITE_WIDTH;
+		auto steps = std::vector<AnimationStep> {
+			AnimationStep(position, pixel_position, 300),
+			AnimationStep(pixel_position, position, 300)
+		};
+		animation = new MultiAnimationCalculator(steps);
+		is_moving = true;
 	}
 }
