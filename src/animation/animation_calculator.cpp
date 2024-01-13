@@ -33,7 +33,6 @@ glm::vec2 AnimationCalculator::get_animation_position(uint64_t delta_time) {
 	glm::vec2 new_position = glm::lerp(start, target, step);
 
 	elapsed_time += delta_time;
-
 	return new_position;
 }
 

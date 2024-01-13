@@ -149,6 +149,10 @@ void Dungeon::render(SpriteRenderer &renderer, TextRenderer &text_renderer) {
 	}
 }
 
+bool Dungeon::can_make_action() {
+	return hero->is_moving || enemy.is_moving;
+}
+
 bool Dungeon::can_move_to(glm::vec2 &position) {
 	DungeonTile tile = map[(int)position.y][(int)position.x];
 

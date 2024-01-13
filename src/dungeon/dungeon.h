@@ -36,6 +36,7 @@ struct Dungeon {
 	bool handle_input(Input);
 	void print();
 	bool can_move_to(glm::vec2 &);
+	bool can_make_action();
 
 private:
 	void _create_hero();

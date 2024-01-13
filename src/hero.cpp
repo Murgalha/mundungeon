@@ -6,6 +6,7 @@
 #include "dungeon/dungeon_tile.h"
 #include "sprite_renderer.h"
 #include "utils.h"
+#include "animation/multi_animation_calculator.h"
 #include "dungeon/dungeon.h"
 #include "random.h"
 
@@ -26,8 +27,8 @@ void Hero::render(SpriteRenderer &renderer) {
 
 void Hero::update(Dungeon &dungeon, float delta_time) {
 	HeroAction action = dungeon.turn_action;
-	if (is_moving) {
-		if (animation->has_ended()) {
+	if (dungeon.can_make_action()) {
+		if (animation && animation->has_ended()) {
 			is_moving = false;
 			position = animation->get_animation_position(delta_time);
 			grid_position = position / SPRITE_WIDTH;
