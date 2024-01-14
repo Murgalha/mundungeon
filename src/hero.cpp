@@ -14,7 +14,7 @@ float get_sprite_rotation(Direction);
 
 Hero::Hero(Texture texture, glm::vec2 grid_start_pos) : Entity(texture, grid_start_pos * SPRITE_WIDTH) {
 	grid_position = grid_start_pos;
-	hp = 100;
+	_hp = 100;
 	state = CreatureState::Idle;
 	animation = nullptr;
 }
@@ -66,7 +66,22 @@ void Hero::update(Dungeon &dungeon, float delta_time) {
 }
 
 bool Hero::is_dead() {
-	return hp == 0;
+	return _hp == 0;
+}
+
+void Hero::take_damage(int32_t value) {
+	auto tmp = _hp - value;
+
+	if (tmp <= 0) {
+		_hp = 0;
+	}
+	else {
+		_hp = tmp;
+	}
+}
+
+int32_t Hero::hp() {
+	return _hp;
 }
 
 void Hero::_move(Dungeon &dungeon, Direction d) {
@@ -96,7 +111,7 @@ void Hero::_attack(Dungeon &dungeon) {
 
 	if (has_enemy) {
 		auto r = random_rangei(1, 11);
-		dungeon.enemy.hp -= r;
+		dungeon.enemy.take_damage(r);
 	}
 
 	if (animation != nullptr) delete animation;

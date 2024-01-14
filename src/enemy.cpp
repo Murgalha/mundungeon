@@ -13,7 +13,7 @@ Enemy::Enemy() : Entity(Texture(), glm::vec2(0.0f)){
 	grid_position = glm::vec2(0.0f);
 	walk_path = std::vector<glm::vec2>();
 	facing_direction = DOWN;
-	hp = 0;
+	_hp = 0;
 	animation = nullptr;
 	state = CreatureState::Idle;
 	should_wait = false;
@@ -21,7 +21,7 @@ Enemy::Enemy() : Entity(Texture(), glm::vec2(0.0f)){
 
 Enemy::Enemy(Texture texture, glm::vec2 grid_start_pos) : Entity(texture, grid_start_pos * SPRITE_WIDTH) {
 	grid_position = grid_start_pos;
-	hp = 30;
+	_hp = 30;
 	walk_path = std::vector<glm::vec2>();
 	animation = nullptr;
 	state = CreatureState::Idle;
@@ -129,10 +129,25 @@ void Enemy::_attack(Hero &hero) {
 	state = CreatureState::Attacking;
 
 	int r = random_rangei(1, 11);
-	hero.hp -= r;
-	printf("Hero HP: %d\n", hero.hp);
+	hero.take_damage(r);
+	printf("Hero HP: %d\n", hero.hp());
 }
 
 bool Enemy::check_death() {
-	return hp <= 0;
+	return _hp == 0;
+}
+
+int32_t Enemy::hp() {
+	return _hp;
+}
+
+void Enemy::take_damage(int32_t value) {
+	auto tmp = _hp - value;
+
+	if (tmp <= 0) {
+		_hp = 0;
+	}
+	else {
+		_hp = tmp;
+	}
 }

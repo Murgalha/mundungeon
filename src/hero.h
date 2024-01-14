@@ -13,7 +13,6 @@ struct Hero : public Entity {
 	glm::vec2 grid_position;
 	Direction facing_direction;
 	CreatureState state;
-	int hp;
 	Animation *animation;
 
 	Hero(Texture, glm::vec2);
@@ -21,7 +20,11 @@ struct Hero : public Entity {
 	void update(Dungeon &, float);
 	void render(SpriteRenderer &);
 	bool is_dead();
+	void take_damage(int32_t value);
+	int32_t hp();
+
 private:
+	int32_t _hp;
 	void _attack(Dungeon &);
 	void _move(Dungeon &, Direction);
 };
