@@ -149,8 +149,12 @@ void Dungeon::render(SpriteRenderer &renderer, TextRenderer &text_renderer) {
 	}
 }
 
-bool Dungeon::can_make_action() {
-	return hero->is_moving || enemy.is_moving;
+bool Dungeon::can_player_act() {
+	return enemy.state == CreatureState::Idle;
+}
+
+void Dungeon::set_enemy_turn() {
+	enemy.should_wait = false;
 }
 
 bool Dungeon::can_move_to(glm::vec2 &position) {

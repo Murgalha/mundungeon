@@ -5,13 +5,14 @@
 #include "sprite_renderer.h"
 #include "animation/animation_calculator.h"
 #include "entity.h"
+#include "creature_state.h"
 
 struct Dungeon;
 
 struct Hero : public Entity {
 	glm::vec2 grid_position;
 	Direction facing_direction;
-	bool is_moving;
+	CreatureState state;
 	int hp;
 	Animation *animation;
 
