@@ -10,8 +10,6 @@
 #include "dungeon/dungeon.h"
 #include "random.h"
 
-float get_sprite_rotation(Direction);
-
 Hero::Hero(Texture texture, glm::vec2 grid_start_pos) : Entity(texture, grid_start_pos * SPRITE_WIDTH) {
 	grid_position = grid_start_pos;
 	_hp = 100;
