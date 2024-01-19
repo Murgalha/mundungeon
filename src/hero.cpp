@@ -91,7 +91,7 @@ void Hero::_move(Dungeon &dungeon, Direction d) {
 
 		if (animation != nullptr) delete animation;
 
-		auto step = AnimationStep(position, pixel_position, 500);
+		auto step = AnimationStep(position, pixel_position, 400);
 		animation = new AnimationCalculator(step);
 
 		grid_position = new_grid_position;
