@@ -70,6 +70,9 @@ bool Dungeon::handle_input(Input input) {
 		action = HeroAction::WalkRight;
 		handled = true;
 		break;
+	case Input::X:
+		action = HeroAction::Attack;
+		break;
 	default:
 		break;
 	}
@@ -144,6 +147,14 @@ void Dungeon::render(SpriteRenderer &renderer, TextRenderer &text_renderer) {
 	if (is_game_over) {
 		game_over.render(renderer, text_renderer, camera->position);
 	}
+}
+
+bool Dungeon::can_player_act() {
+	return enemy.state == CreatureState::Idle;
+}
+
+void Dungeon::set_enemy_turn() {
+	enemy.should_wait = false;
 }
 
 bool Dungeon::can_move_to(glm::vec2 &position) {

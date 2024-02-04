@@ -115,7 +115,7 @@ int TextRenderer::_create_characters() {
         return -1;
     }
 
-    const char *font_name = (char *)"assets/fonts/Antonio-bold.ttf";
+    const char *font_name = (char *)"assets/fonts/player-sans.otf";
 
     FT_Face face;
     if (FT_New_Face(ft, font_name, 0, &face)) {

@@ -3,24 +3,28 @@
 
 #include <glm/vec2.hpp>
 #include "sprite_renderer.h"
-#include "animation_calculator.h"
+#include "animation/animation_calculator.h"
 #include "entity.h"
+#include "creature_state.h"
 
 struct Dungeon;
 
 struct Hero : public Entity {
 	glm::vec2 grid_position;
 	Direction facing_direction;
-	bool is_moving;
-	int hp;
-	AnimationCalculator *animation;
+	CreatureState state;
+	Animation *animation;
 
 	Hero(Texture, glm::vec2);
 	~Hero();
 	void update(Dungeon &, float);
 	void render(SpriteRenderer &);
 	bool is_dead();
+	void take_damage(int32_t value);
+	int32_t hp();
+
 private:
+	int32_t _hp;
 	void _attack(Dungeon &);
 	void _move(Dungeon &, Direction);
 };

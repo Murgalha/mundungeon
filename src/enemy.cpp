@@ -5,32 +5,41 @@
 #include "utils.h"
 #include "a_star.h"
 #include "random.h"
+#include "animation/multi_animation_calculator.h"
 #include "dungeon/dungeon.h"
+#include "hero.h"
 
 Enemy::Enemy() : Entity(Texture(), glm::vec2(0.0f)){
 	grid_position = glm::vec2(0.0f);
 	walk_path = std::vector<glm::vec2>();
 	facing_direction = DOWN;
-	hp = 0;
+	_hp = 0;
 	animation = nullptr;
-	is_moving = false;
+	state = CreatureState::Idle;
+	should_wait = false;
 }
 
 Enemy::Enemy(Texture texture, glm::vec2 grid_start_pos) : Entity(texture, grid_start_pos * SPRITE_WIDTH) {
 	grid_position = grid_start_pos;
-	hp = 30;
+	_hp = 30;
 	walk_path = std::vector<glm::vec2>();
-	is_moving = false;
 	animation = nullptr;
+	state = CreatureState::Idle;
+	should_wait = true;
 }
 
 Enemy::~Enemy() { }
 
 void Enemy::update(Dungeon &dungeon, float delta_time) {
-	if (is_moving) {
+	if (should_wait)
+		return;
+
+	if (state == CreatureState::Attacking || state == CreatureState::Moving) {
 		if (animation->has_ended()) {
-			is_moving = false;
-			position = animation->target;
+			state = CreatureState::Idle;
+			should_wait = true;
+
+			position = animation->get_animation_position(delta_time);
 			grid_position = position / SPRITE_WIDTH;
 		}
 		else {
@@ -38,7 +47,7 @@ void Enemy::update(Dungeon &dungeon, float delta_time) {
 			position = new_position;
 		}
 	}
-	else if (dungeon.turn_action != HeroAction::NoAction) {
+	else {
 		auto hero = dungeon.hero;
 		if (_can_attack(hero->grid_position)) {
 			facing_direction = get_direction_from_positions(grid_position, hero->grid_position);
@@ -64,8 +73,8 @@ void Enemy::_walk(Dungeon &dungeon) {
 	facing_direction = get_direction_from_positions(grid_position, new_grid_position);
 
 	if (animation != nullptr) delete animation;
-	animation = new AnimationCalculator(position, new_position, 300.0f);
-	is_moving = true;
+	animation = new AnimationCalculator(position, new_position, 400.0f);
+	state = CreatureState::Moving;
 }
 
 bool Enemy::_can_attack(glm::vec2 &hero_position) {
@@ -98,22 +107,47 @@ std::vector<glm::vec2> Enemy::generate_enemy_path(Dungeon &dungeon, glm::vec2 &h
 	path.erase(path.end() - 1);
 
 #if DEBUG
-	printf("--------\nNew path:\n");
-	for(auto p : walk_path) {
-		printf("(%.1f, %.1f) -> ", p.x, p.y);
-	}
-	printf("\n");
+	//printf("--------\nNew path:\n");
+	//for(auto p : walk_path) {
+	//	printf("(%.1f, %.1f) -> ", p.x, p.y);
+	//}
+	//printf("\n");
 #endif
 
 	return path;
 }
 
 void Enemy::_attack(Hero &hero) {
-	int r = random_rangei(1, 11);
+	glm::vec2 pixel_position = hero.position;
+	auto steps = std::vector<AnimationStep> {
+		AnimationStep(position, pixel_position, 300),
+		AnimationStep(pixel_position, position, 300)
+	};
 
-	hero.hp -= r;
+	if (animation != nullptr) delete animation;
+	animation = new MultiAnimationCalculator(steps);
+	state = CreatureState::Attacking;
+
+	int r = random_rangei(1, 11);
+	hero.take_damage(r);
+	printf("Hero HP: %d\n", hero.hp());
 }
 
 bool Enemy::check_death() {
-	return hp <= 0;
+	return _hp == 0;
+}
+
+int32_t Enemy::hp() {
+	return _hp;
+}
+
+void Enemy::take_damage(int32_t value) {
+	auto tmp = _hp - value;
+
+	if (tmp <= 0) {
+		_hp = 0;
+	}
+	else {
+		_hp = tmp;
+	}
 }
