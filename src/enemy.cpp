@@ -73,7 +73,7 @@ void Enemy::_walk(Dungeon &dungeon) {
 	facing_direction = get_direction_from_positions(grid_position, new_grid_position);
 
 	if (animation != nullptr) delete animation;
-	animation = new AnimationCalculator(position, new_position, 400.0f);
+	animation = new AnimationCalculator(position, new_position, 200.0f);
 	state = CreatureState::Moving;
 }
 
@@ -120,8 +120,8 @@ std::vector<glm::vec2> Enemy::generate_enemy_path(Dungeon &dungeon, glm::vec2 &h
 void Enemy::_attack(Hero &hero) {
 	glm::vec2 pixel_position = hero.position;
 	auto steps = std::vector<AnimationStep> {
-		AnimationStep(position, pixel_position, 300),
-		AnimationStep(pixel_position, position, 300)
+		AnimationStep(position, pixel_position, 150),
+		AnimationStep(pixel_position, position, 150)
 	};
 
 	if (animation != nullptr) delete animation;

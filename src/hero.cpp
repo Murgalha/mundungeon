@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <glm/gtx/compatibility.hpp>
 #include "hero.h"
 #include "texture.h"
 #include "dungeon/dungeon_tile.h"
@@ -91,7 +90,7 @@ void Hero::_move(Dungeon &dungeon, Direction d) {
 
 		if (animation != nullptr) delete animation;
 
-		auto step = AnimationStep(position, pixel_position, 400);
+		auto step = AnimationStep(position, pixel_position, 200);
 		animation = new AnimationCalculator(step);
 
 		grid_position = new_grid_position;
@@ -116,8 +115,8 @@ void Hero::_attack(Dungeon &dungeon) {
 
 	glm::vec2 pixel_position = target_position * SPRITE_WIDTH;
 	auto steps = std::vector<AnimationStep> {
-		AnimationStep(position, pixel_position, 300),
-		AnimationStep(pixel_position, position, 300)
+		AnimationStep(position, pixel_position, 150),
+		AnimationStep(pixel_position, position, 150)
 	};
 	animation = new MultiAnimationCalculator(steps);
 
