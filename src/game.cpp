@@ -32,9 +32,7 @@ Game::~Game() {
 
 void Game::init() {
 	Shader *shader = new Shader();
-	shader->create(GL_VERTEX_SHADER, (char *)"shaders/shader.vert");
-	shader->create(GL_FRAGMENT_SHADER, (char *)"shaders/shader.frag");
-	shader->create_program();
+	shader->create((char *)"shaders/shader.vert", (char *)"shaders/shader.frag");
 
 	glm::mat4 projection = glm::ortho(0.0f, (float)width, (float)height, 0.0f, -10.0f, 10.0f);
 
