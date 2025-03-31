@@ -8,6 +8,7 @@
 #include "animation/multi_animation_calculator.h"
 #include "dungeon/dungeon.h"
 #include "random.h"
+#include "renderer_repo.h"
 
 Hero::Hero(Texture texture, glm::vec2 grid_start_pos) : Entity(texture, grid_start_pos * SPRITE_WIDTH) {
 	grid_position = grid_start_pos;
@@ -18,8 +19,10 @@ Hero::Hero(Texture texture, glm::vec2 grid_start_pos) : Entity(texture, grid_sta
 
 Hero::~Hero() {}
 
-void Hero::render(SpriteRenderer &renderer) {
-	renderer.render(texture, position, get_sprite_rotation(facing_direction));
+void Hero::render() {
+	auto renderer = renderer_repo["default"];
+
+	renderer->render(texture, position, get_sprite_rotation(facing_direction));
 }
 
 void Hero::update(Dungeon &dungeon, float delta_time) {

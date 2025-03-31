@@ -1,5 +1,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "game.h"
+#include "renderer_repo.h"
 
 #define UNUSED(X) (void)(X)
 
@@ -8,7 +9,6 @@ Game::Game(unsigned int viewport_width, unsigned int viewport_height) {
 	height = viewport_height;
 	keys = (bool *)malloc(sizeof(bool) * 1024);
 	state = GAME_ACTIVE;
-	sprite_renderer = NULL;
 	text_renderer = NULL;
 	dungeon = new Dungeon(50);
 	should_quit = false;
@@ -24,7 +24,6 @@ Game::Game(unsigned int viewport_width, unsigned int viewport_height) {
 }
 
 Game::~Game() {
-	delete sprite_renderer;
 	delete text_renderer;
 	delete dungeon;
 	free(keys);
@@ -36,10 +35,11 @@ void Game::init() {
 
 	glm::mat4 projection = glm::ortho(0.0f, (float)width, (float)height, 0.0f, -10.0f, 10.0f);
 
+	renderer_repo["default"] = new SpriteRenderer(shader);
+
 	shader->use();
 	shader->set_int((char *)"image", 0);
 	shader->set_mat4((char *)"projection", projection);
-    sprite_renderer = new SpriteRenderer(shader);
     text_renderer = new TextRenderer(projection);
 }
 
@@ -71,7 +71,8 @@ void Game::update(float delta_time) {
 	else {
 		dungeon->update(delta_time);
 
-		auto shader = sprite_renderer->shader;
+		auto renderer = renderer_repo["default"];
+		auto shader = renderer->shader;
 		shader->use();
 
 		auto view = dungeon->camera->view_matrix();
@@ -80,5 +81,5 @@ void Game::update(float delta_time) {
 }
 
 void Game::render() {
-	dungeon->render(*sprite_renderer, *text_renderer);
+	dungeon->render(text_renderer);
 }

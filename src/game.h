@@ -24,7 +24,6 @@ struct Game {
 	bool *keys;
 	unsigned int width;
 	unsigned int height;
-	SpriteRenderer *sprite_renderer;
 	TextRenderer *text_renderer;
 	unsigned int texture_id;
 	Dungeon *dungeon;

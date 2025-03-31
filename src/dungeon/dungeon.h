@@ -32,7 +32,7 @@ struct Dungeon {
 	Dungeon(uint16_t);
 	~Dungeon();
 	void update(float);
-	void render(SpriteRenderer &, TextRenderer &);
+	void render(TextRenderer *);
 	bool handle_input(Input);
 	void print();
 	bool can_move_to(glm::vec2 &);

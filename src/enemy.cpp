@@ -8,6 +8,7 @@
 #include "animation/multi_animation_calculator.h"
 #include "dungeon/dungeon.h"
 #include "hero.h"
+#include "renderer_repo.h"
 
 Enemy::Enemy() : Entity(Texture(), glm::vec2(0.0f)){
 	grid_position = glm::vec2(0.0f);
@@ -59,8 +60,10 @@ void Enemy::update(Dungeon &dungeon, float delta_time) {
 	}
 }
 
-void Enemy::render(SpriteRenderer &renderer) {
-	renderer.render(texture, position, get_sprite_rotation(facing_direction));
+void Enemy::render() {
+	auto renderer = renderer_repo["default"];
+
+	renderer->render(texture, position, get_sprite_rotation(facing_direction));
 }
 
 void Enemy::_walk(Dungeon &dungeon) {

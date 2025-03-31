@@ -18,7 +18,7 @@ struct Hero : public Entity {
 	Hero(Texture, glm::vec2);
 	~Hero();
 	void update(Dungeon &, float);
-	void render(SpriteRenderer &);
+	void render();
 	bool is_dead();
 	void take_damage(int32_t value);
 	int32_t hp();

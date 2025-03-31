@@ -30,10 +30,10 @@ void GameOverScreen::update(float delta_time) {
 	UNUSED(delta_time);
 }
 
-void GameOverScreen::render(SpriteRenderer &renderer, TextRenderer &text_renderer, glm::vec2 camera_pos) {
+void GameOverScreen::render(SpriteRenderer *renderer, TextRenderer *text_renderer, glm::vec2 camera_pos) {
 	auto scale = glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT);
 
-	renderer.render(background_tex, camera_pos, 0.0f, background_color, scale);
+	renderer->render(background_tex, camera_pos, 0.0f, background_color, scale);
 
 	glm::vec2 game_over_position = glm::vec2(SCREEN_WIDTH/2 - 30.0, SCREEN_HEIGHT/2 - 100.0f);
 
@@ -44,7 +44,7 @@ void GameOverScreen::render(SpriteRenderer &renderer, TextRenderer &text_rendere
 		.with_alignment(TextAlignment::Center)
 		.build();
 
-	text_renderer.render("GAME OVER", game_over_options);
+	text_renderer->render("GAME OVER", game_over_options);
 
 	auto item_position = game_over_position;
 	item_position.y += 30.0f;
@@ -67,7 +67,7 @@ void GameOverScreen::render(SpriteRenderer &renderer, TextRenderer &text_rendere
 			.with_position(item_position)
 			.build();
 
-		text_renderer.render(item, options);
+		text_renderer->render(item, options);
 	}
 }
 

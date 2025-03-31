@@ -13,7 +13,7 @@ struct GameOverScreen {
 	~GameOverScreen();
 
 	void update(float);
-	void render(SpriteRenderer &sprt_rdr, TextRenderer &text_rdr, glm::vec2 camera);
+	void render(SpriteRenderer *sprt_rdr, TextRenderer *text_rdr, glm::vec2 camera);
 	bool handle_input(Input input);
 	GameOverAction action;
 	bool is_closed;

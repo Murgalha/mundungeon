@@ -22,7 +22,7 @@ struct Enemy : public Entity {
 	Enemy(Texture, glm::vec2);
 	~Enemy();
 	void update(Dungeon &, float);
-	void render(SpriteRenderer &);
+	void render();
 	bool check_death();
 	int32_t hp();
 	void take_damage(int32_t value);
