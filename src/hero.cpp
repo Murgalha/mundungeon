@@ -10,6 +10,9 @@
 #include "random.h"
 #include "renderer_repo.h"
 
+#define MAX(a, b) (a > b ? a : b)
+#define MIN(a, b) (a < b ? a : b)
+
 Hero::Hero(Texture texture, glm::vec2 grid_start_pos) : Entity(texture, grid_start_pos * SPRITE_WIDTH) {
 	grid_position = grid_start_pos;
 	_hp = 100;
@@ -71,13 +74,7 @@ bool Hero::is_dead() {
 
 void Hero::take_damage(int32_t value) {
 	auto tmp = _hp - value;
-
-	if (tmp <= 0) {
-		_hp = 0;
-	}
-	else {
-		_hp = tmp;
-	}
+	_hp = MAX(tmp, 0);
 }
 
 int32_t Hero::hp() {
