@@ -2,11 +2,15 @@
 #include "sprite_renderer.h"
 #include "texture.h"
 #include "utils.h"
+#include <time.h>
+#include <math.h>
 
 SpriteRenderer::SpriteRenderer(Shader *shader) {
 	this->shader = shader;
 	this->sprite_width = SPRITE_WIDTH;
 	this->sprite_height = SPRITE_HEIGHT;
+	this->counter = 0;
+
     unsigned int VBO;
     float vertices[] = {
         // pos      // tex
@@ -49,8 +53,9 @@ void SpriteRenderer::render(Texture texture, glm::vec2 position, float rotation,
 
 	model = glm::scale(model, glm::vec3(scale.x, scale.y, 1.0f));
 
+	//time_t t = time(NULL);
+	shader->set_float((char *)"time", counter++);
 	shader->set_mat4((char *)"model", model);
-
     shader->set_vec4((char *)"spriteColor", color);
 
     glActiveTexture(GL_TEXTURE0);

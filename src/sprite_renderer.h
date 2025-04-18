@@ -12,6 +12,7 @@ struct SpriteRenderer {
 	unsigned int quad_VAO;
 	unsigned int sprite_width;
 	unsigned int sprite_height;
+	int counter;
 
 	SpriteRenderer(Shader *);
 	~SpriteRenderer();

@@ -10,7 +10,7 @@ Game::Game(unsigned int viewport_width, unsigned int viewport_height) {
 	keys = (bool *)malloc(sizeof(bool) * 1024);
 	state = GAME_ACTIVE;
 	text_renderer = NULL;
-	dungeon = new Dungeon(50);
+	dungeon = NULL;
 	should_quit = false;
 
 	input_map = std::map<SDL_Keycode, Input> {
@@ -31,16 +31,28 @@ Game::~Game() {
 
 void Game::init() {
 	Shader *shader = new Shader();
-	shader->create((char *)"shaders/shader.vert", (char *)"shaders/shader.frag");
+	shader->create((char *)"shaders/default.vert", (char *)"shaders/default.frag");
+
+	Shader *blink_shader = new Shader();
+	blink_shader->create((char *)"shaders/default.vert", (char *)"shaders/blink.frag");
 
 	glm::mat4 projection = glm::ortho(0.0f, (float)width, (float)height, 0.0f, -10.0f, 10.0f);
 
 	renderer_repo["default"] = new SpriteRenderer(shader);
+	renderer_repo["blink"] = new SpriteRenderer(blink_shader);
+	printf("Setting renderers...\n");
 
 	shader->use();
 	shader->set_int((char *)"image", 0);
 	shader->set_mat4((char *)"projection", projection);
-    text_renderer = new TextRenderer(projection);
+
+	blink_shader->use();
+	blink_shader->set_int((char *)"image", 0);
+	blink_shader->set_mat4((char *)"projection", projection);
+
+	text_renderer = new TextRenderer(projection);
+
+	dungeon = new Dungeon(50);
 }
 
 bool Game::handle_input(SDL_Event e) {
@@ -73,10 +85,15 @@ void Game::update(float delta_time) {
 
 		auto renderer = renderer_repo["default"];
 		auto shader = renderer->shader;
+		auto b_renderer = renderer_repo["blink"];
+		auto blink_shader = b_renderer->shader;
 		shader->use();
 
 		auto view = dungeon->camera->view_matrix();
 		shader->set_mat4((char *)"view", view);
+
+		blink_shader->use();
+		blink_shader->set_mat4((char *)"view", view);
 	}
 }
 

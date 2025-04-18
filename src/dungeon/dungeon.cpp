@@ -87,7 +87,7 @@ void Dungeon::update(float delta_time) {
 		game_over_action = game_over.action;
 	}
 
-	hero->update(*this, delta_time);
+	hero->update(this, delta_time);
 
 	glm::vec2 enemy_pos = enemy.grid_position;
 	enemies[(int)enemy_pos.y][(int)enemy_pos.x] = 0;
