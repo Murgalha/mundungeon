@@ -9,6 +9,8 @@ struct Hero;
 #include "entity.h"
 #include "animation/animation.h"
 #include "creature_state.h"
+#include "duration.h"
+#include "sprite_renderer.h"
 
 struct Enemy : public Entity {
 	glm::vec2 grid_position;
@@ -17,12 +19,14 @@ struct Enemy : public Entity {
 	Animation *animation;
 	CreatureState state;
 	bool should_wait;
+	SpriteRenderer *renderer;
+	Duration damage_duration;
 
 	Enemy();
 	Enemy(Texture, glm::vec2);
 	~Enemy();
 	void update(Dungeon &, float);
-	void render(SpriteRenderer &);
+	void render();
 	bool check_death();
 	int32_t hp();
 	void take_damage(int32_t value);

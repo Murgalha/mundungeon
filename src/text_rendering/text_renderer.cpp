@@ -8,9 +8,7 @@ TextRenderer::TextRenderer(glm::mat4 &projection) {
 	bitmap_font_size = 100.0f;
 
 	shader = new Shader();
-	shader->create(GL_VERTEX_SHADER, (char *)"shaders/text.vert");
-	shader->create(GL_FRAGMENT_SHADER, (char *)"shaders/text.frag");
-	shader->create_program();
+	shader->create((char *)"shaders/text.vert", (char *)"shaders/text.frag");
 
 	shader->use();
 	shader->set_mat4((char *)"projection", projection);

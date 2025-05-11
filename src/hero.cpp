@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <glm/gtx/compatibility.hpp>
 #include "hero.h"
 #include "texture.h"
 #include "dungeon/dungeon_tile.h"
@@ -9,26 +8,32 @@
 #include "animation/multi_animation_calculator.h"
 #include "dungeon/dungeon.h"
 #include "random.h"
+#include "renderer_repo.h"
+
+#define MAX(a, b) (a > b ? a : b)
+#define MIN(a, b) (a < b ? a : b)
 
 Hero::Hero(Texture texture, glm::vec2 grid_start_pos) : Entity(texture, grid_start_pos * SPRITE_WIDTH) {
 	grid_position = grid_start_pos;
 	_hp = 100;
 	state = CreatureState::Idle;
 	animation = nullptr;
+	damage_duration = Duration((time_t)500);
+	renderer = renderer_repo["default"];
 }
 
 Hero::~Hero() {}
 
-void Hero::render(SpriteRenderer &renderer) {
-	renderer.render(texture, position, get_sprite_rotation(facing_direction));
+void Hero::render() {
+	renderer->render(texture, position, get_sprite_rotation(facing_direction));
 }
 
-void Hero::update(Dungeon &dungeon, float delta_time) {
-	HeroAction action = dungeon.turn_action;
+void Hero::update(Dungeon *dungeon, float delta_time) {
+	HeroAction action = dungeon->turn_action;
 	if (state == CreatureState::Attacking || state == CreatureState::Moving) {
 		if (animation && animation->has_ended()) {
 			state = CreatureState::Idle;
-			dungeon.set_enemy_turn();
+			dungeon->set_enemy_turn();
 
 			position = animation->get_animation_position(delta_time);
 			grid_position = position / SPRITE_WIDTH;
@@ -39,7 +44,14 @@ void Hero::update(Dungeon &dungeon, float delta_time) {
 		}
 		position = animation->get_animation_position(delta_time);
 	}
-	else if (state == CreatureState::Idle && dungeon.can_player_act()) {
+	else if (state == CreatureState::TakingDamage) {
+		damage_duration.add(delta_time);
+		if (damage_duration.is_finished()) {
+			state = CreatureState::Idle;
+			renderer = renderer_repo["default"];
+		}
+	}
+	else if (state == CreatureState::Idle && dungeon->can_player_act()) {
 		switch (action) {
 		case HeroAction::WalkRight:
 			_move(dungeon, RIGHT);
@@ -69,29 +81,28 @@ bool Hero::is_dead() {
 
 void Hero::take_damage(int32_t value) {
 	auto tmp = _hp - value;
+	_hp = MAX(tmp, 0);
 
-	if (tmp <= 0) {
-		_hp = 0;
-	}
-	else {
-		_hp = tmp;
-	}
+	state = CreatureState::TakingDamage;
+	damage_duration.reset();
+	renderer = renderer_repo["blink"];
+	renderer->counter = 0;
 }
 
 int32_t Hero::hp() {
 	return _hp;
 }
 
-void Hero::_move(Dungeon &dungeon, Direction d) {
+void Hero::_move(Dungeon *dungeon, Direction d) {
 	glm::vec2 new_grid_position = grid_position + dir_array[d];
 
 	facing_direction = d;
-	if(dungeon.can_move_to(new_grid_position)) {
+	if(dungeon->can_move_to(new_grid_position)) {
 		glm::vec2 pixel_position = new_grid_position * SPRITE_WIDTH;
 
 		if (animation != nullptr) delete animation;
 
-		auto step = AnimationStep(position, pixel_position, 400);
+		auto step = AnimationStep(position, pixel_position, 200);
 		animation = new AnimationCalculator(step);
 
 		grid_position = new_grid_position;
@@ -99,25 +110,25 @@ void Hero::_move(Dungeon &dungeon, Direction d) {
 	}
 }
 
-void Hero::_attack(Dungeon &dungeon) {
+void Hero::_attack(Dungeon *dungeon) {
 	auto offset = dir_array[facing_direction];
 	auto x = (int)(grid_position.x + offset.x);
 	auto y = (int)(grid_position.y + offset.y);
 	glm::vec2 target_position = glm::vec2(x, y);
 
-	auto has_enemy = dungeon.enemies[y][x];
+	auto has_enemy = dungeon->enemies[y][x];
 
 	if (has_enemy) {
 		auto r = random_rangei(1, 11);
-		dungeon.enemy.take_damage(r);
+		dungeon->enemy.take_damage(r);
 	}
 
 	if (animation != nullptr) delete animation;
 
 	glm::vec2 pixel_position = target_position * SPRITE_WIDTH;
 	auto steps = std::vector<AnimationStep> {
-		AnimationStep(position, pixel_position, 300),
-		AnimationStep(pixel_position, position, 300)
+		AnimationStep(position, pixel_position, 150),
+		AnimationStep(pixel_position, position, 150)
 	};
 	animation = new MultiAnimationCalculator(steps);
 

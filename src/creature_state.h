@@ -4,7 +4,8 @@
 enum struct CreatureState {
 	Idle,
 	Attacking,
-	Moving
+	Moving,
+	TakingDamage,
 };
 
 #endif

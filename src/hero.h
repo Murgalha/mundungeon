@@ -6,6 +6,7 @@
 #include "animation/animation_calculator.h"
 #include "entity.h"
 #include "creature_state.h"
+#include "duration.h"
 
 struct Dungeon;
 
@@ -14,19 +15,21 @@ struct Hero : public Entity {
 	Direction facing_direction;
 	CreatureState state;
 	Animation *animation;
+	Duration damage_duration;
+	SpriteRenderer *renderer;
 
 	Hero(Texture, glm::vec2);
 	~Hero();
-	void update(Dungeon &, float);
-	void render(SpriteRenderer &);
+	void update(Dungeon *, float);
+	void render();
 	bool is_dead();
 	void take_damage(int32_t value);
 	int32_t hp();
 
 private:
 	int32_t _hp;
-	void _attack(Dungeon &);
-	void _move(Dungeon &, Direction);
+	void _attack(Dungeon *);
+	void _move(Dungeon *, Direction);
 };
 
 #endif

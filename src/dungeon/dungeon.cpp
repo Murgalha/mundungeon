@@ -6,6 +6,7 @@
 #include "dungeon/dungeon_generator.h"
 #include "texture.h"
 #include "text_rendering/text_render_options_builder.h"
+#include "renderer_repo.h"
 
 Dungeon::Dungeon(uint16_t dungeon_size) {
 	is_game_over = false;
@@ -86,7 +87,7 @@ void Dungeon::update(float delta_time) {
 		game_over_action = game_over.action;
 	}
 
-	hero->update(*this, delta_time);
+	hero->update(this, delta_time);
 
 	glm::vec2 enemy_pos = enemy.grid_position;
 	enemies[(int)enemy_pos.y][(int)enemy_pos.x] = 0;
@@ -125,24 +126,26 @@ void Dungeon::_post_turn_cleanup() {
 	}
 }
 
-void Dungeon::render(SpriteRenderer &renderer, TextRenderer &text_renderer) {
+void Dungeon::render(TextRenderer *text_renderer) {
 	DungeonTile tile;
 	Texture texture;
 	glm::vec2 position;
 
+	auto renderer = renderer_repo["default"];
+
 	for(int y = 0; y < size; y++) {
 		for(int x = 0; x < size; x++) {
 			tile = map[y][x];
-			position[0] = x * renderer.sprite_width;
-			position[1] = y * renderer.sprite_height;
+			position[0] = x * renderer->sprite_width;
+			position[1] = y * renderer->sprite_height;
 
 			texture = sprites[tile];
-			renderer.render(texture, position);
+			renderer->render(texture, position);
 		}
 	}
 
-	enemy.render(renderer);
-	hero->render(renderer);
+	enemy.render();
+	hero->render();
 
 	if (is_game_over) {
 		game_over.render(renderer, text_renderer, camera->position);

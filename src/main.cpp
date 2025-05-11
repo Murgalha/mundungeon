@@ -8,6 +8,7 @@
 #include "game.h"
 #include "clock.h"
 #include "utils.h"
+#include "renderer_repo.h"
 
 #ifdef DEBUG
 #include "opengl_debug.h"
@@ -15,9 +16,12 @@
 
 #define UNUSED(X) (void)(X)
 
+std::unordered_map<std::string, SpriteRenderer *> renderer_repo;
+
 int main(int argc, char *argv[]) {
 	UNUSED(argc);
 	UNUSED(argv);
+	renderer_repo = std::unordered_map<std::string, SpriteRenderer *>();
 
 	if(SDL_InitSubSystem(SDL_INIT_EVERYTHING ^ SDL_INIT_HAPTIC)) {
 		printf("Could not initialize SDL: %s\n", SDL_GetError());
