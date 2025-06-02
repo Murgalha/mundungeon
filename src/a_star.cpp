@@ -31,7 +31,7 @@ float mhtndist(glm::vec2 v1, glm::vec2 v2) {
 bool is_walkable(Dungeon &dungeon, glm::vec2 v) {
 	int x = (int)v.x;
 	int y = (int)v.y;
-	DungeonTile tile = dungeon.map[y][x];
+	DungeonTile tile = dungeon.map->tiles[y][x];
 
 	return (tile == DungeonTile::Floor ||
 			tile == DungeonTile::Door ||

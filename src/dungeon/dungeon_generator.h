@@ -3,17 +3,25 @@
 
 #include "utils.h"
 #include "types.h"
-#include "dungeon/dungeon_tile.h"
+#include "dungeon/dungeon_map.h"
+#include "shapes/point.h"
+
+typedef struct BranchablePoint {
+	Point point;
+	Direction direction;
+} BranchablePoint;
 
 struct DungeonGenerator {
-	DungeonTile **map;
-	unsigned short size;
-	V2 *walls;
-	unsigned short nwalls;
-	V2 *corridors;
-	unsigned short ncorridors;
+	DungeonMap *map;
 
-	static DungeonTile **new_map(unsigned short);
+	BranchablePoint *branchable_walls;
+	size_t nwalls;
+	BranchablePoint *branchable_corridors;
+	size_t ncorridors;
+
+	unsigned short width();
+	unsigned short height();
+	static DungeonMap *new_map(unsigned short);
 };
 
 #endif

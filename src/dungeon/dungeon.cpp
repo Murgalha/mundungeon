@@ -35,15 +35,17 @@ Dungeon::Dungeon(uint16_t dungeon_size) {
 }
 
 Dungeon::~Dungeon() {
-	for(int i = 0; i < size; i++) {
-		free(map[i]);
-		free(enemies[i]);
-	}
-	free(map);
-	free(enemies);
+	/*
+	  for(int i = 0; i < size; i++) {
+	  free(map[i]);
+	  free(enemies[i]);
+	  }
+	  free(map);
+	  free(enemies);
 
-	delete camera;
-	delete hero;
+	  delete camera;
+	  delete hero;
+	*/
 }
 
 bool Dungeon::handle_input(Input input) {
@@ -77,8 +79,8 @@ bool Dungeon::handle_input(Input input) {
 	default:
 		break;
 	}
-	turn_action = action;
 
+	turn_action = action;
 	return handled;
 }
 
@@ -89,12 +91,12 @@ void Dungeon::update(float delta_time) {
 
 	hero->update(this, delta_time);
 
-	glm::vec2 enemy_pos = enemy.grid_position;
-	enemies[(int)enemy_pos.y][(int)enemy_pos.x] = 0;
-	enemy.update(*this, delta_time);
+	//glm::vec2 enemy_pos = enemy.grid_position;
+	//enemies[(int)enemy_pos.y][(int)enemy_pos.x] = 0;
+	//enemy.update(*this, delta_time);
 
-	enemy_pos = enemy.grid_position;
-	enemies[(int)enemy_pos.y][(int)enemy_pos.x] = 1;
+	//enemy_pos = enemy.grid_position;
+	//enemies[(int)enemy_pos.y][(int)enemy_pos.x] = 1;
 
 	_post_turn_cleanup();
 
@@ -135,7 +137,7 @@ void Dungeon::render(TextRenderer *text_renderer) {
 
 	for(int y = 0; y < size; y++) {
 		for(int x = 0; x < size; x++) {
-			tile = map[y][x];
+			tile = map->tiles[y][x];
 			position[0] = x * renderer->sprite_width;
 			position[1] = y * renderer->sprite_height;
 
@@ -161,7 +163,7 @@ void Dungeon::set_enemy_turn() {
 }
 
 bool Dungeon::can_move_to(glm::vec2 &position) {
-	DungeonTile tile = map[(int)position.y][(int)position.x];
+	DungeonTile tile = map->tiles[(int)position.y][(int)position.x];
 
 	return tile != DungeonTile::Wall &&
 		tile != DungeonTile::Empty &&
@@ -188,7 +190,7 @@ void Dungeon::_spawn_enemies() {
 void Dungeon::print() {
 	for(int y = 0; y < size; y++) {
 		for(int x = 0; x < size; x++) {
-			printf("%c", to_char(map[y][x]));
+			printf("%c", to_char(map->tiles[y][x]));
 		}
 		printf("\n");
 	}

@@ -6,7 +6,7 @@
 #include <glm/vec2.hpp>
 #include <cstdint>
 #include "sprite_renderer.h"
-#include "dungeon/dungeon_tile.h"
+#include "dungeon/dungeon_map.h"
 #include "dungeon/game_over_screen.h"
 #include "dungeon/game_over_action.h"
 #include "text_rendering/text_renderer.h"
@@ -19,7 +19,7 @@
 struct Dungeon {
 	std::map<DungeonTile, Texture> sprites;
 	Camera *camera;
-	DungeonTile **map;
+	DungeonMap *map;
 	unsigned char **enemies;
 	Enemy enemy;
 	Hero *hero;

@@ -3,379 +3,369 @@
 #include <stdbool.h>
 #include "dungeon/dungeon_generator.h"
 #include "dungeon/dungeon_tile.h"
+#include "shapes/rect.h"
 #include "random.h"
 
 #define MAX_TRIES 20
 
-// TODO: Create a DungeonTile map instead of char
+#define unsigned short ushort
 
-// ======================
-// BEGIN TILE FUNCTIONS
-// ======================
-bool tile_is_corner(DungeonGenerator *dungeon, V2 tile) {
-	// up * left + up * right + down * left + down * right
-	// (up + down) * (left + right)
-	if((tile.x - 1) < 0 || (tile.x + 1) >= dungeon->size ||
-	   (tile.y - 1) < 0 || (tile.y + 1) >= dungeon->size) {
+Rect rooms[3] = {
+	{ .start_point = { .x = 0, .y = 0}, .width = 7, .height = 5 },
+	{ .start_point = { .x = 0, .y = 0}, .width = 9, .height = 7 },
+	{ .start_point = { .x = 0, .y = 0}, .width = 11, .height = 9 }
+};
+
+Rect corridors[2] = {
+	{ .start_point = { .x = 0, .y = 0}, .width = 3, .height = 3 },
+	{ .start_point = { .x = 0, .y = 0}, .width = 3, .height = 5 },
+};
+
+Direction directions[4] = { UP, DOWN, LEFT, RIGHT };
+char direction_strings[4][10] = { "up", "down", "left", "right" };
+
+ushort DungeonGenerator::width() {
+	return map->tiles_size;
+}
+
+ushort DungeonGenerator::height() {
+	return map->tiles_size;
+}
+
+void shuffle_directions() {
+	size_t array_len = sizeof(directions)/sizeof(directions[0]);
+
+	for (size_t x = 0; x < array_len / 2; x++) {
+		int i1 = rand() % array_len;
+		int i2 = rand() % array_len;
+
+		Direction tmp = directions[i1];
+		directions[i1] = directions[i2];
+		directions[i2] = tmp;
+	}
+}
+
+void dg_fill_rect(DungeonGenerator *dungeon, Point start_point, ushort width, ushort height, DungeonTile tile) {
+	for (ushort y = start_point.y; y < start_point.y + height; y++) {
+		for (ushort x = start_point.x; x < start_point.x + width; x++) {
+			dungeon->map->tiles[y][x] = tile;
+		}
+	}
+}
+
+void dg_make_room(DungeonGenerator *dungeon, Rect room) {
+	dg_fill_rect(dungeon, room.start_point, room.width, room.height, DungeonTile::Wall);
+
+	Point p;
+	p.x = room.start_point.x + 1;
+	p.y = room.start_point.y + 1;
+	dg_fill_rect(dungeon, p, room.width - 2, room.height - 2, DungeonTile::Floor);
+}
+
+bool dg_try_make_room(DungeonGenerator *dungeon, Rect room) {
+	if (room.start_point.x < 0 || room.start_point.x >= dungeon->width())
 		return false;
-	}
-	if((dungeon->map[tile.y - 1][tile.x] == DungeonTile::Empty ||
-		dungeon->map[tile.y + 1][tile.x] == DungeonTile::Empty) &&
-	   (dungeon->map[tile.y][tile.x - 1] == DungeonTile::Empty ||
-		dungeon->map[tile.y][tile.x + 1] == DungeonTile::Empty)) {
-		return true;
-	}
-	return false;
-}
 
-V2 get_random_wall(DungeonGenerator *dungeon) {
-	V2 wall;
-
-	for(int i = 0; i < MAX_TRIES; i++) {
-		int r = random_rangei(0, dungeon->nwalls);
-		wall = dungeon->walls[r];
-		if(!tile_is_corner(dungeon, wall))
-			return wall;
-	}
-	wall.x = wall.y = -1;
-	return wall;
-}
-
-V2 get_random_corridor(DungeonGenerator *dungeon) {
-	V2 corridor;
-
-	/* This function might not need a for loop, because all corridors are
-	   valid. If only end of corridors are available, this might be needed. But
-	   then I could just store end of corridors on the array. */
-	for(int i = 0; i < MAX_TRIES; i++) {
-		int r = random_rangei(0, dungeon->ncorridors);
-		corridor = dungeon->corridors[r];
-		return corridor;
-	}
-	corridor.x = corridor.y = -1;
-	return corridor;
-}
-
-V2 direction_vector(Direction d) {
-	V2 offset;
-	offset.x = offset.y = 0;
-
-	switch(d) {
-	case UP:
-		offset.y = -1;
-		break;
-	case DOWN:
-		offset.y = 1;
-		break;
-	case LEFT:
-		offset.x = -1;
-		break;
-	case RIGHT:
-		offset.x = 1;
-		break;
-	}
-	return offset;
-}
-// ======================
-// END TILE FUNCTIONS
-// ======================
-
-void dungeon_generator_fill_rect(DungeonGenerator *dungeon, V2 begin, int width, int height, DungeonTile element) {
-	V2 end;
-	end.x = begin.x + width;
-	end.y = begin.y + height;
-
-	for(int y = begin.y; y < end.y; y++) {
-		for(int x = begin.x; x < end.x; x++) {
-			dungeon->map[y][x] = element;
-		}
-	}
-}
-
-// =========================
-// BEGIN ROOM FUNCTIONS
-// =========================
-void dungeon_generator_make_room_at(DungeonGenerator *dungeon, V2 begin, int width, int height) {
-	V2 end, tile;
-	end.x = begin.x + width;
-	end.y = begin.y + height;
-
-	// Inserting horizontal walls
-	for(int x = begin.x; x < end.x; x++) {
-		tile.x = x;
-
-		tile.y = begin.y;
-		dungeon->map[tile.y][tile.x] = DungeonTile::Wall;
-		dungeon->walls[dungeon->nwalls++] = tile;
-
-		tile.y = end.y - 1;
-		dungeon->map[tile.y][tile.x] = DungeonTile::Wall;
-		dungeon->walls[dungeon->nwalls++] = tile;
-	}
-
-	// Inserting vertical walls
-	for(int y = begin.y; y < end.y; y++) {
-		tile.y = y;
-
-		tile.x = begin.x;
-		dungeon->map[tile.y][tile.x] = DungeonTile::Wall;
-		dungeon->walls[dungeon->nwalls++] = tile;
-
-		tile.x = end.x - 1;
-		dungeon->map[tile.y][tile.x] = DungeonTile::Wall;
-		dungeon->walls[dungeon->nwalls++] = tile;
-	}
-	begin.x++;
-	begin.y++;
-	width -= 2;
-	height -= 2;
-
-	dungeon_generator_fill_rect(dungeon, begin, width, height, DungeonTile::Floor);
-}
-
-bool dungeon_generator_has_room_space(DungeonGenerator *dungeon, V2 door, int width, int height, Direction d) {
-	V2 begin = door;
-
-	switch(d) {
-	case UP:
-		begin.y--;
-		for(int y = begin.y; y > begin.y - height; y--) {
-			for(int x = begin.x - width/2; x < begin.x + width/2; x++) {
-				if((x < 0 || x >= dungeon->size) ||
-				   (y < 0 || y >= dungeon->size)) {
-					return false;
-				}
-				if(dungeon->map[y][x] != DungeonTile::Empty && dungeon->map[y][x] != DungeonTile::Wall) {
-					return false;
-				}
-			}
-		}
-		return true;
-		break;
-	case DOWN:
-		begin.y++;
-		for(int y = begin.y; y < begin.y + height; y++) {
-			for(int x = begin.x - width/2; x < begin.x + width/2; x++) {
-				if((x < 0 || x >= dungeon->size) ||
-				   (y < 0 || y >= dungeon->size)) {
-					return false;
-				}
-				if(dungeon->map[y][x] != DungeonTile::Empty && dungeon->map[y][x] != DungeonTile::Wall) {
-					return false;
-				}
-			}
-		}
-		return true;
-		break;
-	case LEFT:
-		begin.x--;
-		for(int y = begin.y-height/2; y < begin.y + height/2; y++) {
-			for(int x = begin.x; x > begin.x - width/2; x--) {
-				if((x < 0 || x >= dungeon->size) ||
-				   (y < 0 || y >= dungeon->size)) {
-					return false;
-				}
-				if(dungeon->map[y][x] != DungeonTile::Empty && dungeon->map[y][x] != DungeonTile::Wall) {
-					return false;
-				}
-			}
-		}
-		return true;
-		break;
-	case RIGHT:
-		begin.x++;
-		for(int y = begin.y-height/2; y < begin.y + height/2; y++) {
-			for(int x = begin.x; x < begin.x + width/2; x++) {
-				if((x < 0 || x >= dungeon->size) ||
-				   (y < 0 || y >= dungeon->size)) {
-					return false;
-				}
-				if(dungeon->map[y][x] != DungeonTile::Empty && dungeon->map[y][x] != DungeonTile::Wall) {
-					return false;
-				}
-			}
-		}
-		return true;
-		break;
-	default:
+	if (room.start_point.y < 0 || room.start_point.y >= dungeon->height())
 		return false;
+
+	if (room.start_point.x + room.width >= dungeon->width())
+		return false;
+
+	if (room.start_point.y + room.height >= dungeon->height())
+		return false;
+
+	for (int y = room.start_point.y; y < room.start_point.y + room.height; y++) {
+		for (int x = room.start_point.x; x < room.start_point.x + room.width; x++) {
+			if (dungeon->map->tiles[y][x] != DungeonTile::Empty)
+				return false;
+		}
 	}
+
+	dg_make_room(dungeon, room);
+	return true;
 }
 
-bool dungeon_generator_make_random_room(DungeonGenerator *dungeon) {
-	V2 corridor;
-	int counter = 0;
-	do {
-		corridor = get_random_corridor(dungeon);
-		counter++;
-		if(counter == 100) {
+bool dg_make_random_room(DungeonGenerator *dungeon) {
+	size_t n_rooms = sizeof(rooms)/sizeof(rooms[0]);
+	bool room_created = false;
+
+	Rect r = rooms[rand() % n_rooms];
+	Rect room = r;
+
+	for (int i = 0; i < MAX_TRIES; i++) {
+		size_t corridor_idx = rand() % dungeon->ncorridors;
+		Point corridor = dungeon->branchable_corridors[corridor_idx].point;
+		Direction direction = dungeon->branchable_corridors[corridor_idx].direction;
+
+		switch (direction) {
+		case UP:
+			room.start_point.x = corridor.x - (room.width / 2);
+			room.start_point.y = corridor.y - room.height;
+			break;
+		case DOWN:
+			room.start_point.x = corridor.x - (room.width / 2);
+			room.start_point.y = corridor.y + 1;
+			break;
+		case LEFT:
+			room.start_point.x = corridor.x - room.width;
+			room.start_point.y = corridor.y - (room.height / 2);
+			break;
+		case RIGHT:
+			room.start_point.x = corridor.x + 1;
+			room.start_point.y = corridor.y - (room.height / 2);
 			break;
 		}
-	} while ((corridor.x == -1 && corridor.y == -1));
 
-	if(counter == 100 || corridor.x == -1) {
-		printf("Could not get random wall. Aborting...\n");
-		return false;
-	}
+		room_created = dg_try_make_room(dungeon, room);
 
-	int size = random_rangei(5, 9);
+		if (room_created) {
+			Point available_wall, p;
 
-	// TODO: Make shuffled array of directions so the
-	// algorithm stays "more random"
-	for(int dir = 0; dir < 4; dir++) {
-		Direction d = static_cast<Direction>(dir);
-		if(dungeon_generator_has_room_space(dungeon, corridor, size, size, d)) {
-			V2 begin, door;
-			int width, height;
-			width = height = size;
-
-			switch(d) {
-			case UP:
-				door.x = corridor.x;
-				door.y = corridor.y - 1;
-				begin.x = corridor.x - width/2;
-				begin.y = corridor.y - height;
-				break;
-			case DOWN:
-				door.x = corridor.x;
-				door.y = corridor.y + 1;
-				begin.x = corridor.x - width/2;
-				begin.y = corridor.y + 1;
-				break;
-			case LEFT:
-				door.x = corridor.x - 1;
-				door.y = corridor.y;
-				begin.x = corridor.x - width;
-				begin.y = corridor.y - height/2;
-				break;
-			case RIGHT:
-				door.x = corridor.x + 1;
-				door.y = corridor.y;
-				begin.x = corridor.x + 1;
-				begin.y = corridor.y - height/2;
-				break;
+			// Connecting the wall to the corridor
+			if (direction == UP) {
+				p = corridor;
+				p.y -= 1;
+				dungeon->map->tiles[p.y][p.x] = DungeonTile::Floor;
 			}
-			dungeon_generator_make_room_at(dungeon, begin, size, size);
-			dungeon->map[door.y][door.x] = DungeonTile::Door;
+			else if (direction == DOWN) {
+				p = corridor;
+				p.y += 1;
+				dungeon->map->tiles[p.y][p.x] = DungeonTile::Floor;
+			}
+			else if (direction == LEFT) {
+				p = corridor;
+				p.x -= 1;
+				dungeon->map->tiles[p.y][p.x] = DungeonTile::Floor;
+			}
+			else {
+				p = corridor;
+				p.x += 1;
+				dungeon->map->tiles[p.y][p.x] = DungeonTile::Floor;
+			}
+
+			// Adding the 3 remaining walls of a room as available to branch
+			// The 4th one was connected to the corridor
+			if (direction != UP) {
+				available_wall = room.start_point;
+				available_wall.y += (room.height -1);
+				available_wall.x += (room.width / 2);
+				dungeon->branchable_walls[dungeon->nwalls].point = available_wall;
+				dungeon->branchable_walls[dungeon->nwalls++].direction = DOWN;
+			}
+			if (direction != DOWN) {
+				available_wall = room.start_point;
+				available_wall.x += (room.width / 2);
+				dungeon->branchable_walls[dungeon->nwalls].point = available_wall;
+				dungeon->branchable_walls[dungeon->nwalls++].direction = UP;
+			}
+			if (direction != LEFT) {
+				available_wall = room.start_point;
+				available_wall.x += (room.width - 1);
+				available_wall.y += (room.height / 2);
+				dungeon->branchable_walls[dungeon->nwalls].point = available_wall;
+				dungeon->branchable_walls[dungeon->nwalls++].direction = RIGHT;
+			}
+			if (direction != RIGHT) {
+				available_wall = room.start_point;
+				available_wall.y += (room.height / 2);
+				dungeon->branchable_walls[dungeon->nwalls].point = available_wall;
+				dungeon->branchable_walls[dungeon->nwalls++].direction = LEFT;
+			}
+
+			dungeon->branchable_corridors[corridor_idx] = dungeon->branchable_corridors[--(dungeon->ncorridors)];
+			dungeon->map->tiles[corridor.y][corridor.x] = DungeonTile::Floor;
 			return true;
 		}
 	}
 	return false;
 }
-// =========================
-// END ROOM FUNCTIONS
-// =========================
 
-// =========================
-// BEGIN CORRIDOR FUNCTIONS
-// =========================
-void dungeon_generator_make_corridor_at(DungeonGenerator *dungeon, V2 door, int size, Direction d) {
-	V2 vector = direction_vector(d);
-	V2 tmp;
-	int i;
+bool dg_make_random_corridor(DungeonGenerator *dungeon) {
+    int tmp;
+	size_t n_corridors = sizeof(corridors)/sizeof(corridors[0]);
+	bool room_created = false;
 
-	dungeon->map[door.y][door.x] = DungeonTile::Door;
-	for(i = 1; i < size; i++) {
-		tmp.x = door.x + (vector.x * i);
-		tmp.y = door.y + (vector.y * i);
-		dungeon->map[tmp.y][tmp.x] = DungeonTile::Corridor;
-	}
-	// TODO: Add every corridor to the array
-	dungeon->corridors[dungeon->ncorridors++] = tmp;
-}
+	Rect r = corridors[rand() % n_corridors];
+	Rect room = r;
 
-bool dungeon_generator_has_corridor_space(DungeonGenerator *dungeon, V2 begin, int size, Direction d) {
-	V2 vector = direction_vector(d);
-	V2 tmp;
+	for (int i = 0; i < MAX_TRIES; i++) {
+		size_t wall_idx = rand() % dungeon->nwalls;
+		Point wall = dungeon->branchable_walls[wall_idx].point;
+		Direction direction = dungeon->branchable_walls[wall_idx].direction;
 
-	for(int i = 1; i < size; i++) {
-		tmp.x = begin.x + (vector.x * i);
-		tmp.y = begin.y + (vector.y * i);
+        // corridors are defined as vertical on the global var,
+        //so we rotate them 90 degrees trying to place them on LEFT/RIGHT
+		switch (direction) {
+		case UP:
+			room.start_point.x = wall.x - (room.width / 2);
+			room.start_point.y = wall.y - room.height;
+			break;
+		case DOWN:
+			room.start_point.x = wall.x - (room.width / 2);
+			room.start_point.y = wall.y + 1;
+			break;
+		case LEFT:
+			tmp = room.width;
+			room.width = room.height;
+			room.height = tmp;
 
-		if(tmp.x < 0 || tmp.x >= dungeon->size ||
-		   tmp.y < 0 || tmp.y >= dungeon->size) {
-			return false;
-		}
+			room.start_point.x = wall.x - room.width;
+			room.start_point.y = wall.y - (room.height / 2);
+			break;
+		case RIGHT:
+			tmp = room.width;
+			room.width = room.height;
+			room.height = tmp;
 
-		if(dungeon->map[tmp.y][tmp.x] != DungeonTile::Empty) {
-			return false;
-		}
-	}
-	return true;
-}
-
-void dungeon_generator_make_random_corridor(DungeonGenerator *dungeon) {
-	V2 wall;
-	int counter = 0;
-	do {
-		wall = get_random_wall(dungeon);
-		counter++;
-		if(counter == 100) {
+			room.start_point.x = wall.x + 1;
+			room.start_point.y = wall.y - (room.height / 2);
 			break;
 		}
-	} while ((wall.x == -1 && wall.y == -1));
 
-	if(counter == 100 || wall.x == -1) {
-		printf("Could not get random wall. Aborting...\n");
-		return;
-	}
-	int size = random_rangei(5, 9);
+		room_created = dg_try_make_room(dungeon, room);
 
-	// TODO: Make shuffled array of directions so the
-	// algorithm stays "more random"
-	for(int dir = 0; dir < 4; dir++) {
-		Direction d = static_cast<Direction>(dir);
-		if(dungeon_generator_has_corridor_space(dungeon, wall, size, d)) {
-			dungeon_generator_make_corridor_at(dungeon, wall, size, d);
-			return;
+		if (room_created) {
+			Point available_corridor, p;
+
+			// Here we add the new corridor walls as available to branch and connect to the previous room
+			// eliminating adjacent walls
+			if (direction == UP) {
+				available_corridor = room.start_point;
+				available_corridor.x += (room.width / 2);
+				dungeon->branchable_corridors[dungeon->ncorridors].point = available_corridor;
+				dungeon->branchable_corridors[dungeon->ncorridors++].direction = UP;
+
+				p = wall;
+				p.y -= 1;
+				dungeon->map->tiles[p.y][p.x] = DungeonTile::Floor;
+			}
+			else if (direction == DOWN) {
+				available_corridor = room.start_point;
+				available_corridor.x += (room.width / 2);
+				available_corridor.y += (room.height - 1);
+				dungeon->branchable_corridors[dungeon->ncorridors].point = available_corridor;
+				dungeon->branchable_corridors[dungeon->ncorridors++].direction = DOWN;
+
+				p = wall;
+				p.y += 1;
+				dungeon->map->tiles[p.y][p.x] = DungeonTile::Floor;
+			}
+			else if (direction == LEFT) {
+				available_corridor = room.start_point;
+				available_corridor.y += (room.height / 2);
+				dungeon->branchable_corridors[dungeon->ncorridors].point = available_corridor;
+				dungeon->branchable_corridors[dungeon->ncorridors++].direction = LEFT;
+
+				p = wall;
+				p.x -= 1;
+				dungeon->map->tiles[p.y][p.x] = DungeonTile::Floor;
+			}
+			else {
+				available_corridor = room.start_point;
+				available_corridor.x += (room.width - 1);
+				available_corridor.y += (room.height / 2);
+				dungeon->branchable_corridors[dungeon->ncorridors].point = available_corridor;
+				dungeon->branchable_corridors[dungeon->ncorridors++].direction = RIGHT;
+
+				p = wall;
+				p.x += 1;
+				dungeon->map->tiles[p.y][p.x] = DungeonTile::Floor;
+			}
+
+			dungeon->branchable_walls[wall_idx] = dungeon->branchable_walls[--(dungeon->nwalls)];
+			dungeon->map->tiles[wall.y][wall.x] = DungeonTile::Floor;
+			return true;
 		}
 	}
-	return;
+	return false;
 }
-// =========================
-// END CORRIDOR FUNCTIONS
-// =========================
 
-DungeonTile **DungeonGenerator::new_map(unsigned short size) {
-	DungeonGenerator *dungeon = (DungeonGenerator *)malloc(sizeof(DungeonGenerator));
-	dungeon->size = size;
+void dg_make_initial_room(DungeonGenerator *dungeon) {
+    // Creating initial room in the middle of the map
+    Rect room;
+    room.width = 9;
+    room.height = 7;
+    room.start_point.x = (dungeon->width() / 2) - (room.width / 2);
+    room.start_point.y = (dungeon->height() / 2) - (room.height / 2);
+    dg_make_room(dungeon, room);
 
-	// Allocating the dungeon map
-	dungeon->map = (DungeonTile **)malloc(sizeof(DungeonTile *) * dungeon->size);
-	for(int i = 0; i < dungeon->size; i++) {
-		(dungeon->map)[i] = (DungeonTile *)malloc(sizeof(DungeonTile) * dungeon->size);
-	}
+    Point available_wall = room.start_point;
+    available_wall.x += (room.width / 2);
+    dungeon->branchable_walls[dungeon->nwalls].point = available_wall;
+    dungeon->branchable_walls[dungeon->nwalls++].direction = UP;
+
+	available_wall = room.start_point;
+    available_wall.x += (room.width / 2);
+    available_wall.y += (room.height - 1);
+    dungeon->branchable_walls[dungeon->nwalls].point = available_wall;
+    dungeon->branchable_walls[dungeon->nwalls++].direction = DOWN;
+
+    available_wall = room.start_point;
+    available_wall.y += (room.height / 2);
+    dungeon->branchable_walls[dungeon->nwalls].point = available_wall;
+    dungeon->branchable_walls[dungeon->nwalls++].direction = LEFT;
+
+	available_wall = room.start_point;
+    available_wall.x += (room.width - 1);
+    available_wall.y += (room.height / 2);
+    dungeon->branchable_walls[dungeon->nwalls].point = available_wall;
+    dungeon->branchable_walls[dungeon->nwalls++].direction = RIGHT;
+
+	Point hero_start;
+	hero_start.x = (dungeon->width() / 2);
+	hero_start.y = (dungeon->height() / 2);
+	DungeonElement hero = DungeonElement(DungeonElementType::Hero, hero_start);
+
+	dungeon->map->elements[dungeon->map->n_elements++] = hero;
+}
+
+DungeonMap *DungeonGenerator::new_map(ushort size) {
+    DungeonGenerator *dungeon = (DungeonGenerator *)malloc(sizeof(DungeonGenerator));
+
+    // Allocating the dungeon map
+    dungeon->map = (DungeonMap *)malloc(sizeof(DungeonMap));
+
+    dungeon->map->tiles_size = size;
+    dungeon->map->tiles = (DungeonTile **)malloc(sizeof(DungeonTile *) * dungeon->height());
+    for(int i = 0; i < dungeon->height(); i++) {
+        (dungeon->map->tiles)[i] = (DungeonTile *)malloc(sizeof(DungeonTile) * dungeon->width());
+    }
+
+    dungeon->map->elements = (DungeonElement *)malloc(sizeof(DungeonElement) * dungeon->width() * dungeon->height());
+    dungeon->map->n_elements = 0;
+
+
 	// TODO: Make them dynamically resizable
-	dungeon->walls = (V2 *)malloc(sizeof(V2) * dungeon->size * dungeon->size);
-	dungeon->nwalls = 0;
-	dungeon->corridors = (V2 *)malloc(sizeof(V2) * dungeon->size * dungeon->size);
-	dungeon->ncorridors = 0;
+    dungeon->branchable_walls = (BranchablePoint *)malloc(sizeof(BranchablePoint) * dungeon->width() * dungeon->height());
+    dungeon->nwalls = 0;
+    dungeon->branchable_corridors = (BranchablePoint *)malloc(sizeof(BranchablePoint) * dungeon->width() * dungeon->height());
+    dungeon->ncorridors = 0;
 
-	// Filling map with EMPTY
-	V2 d_begin;
-	d_begin.x = d_begin.y = 0;
-	dungeon_generator_fill_rect(dungeon, d_begin, size, size, DungeonTile::Empty);
+    // Filling map with EMPTY
+    Point d_begin;
+    d_begin.x = d_begin.y = 0;
+    dg_fill_rect(dungeon, d_begin, dungeon->width(), dungeon->height(), DungeonTile::Empty);
 
-	// Creating initial room in the middle of the map
-	d_begin.x = size/2 - 5;
-	d_begin.y = size/2 - 3;
-	dungeon_generator_make_room_at(dungeon, d_begin, 10, 7);
+    dg_make_initial_room(dungeon);
 
-	int k = 0;
-	while(k != 5) {
-		dungeon_generator_make_random_corridor(dungeon);
-		if(!dungeon_generator_make_random_room(dungeon)) {
-			k++;
-		}
-		else {
-			k = 0;
-		}
-	}
-	DungeonTile **map = dungeon->map;
+    int k = 0;
+    while(k != 3) {
+        dg_make_random_corridor(dungeon);
+        if(!dg_make_random_room(dungeon)) {
+            k++;
+        }
+        else {
+            k = 0;
+        }
+    }
 
-	free(dungeon->corridors);
-	free(dungeon->walls);
-	free(dungeon);
+    for (ushort y = 0; y < dungeon->height(); y++) {
+        for (ushort x = 0; x < dungeon->width(); x++) {
+            printf("%c ", to_char(dungeon->map->tiles[y][x]));
+        }
+        printf("\n");
+    }
 
-	return map;
+    return dungeon->map;
 }
