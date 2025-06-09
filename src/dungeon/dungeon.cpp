@@ -28,8 +28,8 @@ Dungeon::Dungeon(uint16_t dungeon_size) {
 	sprites = std::map<DungeonTile, Texture>();
 	sprites.insert(std::pair<DungeonTile, Texture>(DungeonTile::Unknown, unknown_texture));
 	sprites.insert(std::pair<DungeonTile, Texture>(DungeonTile::Floor, floor_texture));
-	sprites.insert(std::pair<DungeonTile, Texture>(DungeonTile::Door, door_texture));
-	sprites.insert(std::pair<DungeonTile, Texture>(DungeonTile::Corridor, floor_texture));
+	sprites.insert(std::pair<DungeonTile, Texture>(DungeonTile::ClosedTrapdoor, door_texture));
+	sprites.insert(std::pair<DungeonTile, Texture>(DungeonTile::OpenTrapdoor, door_texture));
 	sprites.insert(std::pair<DungeonTile, Texture>(DungeonTile::Wall, wall_texture));
 	sprites.insert(std::pair<DungeonTile, Texture>(DungeonTile::Empty, wall_texture));
 }

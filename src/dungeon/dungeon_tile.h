@@ -4,9 +4,9 @@
 enum class DungeonTile {
 	Unknown,
 	Floor,
-	Door,
-	Corridor,
 	Wall,
+	ClosedTrapdoor,
+	OpenTrapdoor,
 	Empty,
 };
 

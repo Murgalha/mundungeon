@@ -8,14 +8,14 @@ char to_char(DungeonTile tile) {
 	case DungeonTile::Floor:
 		return ' ';
 		break;
-	case DungeonTile::Door:
-		return 'D';
-		break;
-	case DungeonTile::Corridor:
-		return 'C';
-		break;
 	case DungeonTile::Wall:
 		return '#';
+		break;
+	case DungeonTile::ClosedTrapdoor:
+		return 'X';
+		break;
+	case DungeonTile::OpenTrapdoor:
+		return 'O';
 		break;
 	case DungeonTile::Empty:
 		return '.';
@@ -34,14 +34,14 @@ DungeonTile to_dungeon_tile(char c) {
 	case ' ':
 		return DungeonTile::Floor;
 		break;
-	case 'D':
-		return DungeonTile::Door;
-		break;
-	case 'C':
-		return DungeonTile::Corridor;
-		break;
 	case '#':
 		return DungeonTile::Wall;
+		break;
+	case 'X':
+		return DungeonTile::ClosedTrapdoor;
+		break;
+	case 'O':
+		return DungeonTile::OpenTrapdoor;
 		break;
 	case '.':
 		return DungeonTile::Empty;

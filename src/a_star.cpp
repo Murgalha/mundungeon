@@ -33,10 +33,7 @@ bool is_walkable(Dungeon &dungeon, glm::vec2 v) {
 	int y = (int)v.y;
 	DungeonTile tile = dungeon.map->tiles[y][x];
 
-	return (tile == DungeonTile::Floor ||
-			tile == DungeonTile::Door ||
-			tile == DungeonTile::Corridor) &&
-		dungeon.enemies[y][x] == 0;
+	return (tile == DungeonTile::Floor) && dungeon.enemies[y][x] == 0;
 }
 
 bool are_same_position(glm::vec2 v1, glm::vec2 v2) {
