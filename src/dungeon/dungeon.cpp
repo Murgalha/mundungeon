@@ -35,17 +35,17 @@ Dungeon::Dungeon(uint16_t dungeon_size) {
 }
 
 Dungeon::~Dungeon() {
-	/*
-	  for(int i = 0; i < size; i++) {
-	  free(map[i]);
-	  free(enemies[i]);
-	  }
-	  free(map);
-	  free(enemies);
+	for(int i = 0; i < map->tiles_size; i++) {
+		free(map->tiles[i]);
+		free(enemies[i]);
+	}
+	free(map->tiles);
+	free(map->elements);
+	free(map);
+	free(enemies);
 
-	  delete camera;
-	  delete hero;
-	*/
+	delete camera;
+	delete hero;
 }
 
 bool Dungeon::handle_input(Input input) {
