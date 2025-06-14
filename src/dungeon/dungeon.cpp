@@ -91,12 +91,12 @@ void Dungeon::update(float delta_time) {
 
 	hero->update(this, delta_time);
 
-	//glm::vec2 enemy_pos = enemy.grid_position;
-	//enemies[(int)enemy_pos.y][(int)enemy_pos.x] = 0;
-	//enemy.update(*this, delta_time);
+	glm::vec2 enemy_pos = enemy.grid_position;
+	enemies[(int)enemy_pos.y][(int)enemy_pos.x] = 0;
+	enemy.update(*this, delta_time);
 
-	//enemy_pos = enemy.grid_position;
-	//enemies[(int)enemy_pos.y][(int)enemy_pos.x] = 1;
+	enemy_pos = enemy.grid_position;
+	enemies[(int)enemy_pos.y][(int)enemy_pos.x] = 1;
 
 	_post_turn_cleanup();
 
@@ -114,7 +114,7 @@ void Dungeon::_post_turn_cleanup() {
 		enemies[old_y][old_x] = 0;
 
 		// TODO: Hardcoded respawn of enemies should not exist
-		enemy = Enemy(enemy.texture, glm::vec2(13.0f, 21.0f));
+		enemy = Enemy(enemy.texture, glm::vec2(12.0f, 22.0f));
 
 		auto new_position = enemy.grid_position;
 		auto new_x = (int)new_position.x;
@@ -173,7 +173,7 @@ bool Dungeon::can_move_to(glm::vec2 &position) {
 void Dungeon::_spawn_enemies() {
 	auto tex_id = Texture((char *)"assets/enemy.png");
 	glm::vec2 positions[] = {
-		glm::vec2(13.0f, 21.0f),
+		glm::vec2(12.0f, 22.0f),
 	};
 
 	enemies = (unsigned char **) malloc (sizeof(unsigned char *) * size);
